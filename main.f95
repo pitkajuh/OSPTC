@@ -3,37 +3,81 @@
 module read_endf
   implicit none
 contains
-  ! subroutine read_begin(tape_name)
   subroutine read_begin(z)
     implicit none
 
-    integer, intent(in) :: z
+    integer :: z
     integer :: iostat
     character(75) :: line
-    ! character :: tape_name
-
-    ! open(1, file=tape_name, status="old", action="read", iostat=ios)
 
     do
        read(z, '(A75)', iostat=iostat) line
-       print *, line
-       ! exit
+       ! print *, line
        if(trim(line(2:5))/="ENDF" .and. trim(line(72:75))=="0  0") exit
     end do
 
   end subroutine read_begin
+
+  subroutine read_records(z)
+    implicit none
+
+    integer :: z
+    integer :: iostat
+    character(75) :: line
+
+    do
+       read(z, '(A75)', iostat=iostat) line
+       ! print *, line
+       if(line(73:75)=="  0") exit
+    end do
+
+  end subroutine read_records
+
+  subroutine read_header(z)
+    implicit none
+
+    integer :: z
+    integer :: iostat
+    integer :: n
+    character(75) :: line
+
+    n=1
+
+    do
+       read(z, '(A75)', iostat=iostat) line
+       print *, line
+       if(n==3) exit
+       n=n+1
+    end do
+
+  end subroutine read_header
 
   integer function read_tape(tape_name)
     implicit none
 
     character(*) :: tape_name
     integer :: ios, z
-    ! integer :: read_tape
-    ! character(75) :: line
     z=1
-    print *, tape_name
+
     open(z, file=tape_name, status="old", action="read")
     call read_begin(z)
+    call read_header(z)
+    call read_records(z)
+    print *, ""
+    call read_header(z)
+    call read_records(z)
+    print *, ""
+    call read_header(z)
+    call read_records(z)
+    print *, ""
+    call read_header(z)
+    call read_records(z)
+    print *, ""
+    call read_header(z)
+    call read_records(z)
+    print *, ""
+    call read_header(z)
+    call read_records(z)
     close(z)
   end function read_tape
 end module read_endf
