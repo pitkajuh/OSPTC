@@ -1,31 +1,43 @@
-! subroutine read_begin(ios)
-!   implicit none
 
-!   integer :: ios
-!   character(75) :: line
-
-!   do
-!      read(1, '(A75)', iostat=ios) line
-!      if(trim(line(2:5))/="ENDF" .and. trim(line(72:75))=="0  0") exit
-!   end do
-
-! end subroutine read_begin
 
 module read_endf
   implicit none
 contains
-
-  integer function read_tape(tape_name)
+  ! subroutine read_begin(tape_name)
+  subroutine read_begin(z)
     implicit none
 
-    character :: tape_name
-    integer :: ios
+    integer, intent(in) :: z
+    integer :: iostat
+    character(75) :: line
+    ! character :: tape_name
+
+    ! open(1, file=tape_name, status="old", action="read", iostat=ios)
+
+    do
+       read(z, '(A75)', iostat=iostat) line
+       print *, line
+       exit
+       if(trim(line(2:5))/="ENDF" .and. trim(line(72:75))=="0  0") exit
+    end do
+
+  end subroutine read_begin
+
+  integer function read_tape(tape_name)
+  ! subroutine read_tape(tape_name)
+    implicit none
+
+    character(*) :: tape_name
+    integer :: ios, z
     ! integer :: read_tape
     ! character(75) :: line
-
-    open(1, file=tape_name, status="old", action="read", iostat=ios)
-    close(1)
+    z=1
+    print *, tape_name
+    open(z, file=tape_name, status="old", action="read")
+    call read_begin(z)
+    close(z)
     ! read_tape=0.0
+  ! end subroutine read_tape
   end function read_tape
 end module read_endf
 
@@ -43,7 +55,8 @@ program main
   integer :: L1, L2, N1, N2, MAT, MF, MT, NS
   integer :: res
 
-  res=read_tape("cross-sections/photoat-007_N_000.endf")
+  res=read_tape('cross-sections/photoat-007_N_000.endf')
+  ! call read_tape("cross-sections/photoat-007_N_000.endf")
 
   ! character(len=12) :: a1
   ! character(len=11) :: a2, a3, a4, a5, a6
