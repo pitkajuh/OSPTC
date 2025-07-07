@@ -9,26 +9,18 @@ program main
   ! character(10) :: C1, C2, L1, L2, N1, N2, MAT, MF, MT, NS
   real(kind(1.d0)) :: C1, C2!, L1, L2, N1, N2, MAT, MF, MT, NS
   integer :: L1, L2, N1, N2, MAT, MF, MT, NS
-  integer :: n
+
   ! character(len=12) :: a1
   ! character(len=11) :: a2, a3, a4, a5, a6
   ! character(len=8) :: a7
   character(4) :: endf
   z = 7
-  n=0
   open(z, file="cross-sections/photoat-007_N_000.endf", status='old', action='read', iostat=ios)
 
   do
      read(z, '(A75)', iostat=ios) line
-     ! print *, line, "@", line(1:2), "@", "@", trim(line)
      endf=trim(line(2:5))
-     print *, line, "@", endf, "@", line(72:75), "@", len(line(70:75))
-     ! exit
-
-     if (n==180) exit
      if(endf/="ENDF" .and. trim(line(72:75))=="0  0") exit
-     ! if (trim(line) == "0  0" .and. trim(line(1:5)) /= ' ') exit
-     n=n+1
   end do
 
   ! do
