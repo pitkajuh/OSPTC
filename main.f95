@@ -17,14 +17,13 @@ contains
     do
        read(z, '(A75)', iostat=iostat) line
        print *, line
-       exit
+       ! exit
        if(trim(line(2:5))/="ENDF" .and. trim(line(72:75))=="0  0") exit
     end do
 
   end subroutine read_begin
 
   integer function read_tape(tape_name)
-  ! subroutine read_tape(tape_name)
     implicit none
 
     character(*) :: tape_name
@@ -36,8 +35,6 @@ contains
     open(z, file=tape_name, status="old", action="read")
     call read_begin(z)
     close(z)
-    ! read_tape=0.0
-  ! end subroutine read_tape
   end function read_tape
 end module read_endf
 
