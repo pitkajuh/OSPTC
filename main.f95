@@ -29,7 +29,7 @@ contains
     real(kind(1.d0)) :: ZA, AWR
 
     do
-       read(z, '(6E11.0,3I11,I7,I8,I8)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
+       read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
 
        print *, v1, v2, v3, v4, v5, v6, MAT, MF, MT
        ! read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
