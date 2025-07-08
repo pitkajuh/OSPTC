@@ -18,7 +18,7 @@ contains
 
   end subroutine read_begin
 
-  subroutine read_records(z, ios)
+  subroutine read_section(z, ios)
     implicit none
 
     integer :: z
@@ -31,7 +31,7 @@ contains
        if(line(73:75)=="  0") exit
     end do
 
-  end subroutine read_records
+  end subroutine read_section
 
   subroutine read_header(z, ios)
     implicit none
@@ -39,13 +39,14 @@ contains
     integer :: z
     integer :: ios
     integer :: n
-    character(75) :: line
-
+    real(kind(1.d0)) :: ZA, AWR
+    integer :: L1, L2, N1, N2, MAT, MF, MT
     n=1
 
     do
-       read(z, '(A75)', iostat=ios) line
-       print *, line
+       read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
+       print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
+       ! exit when SEND is found, i.e. when MT=0
        if(n==3) exit
        n=n+1
     end do
@@ -61,13 +62,13 @@ contains
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin(z, ios)
-
-    do
-       if(ios<0) exit
-       call read_header(z, ios)
-       call read_records(z, ios)
-       print *, ""
-    end do
+    call read_header(z, ios)
+    ! do
+    !    if(ios<0) exit
+    !    call read_header(z, ios)
+    !    call read_section(z, ios)
+    !    print *, ""
+    ! end do
 
     close(z)
   end function read_tape
@@ -87,5 +88,8 @@ program main
   integer :: res
 
   res=read_tape('cross-sections/photoat-007_N_000.endf')
-
+  ! res=read_tape('cross-sections/photoat-011_Na_000.endf')
+  ! res=read_tape('cross-sections/photoat-022_Ti_000.endf')
+  ! res=read_tape('cross-sections/photoat-026_Fe_000.endf')
+  ! res=read_tape('cross-sections/photoat-053_I_000.endf')
 end program main
