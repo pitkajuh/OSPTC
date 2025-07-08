@@ -24,11 +24,21 @@ contains
     integer :: z
     integer :: ios
     character(75) :: line
+    real(kind(1.d0)) :: v1, v2, v3, v4, v5, v6
+    integer :: L1, L2, N1, N2, MAT, MF, MT
+    real(kind(1.d0)) :: ZA, AWR
 
     do
-       read(z, '(A75)', iostat=ios) line
+       read(z, '(6E11.0,3I11,I7,I8,I8)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
+
+       print *, v1, v2, v3, v4, v5, v6, MAT, MF, MT
+       ! read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
+       ! print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
+       exit
+       ! read(z, '(A75)', iostat=ios) line
        ! print *, line
-       if(line(73:75)=="  0") exit
+       ! exit when SEND is found, i.e. when MT=0
+       ! if(line(73:75)=="  0") exit
     end do
 
   end subroutine read_section
@@ -45,8 +55,8 @@ contains
 
     do
        read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-       print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-       ! exit when SEND is found, i.e. when MT=0
+       ! print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
+
        if(n==3) exit
        n=n+1
     end do
@@ -63,6 +73,7 @@ contains
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin(z, ios)
     call read_header(z, ios)
+    call read_section(z, ios)
     ! do
     !    if(ios<0) exit
     !    call read_header(z, ios)
