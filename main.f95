@@ -1,5 +1,6 @@
 program main
   use read_endf
+  use surface_type
   implicit none
 
   integer :: res
