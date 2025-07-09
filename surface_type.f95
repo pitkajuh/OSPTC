@@ -1,4 +1,5 @@
 module surface_type
+  use coordinate_type
   implicit none
 
   type, abstract :: surface
@@ -21,6 +22,16 @@ module surface_type
      procedure, pass :: create => create_planex
   end type planex
 
+  type, extends(surface) :: planey
+   contains
+     procedure, pass :: create => create_planey
+  end type planey
+
+  type, extends(surface) :: planez
+   contains
+     procedure, pass :: create => create_planez
+  end type planez
+
 contains
 
   subroutine create_planex(this, v)
@@ -30,5 +41,21 @@ contains
     this%G=1
     this%J=-v
   end subroutine create_planex
+
+  subroutine create_planey(this, v)
+    class(planey), intent(inout) :: this
+    real, intent(in) :: v
+    this%value1=v
+    this%H=1
+    this%J=-v
+  end subroutine create_planey
+
+  subroutine create_planez(this, v)
+    class(planez), intent(inout) :: this
+    real, intent(in) :: v
+    this%value1=v
+    this%I=1
+    this%J=-v
+  end subroutine create_planez
 
 end module surface_type
