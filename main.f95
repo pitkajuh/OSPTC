@@ -1,16 +1,13 @@
 program main
   use read_endf
-  use planex_type
+  use surface_type
   implicit none
 
   integer :: res
-  ! type(surface) :: a3=surface(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-  ! type(surface) :: a
-  ! type(planex) :: a1=planex(0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0)
-  ! type(planex), allocatable :: a34
 
-  ! allocate(a, source=planex())
-  ! a%create(100)
+  class(surface), allocatable :: a1
+  allocate(planex :: a1)
+  call a1%create(100.0)
 
   res=read_tape('cross-sections/photoat-007_N_000.endf')
   res=read_tape('cross-sections/photoat-011_Na_000.endf')
