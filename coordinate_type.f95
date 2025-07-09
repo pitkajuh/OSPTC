@@ -19,6 +19,14 @@ contains
     distance=((to%x-from%x)**2+(to%y-from%y)**2+(to%z-from%z)**2)**0.5
   end function distance
 
+  function generate_random(xmin, xmax, ymin, ymax, zmin, zmax)
+    real :: xmin, xmax, ymin, ymax, zmin, zmax
+    type(coordinate) :: generate_random
+    generate_random%x=rng(xmin, xmax)
+    generate_random%y=rng(ymin, ymax)
+    generate_random%z=rng(zmin, zmax)
+  end function generate_random
+
   function random_emission_direction()
     type(coordinate) :: random_emission_direction
     real :: azimuthal_angle, polar_angle
