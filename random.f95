@@ -13,5 +13,4 @@ contains
     real :: rng
     rng=min+std_uniform_distribution()*(max-min)
   end function rng
-
 end module random

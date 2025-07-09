@@ -8,7 +8,8 @@ program main
   ! Not working. Must be declared as a pointer.
   ! type(planex) :: test1
   ! call test1%create(100.0)
-
+  real :: t
+  type(coordinate) :: point
   class(surface), allocatable :: a1
   allocate(planex :: a1)
   call a1%create(100.0)
@@ -18,4 +19,9 @@ program main
   res=read_tape('cross-sections/photoat-022_Ti_000.endf')
   res=read_tape('cross-sections/photoat-026_Fe_000.endf')
   res=read_tape('cross-sections/photoat-053_I_000.endf')
+
+
+  t=std_uniform_distribution()
+  point=coordinate(t, t, t)
+  call show(point)
 end program main
