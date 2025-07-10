@@ -14,14 +14,14 @@ module coordinate_type
 
   interface operator(-)
      module procedure subtract_coordinate
-     ! module procedure subtract_scalar
-     ! module procedure subtract_scalar_reverse
+     module procedure subtract_scalar
+     module procedure subtract_scalar_reverse
   end interface operator(-)
 
   interface operator(*)
      module procedure multiply_coordinate
-     ! module procedure multiply_scalar
-     ! module procedure multiply_scalar_reverse
+     module procedure multiply_scalar
+     module procedure multiply_scalar_reverse
   end interface operator(*)
 
 contains
@@ -64,6 +64,26 @@ contains
     subtract_coordinate%z=v1%z-v2%z
   end function subtract_coordinate
 
+  pure function subtract_scalar(v1, v2)
+    type(coordinate), intent(in) :: v1
+    real, intent(in) :: v2
+    type(coordinate) :: subtract_scalar
+
+    subtract_scalar%x=v1%x-v2
+    subtract_scalar%y=v1%y-v2
+    subtract_scalar%z=v1%z-v2
+  end function subtract_scalar
+
+  pure function subtract_scalar_reverse(v1, v2)
+    type(coordinate), intent(in) :: v2
+    real, intent(in) :: v1
+    type(coordinate) :: subtract_scalar_reverse
+
+    subtract_scalar_reverse%x=v1-v2%x
+    subtract_scalar_reverse%y=v1-v2%y
+    subtract_scalar_reverse%z=v1-v2%z
+  end function subtract_scalar_reverse
+
   pure function multiply_coordinate(v1, v2)
     type(coordinate), intent(in) :: v1, v2
     type(coordinate) :: multiply_coordinate
@@ -72,6 +92,26 @@ contains
     multiply_coordinate%y=v1%y*v2%y
     multiply_coordinate%z=v1%z*v2%z
   end function multiply_coordinate
+
+  pure function multiply_scalar(v1, v2)
+    type(coordinate), intent(in) :: v1
+    real, intent(in) :: v2
+    type(coordinate) :: multiply_scalar
+
+    multiply_scalar%x=v1%x*v2
+    multiply_scalar%y=v1%y*v2
+    multiply_scalar%z=v1%z*v2
+  end function multiply_scalar
+
+  pure function multiply_scalar_reverse(v1, v2)
+    type(coordinate), intent(in) :: v2
+    real, intent(in) :: v1
+    type(coordinate) :: multiply_scalar_reverse
+
+    multiply_scalar_reverse%x=v1*v2%x
+    multiply_scalar_reverse%y=v1*v2%y
+    multiply_scalar_reverse%z=v1*v2%z
+  end function multiply_scalar_reverse
 
   subroutine show(this)
     type(coordinate), intent(in) :: this
