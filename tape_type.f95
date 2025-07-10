@@ -1,4 +1,5 @@
 module tape_type
+  use file_type
   implicit none
 
   type :: tape
@@ -16,12 +17,12 @@ contains
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin1(this, z, ios)
 
-    ! do
-    !    if(ios<0) exit
-    !    ! call read_header(z, ios)
+    do
+       if(ios<0) exit
+       call read_file_header(z, ios)
     !    ! call read_section(z, ios)
     !    ! print *, ""
-    ! end do
+    end do
 
     close(z)
   end subroutine read_tape1
