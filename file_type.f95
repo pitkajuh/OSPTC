@@ -3,6 +3,7 @@ module file_type
 
   type :: file
      real, dimension(6, 3) :: header
+     real, allocatable :: section(:)
   end type file
 
 contains
@@ -35,18 +36,19 @@ contains
     implicit none
 
     integer :: z
-    ! integer :: n
+    integer :: n
     integer :: ios
     real(kind(1.d0)) :: v1, v2, v3, v4, v5, v6
     integer :: L1, L2, N1, N2, MAT, MF, MT
-    ! n=0
+    n=0
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
        if(MT==0) exit
        ! print *, v1, v2, v3, v4, v5, v6, MAT, MF, MT
-       ! n=n+1
+       n=n+1
     end do
-    ! print *, n+3
+    print *, n+3
+    ! real, dimension(2) :: a1
   end subroutine read_section
 
 end module file_type
