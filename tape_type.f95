@@ -20,7 +20,7 @@ contains
     do
        if(ios<0) exit
        call read_file_header(z, ios)
-    !    ! call read_section(z, ios)
+       call read_section(z, ios)
     !    ! print *, ""
     end do
 

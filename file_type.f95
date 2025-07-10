@@ -1,5 +1,4 @@
 module file_type
-
   implicit none
 
   type :: file
@@ -17,7 +16,7 @@ contains
     real(kind(1.d0)) :: ZA, AWR
     integer :: L1, L2, N1, N2, MAT, MF, MT
     n=1
-
+    ! print *, "file header read"
     do
        read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
        ! print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
@@ -30,8 +29,24 @@ contains
        if(n==3) exit
        n=n+1
     end do
-
   end subroutine read_file_header
 
+  subroutine read_section(z, ios)
+    implicit none
+
+    integer :: z
+    ! integer :: n
+    integer :: ios
+    real(kind(1.d0)) :: v1, v2, v3, v4, v5, v6
+    integer :: L1, L2, N1, N2, MAT, MF, MT
+    ! n=0
+    do
+       read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
+       if(MT==0) exit
+       ! print *, v1, v2, v3, v4, v5, v6, MAT, MF, MT
+       ! n=n+1
+    end do
+    ! print *, n+3
+  end subroutine read_section
 
 end module file_type
