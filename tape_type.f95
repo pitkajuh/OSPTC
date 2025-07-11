@@ -18,29 +18,29 @@ contains
     print *, "read tape"
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin1(this, z, ios)
-    print *, MF, MT
-    ! do
-    !    ! if(ios<0) exit
-    !    call read_file_header(this%mf23, z, ios, MF, MT)
-    !    if(MT==0 .and. MF==0) exit
-    !    call read_section(this%mf23, z, ios, MF, MT)
-    !    ! print *, MF, MT
-    !    ! if
-    !    ! if(MT==0 .and. MF==0) exit
-    !    print *, ""
-    ! end do
+    ! print *, MF, MT
+    do
+       ! if(ios<0) exit
+       call read_file_header(this%mf23, z, ios, MF, MT)
+       if(MT==0 .and. MF==0) exit
+       call read_section(this%mf23, z, ios, MF, MT)
+       ! print *, MF, MT
+       ! if
+       ! if(MT==0 .and. MF==0) exit
+       print *, ""
+    end do
 
-    ! do
-    !    ! if(ios<0) exit
-    !    call read_file_header(this%mf27, z, ios, MF, MT)
-    !    ! if(ios<0) exit
-    !    if(MT==0 .and. MF==0) exit
-    !    call read_section(this%mf27, z, ios, MF, MT)
-    !    ! print *, MF, MT
-    !    ! if
-    !    ! if(MT==0 .and. MF==0) exit
-    !    print *, ""
-    ! end do
+    do
+       ! if(ios<0) exit
+       call read_file_header(this%mf27, z, ios, MF, MT)
+       ! if(ios<0) exit
+       if(MT==0 .and. MF==0) exit
+       call read_section(this%mf27, z, ios, MF, MT)
+       ! print *, MF, MT
+       ! if
+       ! if(MT==0 .and. MF==0) exit
+       print *, ""
+    end do
 
     close(z)
   end subroutine read_tape1
@@ -107,6 +107,9 @@ contains
        ! if(n==20) exit
        ! n=n+1
     end do
+
+    read(z, '(I36,I10,I10,I10)', iostat=ios) N1, MAT, MF, MT!, N2, L1, L2
+
     ! n=0
     ! do
     !    read(z, '(A31,I10,I10,I9,I6,I1,I2,I2)', iostat=ios) line, N1, MAT, MF, MT, N2, L1, L2

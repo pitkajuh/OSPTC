@@ -31,7 +31,7 @@ contains
     !    return
     !    this%to=3
     ! else
-       print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT, "else"
+       print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
        this%header(1, n)=ZA
        this%header(2, n)=AWR
        this%header(3, n)=L1
