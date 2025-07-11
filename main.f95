@@ -25,9 +25,11 @@ program main
   print *, ""
   call read_tape1(endf_tape, 'cross-sections/photoat-011_Na_000.endf')
   print *, ""
-  ! call read_tape1(endf_tape, 'cross-sections/photoat-022_Ti_000.endf')
-  ! call read_tape1(endf_tape, 'cross-sections/photoat-026_Fe_000.endf')
-  ! call read_tape1(endf_tape, 'cross-sections/photoat-053_I_000.endf')
+  call read_tape1(endf_tape, 'cross-sections/photoat-022_Ti_000.endf')
+  print *, ""
+  call read_tape1(endf_tape, 'cross-sections/photoat-026_Fe_000.endf')
+  print *, ""
+  call read_tape1(endf_tape, 'cross-sections/photoat-053_I_000.endf')
 
 
   ! t=std_uniform_distribution()

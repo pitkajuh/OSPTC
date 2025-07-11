@@ -89,13 +89,19 @@ contains
     do
        ! read(z, '(A31,I10,I10,I10,I6,I1,I2,I2)', iostat=ios) line, N1, MAT, MF, MT!, N2, L1, L2
        ! read(z, '(A31,I10,I10,I10,I6)', iostat=ios) line, N1, MAT, MF, MT!, N2, L1, L2
-       read(z, '(I36,I10,I10,I10)', iostat=ios) N1, MAT, MF, MT!, N2, L1, L2
-       print *, N1, MAT, MF, MT!, MT!, N2, L1, L2
+
+
+       ! read(z, '(I36,I10,I10,I10)', iostat=ios) N1, MAT, MF, MT!, N2, L1, L2
+
+       read(z, '(I33,I11,I11,I11)', iostat=ios) N1, MAT, MF, MT!, N2, L1, L2
+
+
        ! if(MAT==0 .and. MF==0 .and. MT==0) exit
        if(MT/=3) exit
+       print *, N1, MAT, MF, MT!, MT!, N2, L1, L2
        ! print *, N1, MAT, MF!, MT!, N2, L1, L2
-       if(n==20) exit
-       n=n+1
+       ! if(n==20) exit
+       ! n=n+1
     end do
 
     ! do
