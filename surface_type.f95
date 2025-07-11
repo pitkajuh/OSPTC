@@ -69,6 +69,7 @@ module surface_type
   end type planez
 
   type, extends(surface) :: cylinder
+     type(coordinate) :: centered_at
    contains
      procedure, pass :: create => create_cylinder
      procedure, pass :: surface_equation => surface_equation_cylinder
@@ -192,17 +193,6 @@ contains
     result1=get_surface_test(surface_equation_z(this, p))
   end function surface_test_z
 
-
-
-
-
-
-
-
-
-
-
-
   ! subroutine create_cylinder(this, v, at)
   subroutine create_cylinder(this, v)
     class(cylinder), intent(inout) :: this
@@ -219,13 +209,14 @@ contains
     class(cylinder), intent(inout) :: this
     type(coordinate), intent(in) :: p
     real :: result1
-    result1=0
-    ! result1=(p%x-centered_at%x)**2+(p%y-centered_at%y)**2+this%J;
+    ! result1=0
+    result1=(p%x-this%centered_at%x)**2+(p%y-this%centered_at%y)**2+this%J;
   end function surface_equation_cylinder
 
   function surface_distance_cylinder(this, from, to) result(result1)
     class(cylinder), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
+    type(coordinate) :: centered_at
     real :: result1, inSqrt
     real :: sqrtValue
     real :: optionPositive
@@ -236,10 +227,8 @@ contains
 
     x=from%x
     y=from%y
-    ! x0=centered_at.x
-    ! y0=centered_at.y
-    x0=1
-    y0=1
+    x0=centered_at%x
+    y0=centered_at%y
     ! Direction vector by using direction cosine.
     u=to%x
     v=to%y

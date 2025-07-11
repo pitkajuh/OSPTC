@@ -13,6 +13,8 @@ program main
   type(coordinate) :: point, point1
   class(surface), allocatable :: a1
   type(tape) :: endf_tape
+  type(cylinder) :: t12
+
   ! call read_tape1(endf_tape, 'cross-sections/photoat-007_N_000.endf')
   ! print *, endf_tape%header
   ! call endf_tape%read_tape1('cross-sections/photoat-007_N_000.endf')
@@ -45,5 +47,7 @@ program main
   ! print *, a1%value1
   ! call a1%surface_equation(point1)
   deallocate(a1)
+
+
 
 end program main
