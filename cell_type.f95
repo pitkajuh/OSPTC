@@ -35,16 +35,15 @@ contains
   function cell_test_box(this, p) result(result1)
     class(cell_box_3d), intent(inout) :: this
     type(coordinate), intent(in) :: p
-    logical :: result1, b1, b2, b3, b4, b5, b6, result2
+    logical :: result1, b1, b2, b3, b4, b5, b6
     b1=.not. this%wallx_negative%surface_test(p)
     b2=this%wallx_positive%surface_test(p)
     b3=.not. this%wally_negative%surface_test(p)
     b4=this%wally_positive%surface_test(p)
     b5=.not. this%wallz_negative%surface_test(p)
     b6=this%wallz_positive%surface_test(p)
-    result2=b1 .and. b2 .and. b3 .and. b4 .and. b4 .and. b5 .and. b6
 
-    if(result2) then
+    if(b1 .and. b2 .and. b3 .and. b4 .and. b4 .and. b5 .and. b6) then
        this%hits=this%hits+1
        result1=.true.
     else
