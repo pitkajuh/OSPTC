@@ -4,7 +4,7 @@ module file_type
   type :: file
      real, dimension(6, 3) :: header
      real, allocatable :: section(:)
-     ! integer :: to=2
+     integer :: to=2
   end type file
 
 contains
@@ -14,20 +14,20 @@ contains
     type(file) :: this
     integer :: z
     integer :: ios
-    integer :: n
-    integer :: to=2
+    integer :: n=1
+    integer :: to
     real(kind(1.d0)) :: ZA, AWR
     integer :: L1, L2, N1, N2, MAT, MF, MT
-    n=1
+    ! n=1
     print *, "file header read"
     read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
 
 
-    if(MF==0) then
-       to=3
+    if(MF==0 .and. this%to==2) then
+       this%to=3
        ! print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
     else
-       print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
+       print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT, "else"
        this%header(1, n)=ZA
        this%header(2, n)=AWR
        this%header(3, n)=L1
@@ -40,16 +40,17 @@ contains
        read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
 
        ! if(MF==0 .and. MT==0) exit
-       print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
+       print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT, n, this%to
        this%header(1, n)=ZA
        this%header(2, n)=AWR
        this%header(3, n)=L1
        this%header(4, n)=L2
        this%header(5, n)=N1
        this%header(6, n)=N2
-       if(n==to) exit
+       if(n==this%to) exit
        n=n+1
     end do
+    n=1
     ! n=1
     ! print *, "file header read"
     ! do
