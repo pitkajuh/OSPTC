@@ -21,9 +21,8 @@ module surface_type
        use coordinate_type
        import surface
        class(surface), intent(inout) :: this
-       type(coordinate), intent(in)  :: p
-       ! real :: p
-       real                          :: result1
+       type(coordinate), intent(in) :: p
+       real :: result1
      end function create_surface_equation
   end interface
 
@@ -33,10 +32,11 @@ module surface_type
      procedure, pass :: surface_equation => surface_equation_x
   end type planex
 
-  ! type, extends(surface) :: planey
-  !  contains
-  !    procedure, pass :: create => create_planey
-  ! end type planey
+  type, extends(surface) :: planey
+   contains
+     procedure, pass :: create => create_planey
+     procedure, pass :: surface_equation => surface_equation_y
+  end type planey
 
   ! type, extends(surface) :: planez
   !  contains
@@ -60,14 +60,21 @@ contains
     result1=p%x+this%J
   end function surface_equation_x
 
+  subroutine create_planey(this, v)
+    class(planey), intent(inout) :: this
+    real, intent(in) :: v
+    this%value1=v
+    this%H=1
+    this%J=-v
+  end subroutine create_planey
 
-  ! subroutine create_planey(this, v)
-  !   class(planey), intent(inout) :: this
-  !   real, intent(in) :: v
-  !   this%value1=v
-  !   this%H=1
-  !   this%J=-v
-  ! end subroutine create_planey
+  function surface_equation_y(this, p) result(result1)
+    class(planey), intent(inout) :: this
+    type(coordinate), intent(in) :: p
+    real :: result1
+    result1=p%y+this%J
+  end function surface_equation_y
+
 
   ! subroutine create_planez(this, v)
   !   class(planez), intent(inout) :: this
