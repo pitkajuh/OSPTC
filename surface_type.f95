@@ -230,12 +230,9 @@ contains
     real :: sqrtValue
     real :: optionPositive
     real :: optionNegative
-    real :: x
-    real :: y
-    real :: x0
-    real :: y0
-    real :: u
-    real :: v
+    real :: x, y, x0, y0, u, v
+
+    ! Equation should be A*(x-x0)*(x-x0)+B*(y-y0)*(y-y0)+J, but A and B are omitted because they are 1.
 
     x=from%x
     y=from%y
