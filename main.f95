@@ -14,7 +14,7 @@ program main
   class(surface), allocatable :: a1
   type(tape) :: endf_tape
   call read_tape1(endf_tape, 'cross-sections/photoat-007_N_000.endf')
-  print *, endf_tape%header
+  ! print *, endf_tape%header
   ! call endf_tape%read_tape1('cross-sections/photoat-007_N_000.endf')
 
   ! allocate(planex :: a1)
