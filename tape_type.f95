@@ -54,7 +54,7 @@ contains
     integer :: n
 
     real(kind(1.d0)) :: ZA, AWR
-    integer :: L1, L2, N1, N2, MAT, MF, MT
+    integer :: L1, L2, N1, N2, MAT, MF, MT, MT1, MF1
 
     n=1
 
@@ -87,34 +87,42 @@ contains
     end do
     n=0
     do
+       ! read(z, '(I33,I11)', iostat=ios) N1, MAT, MF1, MT1!, MAT, MF, MT, N2, L1, L2
+       ! print *, N1, MAT, MF1, MT1!, N2, L1, L2
+
+
        ! read(z, '(A31,I10,I10,I10,I6,I1,I2,I2)', iostat=ios) line, N1, MAT, MF, MT!, N2, L1, L2
        ! read(z, '(A31,I10,I10,I10,I6)', iostat=ios) line, N1, MAT, MF, MT!, N2, L1, L2
 
 
-       ! read(z, '(I36,I10,I10,I10)', iostat=ios) N1, MAT, MF, MT!, N2, L1, L2
+       read(z, '(I36,I10,I10,I10)', iostat=ios) N1, MAT, MF, MT!, N2, L1, L2
 
-       read(z, '(I33,I11,I11,I11)', iostat=ios) N1, MAT, MF, MT!, N2, L1, L2
+       ! read(z, '(I33,I11,I11,I11)', iostat=ios) N1, MAT, MF, MT!, N2, L1, L2
 
 
        ! if(MAT==0 .and. MF==0 .and. MT==0) exit
        if(MT/=3) exit
-       print *, N1, MAT, MF, MT!, MT!, N2, L1, L2
+       print *, N1, MAT, MF, MT
        ! print *, N1, MAT, MF!, MT!, N2, L1, L2
        ! if(n==20) exit
        ! n=n+1
     end do
-
+    ! n=0
     ! do
-       read(z, '(A31,I10,I10,I10,I6,I1,I2,I2)', iostat=ios) line, N1, MAT, MF, MT, N2, L1, L2
+    !    read(z, '(A31,I10,I10,I9,I6,I1,I2,I2)', iostat=ios) line, N1, MAT, MF, MT, N2, L1, L2
 
-       ! if(MAT==0 .and. MF==0 .and. MT==0) exit
-       ! print *, N1, MAT, MF, MT, N2, L1, L2
-       ! if(L1==0 .and. L2==0) exit
+    !    ! if(MAT==0 .and. MF==0 .and. MT==0) exit
+    !    if(MT/=3) exit
+    !    print *, N1, MAT, MF, MT, N2, L1, L2
+    !    ! if(L1==0 .and. L2==0) then
+    !    !    print *, "xit"
+    !    !    exit
+    !    ! end if
 
-       ! if(n==20) exit
-       ! n=n+1
+    !    if(n==20) exit
+    !    n=n+1
     ! end do
-
+    print *, "aoe"
     ! do
     !    read(z, '(A71,I2,I1,I1)', iostat=ios) line, MAT, MF, MT
     !    ! print *, line, MAT, MF, MT
