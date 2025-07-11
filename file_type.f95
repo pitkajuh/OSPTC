@@ -9,14 +9,14 @@ module file_type
 
 contains
 
-  subroutine read_file_header(this, z, ios, MFnow, MF, MT)
+  subroutine read_file_header(this, z, ios, MF, MT)
     type(file) :: this
     integer :: z
     integer :: ios
     integer :: n=1
     integer :: to
     real :: ZA, AWR
-    integer :: L1, L2, N1, N2, MAT, MF, MT, MFnow
+    integer :: L1, L2, N1, N2, MAT, MF, MT
     ! n=1
     ! print *, "file header read"
     read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
@@ -25,12 +25,12 @@ contains
        print *, "change file"
        return
     end if
-    if(MF==0 .and. this%to==2) then
-       ! Change file
-       print *, "change file", MF, MT
-       return
-       this%to=3
-    else
+    ! if(MF==0 .and. this%to==2) then
+    !    ! Change file
+    !    print *, "change file", MF, MT
+    !    return
+    !    this%to=3
+    ! else
        print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT, "else"
        this%header(1, n)=ZA
        this%header(2, n)=AWR
@@ -38,12 +38,12 @@ contains
        this%header(4, n)=L2
        this%header(5, n)=N1
        this%header(6, n)=N2
-    end if
+    ! end if
 
     do
        read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
 
-       if(MF==0 .and. MT==0) exit
+       ! if(MF==0 .and. MT==0) exit
        print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT, n, this%to
        this%header(1, n)=ZA
        this%header(2, n)=AWR
@@ -55,32 +55,16 @@ contains
        n=n+1
     end do
     n=1
-    ! n=1
-    ! print *, "file header read"
-    ! do
-    !    read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-
-    !    ! if(MF==0 .and. MT==0) exit
-    !    print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-    !    this%header(1, n)=ZA
-    !    this%header(2, n)=AWR
-    !    this%header(3, n)=L1
-    !    this%header(4, n)=L2
-    !    this%header(5, n)=N1
-    !    this%header(6, n)=N2
-    !    if(n==3) exit
-    !    n=n+1
-    ! end do
   end subroutine read_file_header
 
   subroutine read_section(this, z, ios, MF,  MT)
     type(file) :: this
     integer :: z
-    integer :: n
+    integer :: n=0
     integer :: ios
     real :: v1, v2, v3, v4, v5, v6
     integer :: L1, L2, N1, N2, MAT, MF, MT
-    n=0
+    ! n=0
     ! print *, "read sectin"
 
     ! read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT

@@ -15,32 +15,32 @@ contains
     character(*) :: tape_name
     integer :: ios, z, MF, MT, MFnow
     z=1
-
+    print *, "read tape"
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin1(this, z, ios)
+    print *, MF, MT
+    ! do
+    !    ! if(ios<0) exit
+    !    call read_file_header(this%mf23, z, ios, MF, MT)
+    !    if(MT==0 .and. MF==0) exit
+    !    call read_section(this%mf23, z, ios, MF, MT)
+    !    ! print *, MF, MT
+    !    ! if
+    !    ! if(MT==0 .and. MF==0) exit
+    !    print *, ""
+    ! end do
 
-    do
-       ! if(ios<0) exit
-       call read_file_header(this%mf23, z, ios, 23, MF, MT)
-       if(MT==0 .and. MF==0) exit
-       call read_section(this%mf23, z, ios, MF, MT)
-       ! print *, MF, MT
-       ! if
-       ! if(MT==0 .and. MF==0) exit
-       print *, ""
-    end do
-
-    do
-       ! if(ios<0) exit
-       call read_file_header(this%mf27, z, ios, 27, MF, MT)
-       ! if(ios<0) exit
-       if(MT==0 .and. MF==0) exit
-       call read_section(this%mf27, z, ios, MF, MT)
-       ! print *, MF, MT
-       ! if
-       ! if(MT==0 .and. MF==0) exit
-       print *, ""
-    end do
+    ! do
+    !    ! if(ios<0) exit
+    !    call read_file_header(this%mf27, z, ios, MF, MT)
+    !    ! if(ios<0) exit
+    !    if(MT==0 .and. MF==0) exit
+    !    call read_section(this%mf27, z, ios, MF, MT)
+    !    ! print *, MF, MT
+    !    ! if
+    !    ! if(MT==0 .and. MF==0) exit
+    !    print *, ""
+    ! end do
 
     close(z)
   end subroutine read_tape1
@@ -68,25 +68,34 @@ contains
        this%header(4, n)=L2
        this%header(5, n)=N1
        this%header(6, n)=N2
-       if(n==4) exit
        ! print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-       n=n+1
-    end do
+       if(n==4) exit
 
-    do
-       read(z, '(A65,I2)', iostat=ios) line, N1
-       if(N1==3) exit
+       n=n+1
     end do
     ! n=0
     do
-       ! read(z, '(A31,I10,I10,I10,I6,I1,I2,I2)', iostat=ios) line, N1, MAT, MF, MT!, N2, L1, L2
-       read(z, '(A31,I10,I10,I10,I6)', iostat=ios) line, N1, MAT, MF, MT!, N2, L1, L2
+       read(z, '(A65,I1)', iostat=ios) line, N1
 
+       ! if(n==200) exit
+       ! exit
+       if(N1==3) then
+          ! print *, line, N1
+          exit
+       end if
+       ! n=n+1
+    end do
+    n=0
+    do
+       ! read(z, '(A31,I10,I10,I10,I6,I1,I2,I2)', iostat=ios) line, N1, MAT, MF, MT!, N2, L1, L2
+       ! read(z, '(A31,I10,I10,I10,I6)', iostat=ios) line, N1, MAT, MF, MT!, N2, L1, L2
+       read(z, '(I36,I10,I10,I10)', iostat=ios) N1, MAT, MF, MT!, N2, L1, L2
+       print *, N1, MAT, MF, MT!, MT!, N2, L1, L2
        ! if(MAT==0 .and. MF==0 .and. MT==0) exit
        if(MT/=3) exit
-       print *, N1, MAT, MF!, MT!, N2, L1, L2
-       ! if(n==20) exit
-       ! n=n+1
+       ! print *, N1, MAT, MF!, MT!, N2, L1, L2
+       if(n==20) exit
+       n=n+1
     end do
 
     ! do
