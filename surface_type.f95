@@ -68,6 +68,14 @@ module surface_type
      procedure, pass :: surface_test => surface_test_z
   end type planez
 
+  type, extends(surface) :: cylinder
+   contains
+     procedure, pass :: create => create_cylinder
+     procedure, pass :: surface_equation => surface_equation_cylinder
+     procedure, pass :: surface_distance => surface_distance_cylinder
+     procedure, pass :: surface_test => surface_test_cylinder
+  end type cylinder
+
 contains
 
   function get_surface_test(v)
@@ -183,5 +191,90 @@ contains
     logical :: result1
     result1=get_surface_test(surface_equation_z(this, p))
   end function surface_test_z
+
+
+
+
+
+
+
+
+
+
+
+
+  ! subroutine create_cylinder(this, v, at)
+  subroutine create_cylinder(this, v)
+    class(cylinder), intent(inout) :: this
+    ! type(coordinate), intent(in) :: at
+    real, intent(in) :: v
+    this%value1=v
+    ! this%centered_at=at
+    this%A=1
+    this%B=1
+    this%J=-v*v
+  end subroutine create_cylinder
+
+  function surface_equation_cylinder(this, p) result(result1)
+    class(cylinder), intent(inout) :: this
+    type(coordinate), intent(in) :: p
+    real :: result1
+    result1=0
+    ! result1=(p%x-centered_at%x)**2+(p%y-centered_at%y)**2+this%J;
+  end function surface_equation_cylinder
+
+  function surface_distance_cylinder(this, from, to) result(result1)
+    class(cylinder), intent(inout) :: this
+    type(coordinate), intent(in) :: from, to
+    real :: result1, inSqrt
+    real :: sqrtValue
+    real :: optionPositive
+    real :: optionNegative
+    real :: x
+    real :: y
+    real :: x0
+    real :: y0
+    real :: u
+    real :: v
+
+    x=from%x
+    y=from%y
+    ! x0=centered_at.x
+    ! y0=centered_at.y
+    x0=1
+    y0=1
+    ! Direction vector by using direction cosine.
+    u=to%x
+    v=to%y
+
+    this%K=(x-x0)**2+(y-y0)**2+this%J;
+    this%L=2*(u*(x-x0)+v*(y-y0));
+    this%M=u*u+v*v;
+
+    inSqrt=this%L*this%L-4*this%M*this%K;
+
+    if(inSqrt<0 .or. this%M==0) then
+       result1=-1;
+    else
+       optionPositive=(-this%L+inSqrt**0.5)/(2*this%M)
+       optionNegative=(-this%L-inSqrt**0.5)/(2*this%M)
+
+       if(optionPositive<0 .and. optionNegative<0) then
+          ! No solution exists, the surface is away from line-of-sight.
+          result1=-1
+       else if(optionPositive>0 .and. optionNegative<0 .and. optionPositive>optionNegative) then
+          result1=optionPositive
+       else
+          result1=optionNegative
+       end if
+    end if
+  end function surface_distance_cylinder
+
+  function surface_test_cylinder(this, p) result(result1)
+    class(cylinder), intent(inout) :: this
+    type(coordinate), intent(in) :: p
+    logical :: result1
+    result1=get_surface_test(surface_equation_cylinder(this, p))
+  end function surface_test_cylinder
 
 end module surface_type
