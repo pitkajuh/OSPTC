@@ -6,27 +6,17 @@ module surface_type
      ! For general quadratic surface S(x, y, z)=Ax^2+By^2+Cz^2+Dxy+Eyz+F zx+Gx+Hy+Iz+J
      real(kind(1.d0)) :: value1=0, A=0, B=0, C=0, D=0, E=0, F=0, G=0, H=0, I=0, J=0, L=0, M=0, K=0
    contains
-     ! procedure(create_interface), deferred :: create
+     procedure(create_interface), deferred :: create
      procedure(create_surface_equation), deferred :: surface_equation
   end type surface
 
-  ! abstract interface
-  !    subroutine create_interface(this, v)
-  !      import surface
-  !      class(surface), intent(inout) :: this
-  !      real, intent(in) :: v
-  !    end subroutine create_interface
-
-  !    ! function create_surface_equation(this, p)
-  !    !   use coordinate_type
-  !    !   import surface
-  !    !   class(surface), intent(inout) :: this
-  !    !   type(coordinate), intent(in) :: p
-  !    ! end function create_surface_equation
-
-  ! end interface
-
   abstract interface
+     subroutine create_interface(this, v)
+       import surface
+       class(surface), intent(inout) :: this
+       real, intent(in) :: v
+     end subroutine create_interface
+
      function create_surface_equation(this, p) result(result1)
        use coordinate_type
        import surface
@@ -39,7 +29,7 @@ module surface_type
 
   type, extends(surface) :: planex
    contains
-     ! procedure, pass :: create => create_planex
+     procedure, pass :: create => create_planex
      procedure, pass :: surface_equation => surface_equation_x
   end type planex
 
@@ -55,21 +45,19 @@ module surface_type
 
 contains
 
-  ! subroutine create_planex(this, v)
-  !   class(planex), intent(inout) :: this
-  !   real, intent(in) :: v
-  !   this%value1=v
-  !   this%G=1
-  !   this%J=-v
-  ! end subroutine create_planex
+  subroutine create_planex(this, v)
+    class(planex), intent(inout) :: this
+    real, intent(in) :: v
+    this%value1=v
+    this%G=1
+    this%J=-v
+  end subroutine create_planex
 
   function surface_equation_x(this, p) result(result1)
-    ! use coordinate_type
     class(planex), intent(inout) :: this
-    type(coordinate), intent(in)             :: p
-    ! real             :: p
-    real                         :: result1
-    ! result1=p%x+this%J
+    type(coordinate), intent(in) :: p
+    real :: result1
+    result1=p%x+this%J
   end function surface_equation_x
 
 
