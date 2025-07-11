@@ -17,12 +17,12 @@ contains
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin1(this, z, ios)
 
-    do
-       if(ios<0) exit
-       call read_file_header(z, ios)
-       call read_section(z, ios)
-    !    ! print *, ""
-    end do
+    ! do
+    !    if(ios<0) exit
+    !    call read_file_header(z, ios)
+    !    call read_section(z, ios)
+    ! !    ! print *, ""
+    ! end do
 
     close(z)
   end subroutine read_tape1
@@ -54,12 +54,30 @@ contains
        ! print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
        n=n+1
     end do
+    n=0
+    do
+       read(z, '(A65,I2,I1,I2,I2,I2)', iostat=ios) line, N1, MAT, MF, MT, N2
+       ! print *, line, N1, MAT, MF, MT, N2
+       ! if(MAT==0 .and. MF==0 .and. MT==0) exit
+       if(N1==3) exit
+       ! if(n==200) exit
+       ! n=n+1
+    end do
 
     do
-       read(z, '(A71,I2,I1,I1)', iostat=ios) line, MAT, MF, MT
-       ! print *, line, MAT, MF, MT
-       if(MAT==0 .and. MF==0 .and. MT==0) exit
+       read(z, '(A65,I2,I1,I2,I2,I2)', iostat=ios) line, N1, MAT, MF, MT, N2
+       print *, line, N1, MAT, MF, MT, N2
+       ! if(MAT==0 .and. MF==0 .and. MT==0) exit
+       ! if(N1==3) exit
+       if(n==20) exit
+       n=n+1
     end do
+
+    ! do
+    !    read(z, '(A71,I2,I1,I1)', iostat=ios) line, MAT, MF, MT
+    !    ! print *, line, MAT, MF, MT
+    !    if(MAT==0 .and. MF==0 .and. MT==0) exit
+    ! end do
 
   end subroutine read_begin1
 
