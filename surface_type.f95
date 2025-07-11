@@ -8,6 +8,7 @@ module surface_type
    contains
      procedure(create_interface), deferred :: create
      procedure(create_surface_equation), deferred :: surface_equation
+     procedure(create_surface_distance), deferred :: surface_distance
   end type surface
 
   abstract interface
@@ -24,25 +25,34 @@ module surface_type
        type(coordinate), intent(in) :: p
        real :: result1
      end function create_surface_equation
+
+     function create_surface_distance(this, from, to) result(result1)
+       use coordinate_type
+       import surface
+       class(surface), intent(inout) :: this
+       type(coordinate), intent(in) :: from, to
+       real :: result1
+     end function create_surface_distance
   end interface
 
   type, extends(surface) :: planex
    contains
      procedure, pass :: create => create_planex
      procedure, pass :: surface_equation => surface_equation_x
+     procedure, pass :: surface_distance => surface_distance_x
   end type planex
 
-  type, extends(surface) :: planey
-   contains
-     procedure, pass :: create => create_planey
-     procedure, pass :: surface_equation => surface_equation_y
-  end type planey
+  ! type, extends(surface) :: planey
+  !  contains
+  !    procedure, pass :: create => create_planey
+  !    procedure, pass :: surface_equation => surface_equation_y
+  ! end type planey
 
-  type, extends(surface) :: planez
-   contains
-     procedure, pass :: create => create_planez
-     procedure, pass :: surface_equation => surface_equation_z
-  end type planez
+  ! type, extends(surface) :: planez
+  !  contains
+  !    procedure, pass :: create => create_planez
+  !    procedure, pass :: surface_equation => surface_equation_z
+  ! end type planez
 
 contains
 
@@ -73,34 +83,47 @@ contains
     result1=p%x+this%J
   end function surface_equation_x
 
-  subroutine create_planey(this, v)
-    class(planey), intent(inout) :: this
-    real, intent(in) :: v
-    this%value1=v
-    this%H=1
-    this%J=-v
-  end subroutine create_planey
-
-  function surface_equation_y(this, p) result(result1)
-    class(planey), intent(inout) :: this
-    type(coordinate), intent(in) :: p
+  function surface_distance_x(this, from, to) result(result1)
+    use coordinate_type
+    class(planex), intent(inout) :: this
+    type(coordinate), intent(in) :: from, to
     real :: result1
-    result1=p%y+this%J
-  end function surface_equation_y
 
-  subroutine create_planez(this, v)
-    class(planez), intent(inout) :: this
-    real, intent(in) :: v
-    this%value1=v
-    this%I=1
-    this%J=-v
-  end subroutine create_planez
+    if(to%x==0) then
+       result1=-1
+    else
+       result1=-(from%x+this%J)/to%x
+    end if
+  end function surface_distance_x
 
-  function surface_equation_z(this, p) result(result1)
-    class(planez), intent(inout) :: this
-    type(coordinate), intent(in) :: p
-    real :: result1
-    result1=p%z+this%J
-  end function surface_equation_z
+  ! subroutine create_planey(this, v)
+  !   class(planey), intent(inout) :: this
+  !   real, intent(in) :: v
+  !   this%value1=v
+  !   this%H=1
+  !   this%J=-v
+  ! end subroutine create_planey
+
+  ! function surface_equation_y(this, p) result(result1)
+  !   class(planey), intent(inout) :: this
+  !   type(coordinate), intent(in) :: p
+  !   real :: result1
+  !   result1=p%y+this%J
+  ! end function surface_equation_y
+
+  ! subroutine create_planez(this, v)
+  !   class(planez), intent(inout) :: this
+  !   real, intent(in) :: v
+  !   this%value1=v
+  !   this%I=1
+  !   this%J=-v
+  ! end subroutine create_planez
+
+  ! function surface_equation_z(this, p) result(result1)
+  !   class(planez), intent(inout) :: this
+  !   type(coordinate), intent(in) :: p
+  !   real :: result1
+  !   result1=p%z+this%J
+  ! end function surface_equation_z
 
 end module surface_type
