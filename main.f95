@@ -1,6 +1,6 @@
 program main
   ! use read_endf
-  use surface_type
+  use cell_type
   use tape_type
   implicit none
 
