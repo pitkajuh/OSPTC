@@ -46,6 +46,18 @@ module surface_type
 
 contains
 
+  function get_surface_test(v)
+    real :: v
+    integer :: get_surface_test
+
+    ! Return true if the point is inside(<0) or on(==0) the surface.
+    if(v<=0) then
+       get_surface_test=1
+    else
+       get_surface_test=0
+    end if
+  end function get_surface_test
+
   subroutine create_planex(this, v)
     class(planex), intent(inout) :: this
     real, intent(in) :: v
