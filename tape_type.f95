@@ -54,23 +54,20 @@ contains
        ! print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
        n=n+1
     end do
-    n=0
-    do
-       read(z, '(A65,I2,I1,I2,I2,I2)', iostat=ios) line, N1, MAT, MF, MT, N2
-       ! print *, line, N1, MAT, MF, MT, N2
-       ! if(MAT==0 .and. MF==0 .and. MT==0) exit
-       if(N1==3) exit
-       ! if(n==200) exit
-       ! n=n+1
-    end do
 
     do
-       read(z, '(A65,I2,I1,I2,I2,I2)', iostat=ios) line, N1, MAT, MF, MT, N2
-       print *, line, N1, MAT, MF, MT, N2
+       read(z, '(A65,I2)', iostat=ios) line, N1
+       if(N1==3) exit
+    end do
+    ! n=0
+    do
+       read(z, '(A31,I10,I10,I10,I6,I1,I2,I2)', iostat=ios) line, N1, MAT, MF, MT, N2, L1, L2
+
        ! if(MAT==0 .and. MF==0 .and. MT==0) exit
-       ! if(N1==3) exit
-       if(n==20) exit
-       n=n+1
+       if(MT/=3) exit
+       print *, N1, MAT, MF, MT, N2, L1, L2
+       ! if(n==20) exit
+       ! n=n+1
     end do
 
     ! do
