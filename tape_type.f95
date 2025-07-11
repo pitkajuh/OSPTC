@@ -11,7 +11,7 @@ contains
   subroutine read_tape1(this, tape_name)
     type(tape) :: this
     character(*) :: tape_name
-    integer :: ios, z
+    integer :: ios, z, MF, MT
     z=1
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
@@ -20,7 +20,8 @@ contains
     do
        if(ios<0) exit
        call read_file_header(z, ios)
-       call read_section(z, ios)
+       call read_section(z, ios, MF, MT)
+       if(MT==0 .and. MF==0) exit
        print *, ""
     end do
 
@@ -61,11 +62,12 @@ contains
     end do
     ! n=0
     do
-       read(z, '(A31,I10,I10,I10,I6,I1,I2,I2)', iostat=ios) line, N1, MAT, MF, MT, N2, L1, L2
+       ! read(z, '(A31,I10,I10,I10,I6,I1,I2,I2)', iostat=ios) line, N1, MAT, MF, MT!, N2, L1, L2
+       read(z, '(A31,I10,I10,I10,I6)', iostat=ios) line, N1, MAT, MF, MT!, N2, L1, L2
 
        ! if(MAT==0 .and. MF==0 .and. MT==0) exit
        if(MT/=3) exit
-       print *, N1, MAT, MF, MT, N2, L1, L2
+       print *, N1, MAT, MF!, MT!, N2, L1, L2
        ! if(n==20) exit
        ! n=n+1
     end do
