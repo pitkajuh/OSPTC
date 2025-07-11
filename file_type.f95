@@ -10,19 +10,21 @@ module file_type
 contains
 
   subroutine read_file_header(this, z, ios, MFnow, MF, MT)
-    ! implicit none
     type(file) :: this
     integer :: z
     integer :: ios
     integer :: n=1
     integer :: to
-    real(kind(1.d0)) :: ZA, AWR
+    real :: ZA, AWR
     integer :: L1, L2, N1, N2, MAT, MF, MT, MFnow
     ! n=1
     ! print *, "file header read"
     read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
     ! print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-    ! if(MF==0 .and. MT==0) return
+    if(MF==0 .and. MT==0) then
+       print *, "change file"
+       return
+    end if
     if(MF==0 .and. this%to==2) then
        ! Change file
        print *, "change file", MF, MT
@@ -72,7 +74,6 @@ contains
   end subroutine read_file_header
 
   subroutine read_section(this, z, ios, MF,  MT)
-    ! implicit none
     type(file) :: this
     integer :: z
     integer :: n

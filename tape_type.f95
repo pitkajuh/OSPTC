@@ -24,7 +24,7 @@ contains
        call read_file_header(this%mf23, z, ios, 23, MF, MT)
        if(MT==0 .and. MF==0) exit
        call read_section(this%mf23, z, ios, MF, MT)
-       print *, MF, MT
+       ! print *, MF, MT
        ! if
        ! if(MT==0 .and. MF==0) exit
        print *, ""
@@ -33,9 +33,10 @@ contains
     do
        ! if(ios<0) exit
        call read_file_header(this%mf27, z, ios, 27, MF, MT)
+       ! if(ios<0) exit
        if(MT==0 .and. MF==0) exit
        call read_section(this%mf27, z, ios, MF, MT)
-       print *, MF, MT
+       ! print *, MF, MT
        ! if
        ! if(MT==0 .and. MF==0) exit
        print *, ""
