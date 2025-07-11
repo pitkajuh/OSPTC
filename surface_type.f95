@@ -38,10 +38,11 @@ module surface_type
      procedure, pass :: surface_equation => surface_equation_y
   end type planey
 
-  ! type, extends(surface) :: planez
-  !  contains
-  !    procedure, pass :: create => create_planez
-  ! end type planez
+  type, extends(surface) :: planez
+   contains
+     procedure, pass :: create => create_planez
+     procedure, pass :: surface_equation => surface_equation_z
+  end type planez
 
 contains
 
@@ -75,13 +76,19 @@ contains
     result1=p%y+this%J
   end function surface_equation_y
 
+  subroutine create_planez(this, v)
+    class(planez), intent(inout) :: this
+    real, intent(in) :: v
+    this%value1=v
+    this%I=1
+    this%J=-v
+  end subroutine create_planez
 
-  ! subroutine create_planez(this, v)
-  !   class(planez), intent(inout) :: this
-  !   real, intent(in) :: v
-  !   this%value1=v
-  !   this%I=1
-  !   this%J=-v
-  ! end subroutine create_planez
+  function surface_equation_z(this, p) result(result1)
+    class(planez), intent(inout) :: this
+    type(coordinate), intent(in) :: p
+    real :: result1
+    result1=p%z+this%J
+  end function surface_equation_z
 
 end module surface_type
