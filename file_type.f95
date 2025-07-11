@@ -9,7 +9,7 @@ module file_type
 
 contains
 
-  subroutine read_file_header(z, ios)
+  subroutine read_file_header(this, z, ios, MFnow, MF, MT)
     ! implicit none
     type(file) :: this
     integer :: z
@@ -17,7 +17,7 @@ contains
     integer :: n=1
     integer :: to
     real(kind(1.d0)) :: ZA, AWR
-    integer :: L1, L2, N1, N2, MAT, MF, MT
+    integer :: L1, L2, N1, N2, MAT, MF, MT, MFnow
     ! n=1
     ! print *, "file header read"
     read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
@@ -25,6 +25,8 @@ contains
     ! if(MF==0 .and. MT==0) return
     if(MF==0 .and. this%to==2) then
        ! Change file
+       print *, "change file", MF, MT
+       return
        this%to=3
     else
        print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT, "else"
@@ -69,18 +71,18 @@ contains
     ! end do
   end subroutine read_file_header
 
-  subroutine read_section(z, ios, MF,  MT)
+  subroutine read_section(this, z, ios, MF,  MT)
     ! implicit none
-
+    type(file) :: this
     integer :: z
     integer :: n
     integer :: ios
-    real(kind(1.d0)) :: v1, v2, v3, v4, v5, v6
+    real :: v1, v2, v3, v4, v5, v6
     integer :: L1, L2, N1, N2, MAT, MF, MT
     n=0
     ! print *, "read sectin"
 
-    read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
+    ! read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
     ! print *, v1, v2, v3, v4, v5, v6, MAT, MF, MT
     ! if(MF==0 .and. MT==0) return
 
@@ -98,6 +100,7 @@ contains
     ! print *, n+3
     ! real, dimension(2) :: a1
     ! print *, "end sectin"
+    ! print *, v1, v2, v3, v4, v5, v6, MAT, MF, MT
   end subroutine read_section
 
 end module file_type

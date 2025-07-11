@@ -4,6 +4,8 @@ module tape_type
 
   type :: tape
      real, dimension(6, 4) :: header
+     type(file) :: mf23
+     type(file) :: mf27
   end type tape
 
 contains
@@ -11,17 +13,31 @@ contains
   subroutine read_tape1(this, tape_name)
     type(tape) :: this
     character(*) :: tape_name
-    integer :: ios, z, MF, MT
+    integer :: ios, z, MF, MT, MFnow
     z=1
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin1(this, z, ios)
 
     do
-       if(ios<0) exit
-       call read_file_header(z, ios)
-       call read_section(z, ios, MF, MT)
+       ! if(ios<0) exit
+       call read_file_header(this%mf23, z, ios, 23, MF, MT)
        if(MT==0 .and. MF==0) exit
+       call read_section(this%mf23, z, ios, MF, MT)
+       print *, MF, MT
+       ! if
+       ! if(MT==0 .and. MF==0) exit
+       print *, ""
+    end do
+
+    do
+       ! if(ios<0) exit
+       call read_file_header(this%mf27, z, ios, 27, MF, MT)
+       if(MT==0 .and. MF==0) exit
+       call read_section(this%mf27, z, ios, MF, MT)
+       print *, MF, MT
+       ! if
+       ! if(MT==0 .and. MF==0) exit
        print *, ""
     end do
 
