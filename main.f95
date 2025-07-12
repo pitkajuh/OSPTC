@@ -3,6 +3,7 @@ program main
   use cell_type
   use tape_type
   use radionuclide_type
+  use material_type
   implicit none
 
   integer :: res

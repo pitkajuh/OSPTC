@@ -135,8 +135,7 @@ contains
     real :: result1, distance
     integer :: i
     real, dimension(2) :: distances
-    distances(1)=this%wallz_negative%surface_distance(from, to)
-    distances(2)=this%wallz_positive%surface_distance(from, to)
+    distances=(/this%wallz_negative%surface_distance(from, to),  this%wallz_positive%surface_distance(from, to)/)
     distance=this%surface_cylinder%surface_distance(from, to)
 
     ! ! Find the distance to the surface that is the closest one, i.e. find the smallest value. The distance must be >0.
