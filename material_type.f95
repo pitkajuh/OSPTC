@@ -203,7 +203,7 @@ contains
 
   subroutine create_hydrogen(this)
     class(hydrogen), intent(inout) :: this
-    this%density=1.165E-03
+    this%density=8.375E-05
 
     ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,7.217E+00,6.820E+00,&
@@ -230,7 +230,7 @@ contains
 
   subroutine create_oxygen(this)
     class(oxygen), intent(inout) :: this
-    this%density=1.165E-03
+    this%density=1.332E-03
 
     ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,4.590E+03,4.576E+03,&
