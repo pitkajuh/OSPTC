@@ -139,27 +139,24 @@ contains
     class(cell_cylinder_truncated_z), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
     real :: result1, distance
-    real, dimension(5) :: distances
+    real, dimension(2) :: distances
     integer :: i=1
-    ! distances(1)=this%wallx_negative%surface_distance(from, to)
-    ! distances(2)=this%wallx_positive%surface_distance(from, to)
-    ! distances(3)=this%wally_negative%surface_distance(from, to)
-    ! distances(4)=this%wally_positive%surface_distance(from, to)
-    ! distances(5)=this%wallz_negative%surface_distance(from, to)
-    ! distance=this%wallz_positive%surface_distance(from, to)
+    distances(1)=this%wallz_negative%surface_distance(from, to)
+    distances(2)=this%wallz_positive%surface_distance(from, to)
+    distance=this%surface_cylinder%surface_distance(from, to)
 
     ! ! Find the distance to the surface that is the closest one, i.e. find the smallest value. The distance must be >0.
-    ! do
-    !    if(i==5) then
-    !       exit
-    !    else if(distances(i)<distance .and. distances(i)>0) then
-    !       distance=distances(i)
-    !    else if(distance<0 .and. distances(i)>0) then
-    !       distance=distances(i)
-    !    end if
-    !    i=i+1
-    ! end do
-    ! result1=distance
+    do
+       if(i==2) then
+          exit
+       else if(distances(i)<distance .and. distances(i)>0) then
+          distance=distances(i)
+       else if(distance<0 .and. distances(i)>0) then
+          distance=distances(i)
+       end if
+       i=i+1
+    end do
+    result1=distance
   end function cell_distance_cylinder_z
 
   function cell_cylinder_z_initial_position(this) result(result1)
