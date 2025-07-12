@@ -1,35 +1,21 @@
 module interpolate
   implicit none
 contains
-  ! function std_uniform_distribution()
-  !   real :: std_uniform_distribution, rnd
-  !   call random_seed()
-  !   call random_number(rnd)
-  !   std_uniform_distribution=1-rnd
-  ! end function std_uniform_distribution
 
-  ! function rng(min, max)
-  !   real, intent(in) :: min, max
-  !   real :: rng
-  !   rng=min+std_uniform_distribution()*(max-min)
-  ! end function rng
-
-  function get_mu_value(array, energy, nx, ny)
-    ! class(material), intent(inout) :: this
+  function linear_interpolation(array, energy, ny)
     integer :: nx, ny, i
-    real :: energy, get_mu_value
+    real :: energy, linear_interpolation
     real, dimension(:, :) :: array
-    print *, "get"
+
     do i=1, ny
-       ! print *, array(1, i)
        if(array(1, i)>=energy) exit
     end do
-    print *, array(1, i), array(1, i+1)
+    print *, energy, array(1, i-1), array(1, i), array(2, i-1), array(2, i)
     if(array(1, i)==energy) then
-       print *, "eq"
+       linear_interpolation=array(2, i)
     else
-
+       linear_interpolation=(array(2, i-1)+(energy-array(1, i-1))*(array(2, i)-array(2, i-1))/(array(1, i)-array(1, i-1)))
     end if
-  end function get_mu_value
+  end function linear_interpolation
 
 end module interpolate

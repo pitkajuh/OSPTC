@@ -66,7 +66,7 @@ contains
     this%density=7.874
 
     ! Taken from https://physics.nist.gov/PhysRefData/XrayMassCoef/ElemTab/z26.html
-    ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
+    ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,9.085E+03,9.052E+03,&
          1.50000E-03,3.399E+03,3.388E+03,2.00000E-03,1.626E+03,1.620E+03,&
          3.00000E-03,5.576E+02,5.535E+02,4.00000E-03,2.567E+02,2.536E+02,&
