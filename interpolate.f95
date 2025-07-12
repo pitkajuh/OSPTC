@@ -16,10 +16,20 @@ contains
 
   function get_mu_value(array, energy, nx, ny)
     ! class(material), intent(inout) :: this
-    integer :: nx, ny
+    integer :: nx, ny, i
     real :: energy, get_mu_value
-    real, dimension(nx, ny) :: array
+    real, dimension(:, :) :: array
+    print *, "get"
+    do i=1, ny
+       ! print *, array(1, i)
+       if(array(1, i)>=energy) exit
+    end do
+    print *, array(1, i), array(1, i+1)
+    if(array(1, i)==energy) then
+       print *, "eq"
+    else
 
+    end if
   end function get_mu_value
 
 end module interpolate
