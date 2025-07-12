@@ -20,6 +20,7 @@ module material_type
      real, dimension(3, 37) :: mu
    contains
      procedure, pass :: create => create_steel
+     ! procedure, pass :: get_mu_value
   end type steel
 
   type, extends(material) :: iodine

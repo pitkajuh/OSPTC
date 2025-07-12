@@ -16,7 +16,11 @@ program main
   class(surface), allocatable :: a1
   type(tape) :: endf_tape
   type(cylinder) :: t12
-
+  type(steel) :: steel1
+  call steel1%create()
+  print *, steel1%mu(1,2)
+  print *, get_mu_value(steel1%mu, 10.0, 3, 37)
+  ! steel1%get_mu_value(10)
   ! call read_tape1(endf_tape, 'cross-sections/photoat-007_N_000.endf')
   ! print *, endf_tape%header
   ! call endf_tape%read_tape1('cross-sections/photoat-007_N_000.endf')
