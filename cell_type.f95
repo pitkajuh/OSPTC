@@ -9,7 +9,7 @@ module cell_type
    contains
      procedure(create_cell_test), deferred :: cell_test
      procedure(create_cell_distance), deferred :: cell_distance
-     procedure(create_initial_position), deferred :: get_initial_position
+     procedure(create_initial_position), deferred :: random_initial_position
   end type cell
 
   abstract interface
@@ -47,7 +47,7 @@ module cell_type
    contains
      procedure, pass :: cell_test => cell_test_box
      procedure, pass :: cell_distance => cell_distance_box
-     procedure, pass :: get_initial_position => cell_box_initial_position
+     procedure, pass :: random_initial_position => cell_initial_position_box
   end type cell_box_3d
 
   type, extends(cell) :: cell_cylinder_truncated_z
@@ -57,7 +57,7 @@ module cell_type
    contains
      procedure, pass :: cell_test => cell_test_cylinder_z
      procedure, pass :: cell_distance => cell_distance_cylinder_z
-     procedure, pass :: get_initial_position => cell_cylinder_z_initial_position
+     procedure, pass :: random_initial_position => cell_initial_position_cylinder_z
   end type cell_cylinder_truncated_z
 
 contains
@@ -85,8 +85,8 @@ contains
     class(cell_box_3d), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
     real :: result1, distance
+    integer :: i
     real, dimension(5) :: distances
-    integer :: i=1
     distances(1)=this%wallx_negative%surface_distance(from, to)
     distances(2)=this%wallx_positive%surface_distance(from, to)
     distances(3)=this%wally_negative%surface_distance(from, to)
@@ -95,26 +95,23 @@ contains
     distance=this%wallz_positive%surface_distance(from, to)
 
     ! Find the distance to the surface that is the closest one, i.e. find the smallest value. The distance must be >0.
-    do
-       if(i==5) then
-          exit
-       else if(distances(i)<distance .and. distances(i)>0) then
+    do i=1, 5
+       if(distances(i)<distance .and. distances(i)>0) then
           distance=distances(i)
        else if(distance<0 .and. distances(i)>0) then
           distance=distances(i)
        end if
-       i=i+1
     end do
     result1=distance
   end function cell_distance_box
 
-  function cell_box_initial_position(this) result(result1)
+  function cell_initial_position_box(this) result(result1)
     class(cell_box_3d), intent(inout) :: this
     type(coordinate) :: result1
     result1%x=rng(this%wallx_negative%value1, this%wallx_positive%value1)
     result1%y=rng(this%wally_negative%value1, this%wally_positive%value1)
     result1%z=rng(this%wallz_negative%value1, this%wallz_positive%value1)
-  end function cell_box_initial_position
+  end function cell_initial_position_box
 
   function cell_test_cylinder_z(this, p) result(result1)
     class(cell_cylinder_truncated_z), intent(inout) :: this
@@ -136,27 +133,24 @@ contains
     class(cell_cylinder_truncated_z), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
     real :: result1, distance
+    integer :: i
     real, dimension(2) :: distances
-    integer :: i=1
     distances(1)=this%wallz_negative%surface_distance(from, to)
     distances(2)=this%wallz_positive%surface_distance(from, to)
     distance=this%surface_cylinder%surface_distance(from, to)
 
     ! ! Find the distance to the surface that is the closest one, i.e. find the smallest value. The distance must be >0.
-    do
-       if(i==2) then
-          exit
-       else if(distances(i)<distance .and. distances(i)>0) then
+    do i=1, 2
+       if(distances(i)<distance .and. distances(i)>0) then
           distance=distances(i)
        else if(distance<0 .and. distances(i)>0) then
           distance=distances(i)
        end if
-       i=i+1
     end do
     result1=distance
   end function cell_distance_cylinder_z
 
-  function cell_cylinder_z_initial_position(this) result(result1)
+  function cell_initial_position_cylinder_z(this) result(result1)
     class(cell_cylinder_truncated_z), intent(inout) :: this
     type(coordinate) :: result1
     real :: radial, azimuthal_angle
@@ -166,6 +160,6 @@ contains
     result1%x=radial*cos(azimuthal_angle)
     result1%y=radial*sin(azimuthal_angle)
     result1%z=this%wallz_negative%value1+(this%wallz_positive%value1-this%wallz_negative%value1)*std_uniform_distribution()
-  end function cell_cylinder_z_initial_position
+  end function cell_initial_position_cylinder_z
 
 end module cell_type

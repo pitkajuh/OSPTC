@@ -2,6 +2,7 @@ program main
   ! use read_endf
   use cell_type
   use tape_type
+  use radionuclide_type
   implicit none
 
   integer :: res
