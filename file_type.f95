@@ -8,9 +8,10 @@ module file_type
   end type file
 
   abstract interface
-     subroutine create_file(this)
+     subroutine create_file(this, z, ios, MF, MT)
        import file
        class(file), intent(inout) :: this
+       integer :: z, ios, MF, MT
      end subroutine create_file
   end interface
 
@@ -34,12 +35,14 @@ module file_type
 
 contains
 
-  subroutine create_mf23(this)
+  subroutine create_mf23(this, z, ios, MF, MT)
     class(MF23), intent(inout) :: this
+    integer :: z, ios, MF, MT
   end subroutine create_mf23
 
-  subroutine create_mf27(this)
+  subroutine create_mf27(this, z, ios, MF, MT)
     class(MF27), intent(inout) :: this
+    integer :: z, ios, MF, MT
   end subroutine create_mf27
 
 end module file_type

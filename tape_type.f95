@@ -19,6 +19,8 @@ contains
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin1(this, z, ios)
 
+    call this%mf23%create(z, ios, MF, MT)
+    call this%mf27%create(z, ios, MF, MT)
     ! Get MF23
     ! do
        ! call read_file_header(this%mf23, z, ios, MF, MT)
