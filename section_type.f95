@@ -3,7 +3,7 @@ module section_type
 
   type, abstract :: section
      real, dimension(6, 3) :: header
-     integer, allocatable :: records(:, :)
+     real, allocatable :: records(:, :)
      integer :: n
    contains
      procedure, public :: read_section_header
@@ -105,8 +105,9 @@ contains
     end do
   end subroutine read_section_header
 
-  subroutine read_section(this, z, ios, MF,  MT, n)
+  subroutine read_section(this, z, ios, MF,  MT, n, records)
     class(section), intent(inout) :: this
+    real, allocatable :: records(:, :)
     real :: v1, v2, v3, v4, v5, v6
     integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, n, i
     i=1
@@ -115,12 +116,18 @@ contains
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
        if(MT==0) exit
        print *, v1, v2, v3, v4, v5, v6
-       this%records(i, 1)=v1
-       this%records(i, 2)=v2
-       this%records(i+1, 1)=v3
-       this%records(i+1, 2)=v4
-       this%records(i+2, 1)=v5
-       this%records(i+2, 2)=v6
+       ! this%records(i, 1)=v1
+       ! this%records(i, 2)=v2
+       ! this%records(i+1, 1)=v3
+       ! this%records(i+1, 2)=v4
+       ! this%records(i+2, 1)=v5
+       ! this%records(i+2, 2)=v6
+       records(i, 1)=v1
+       records(i, 2)=v2
+       records(i+1, 1)=v3
+       records(i+1, 2)=v4
+       records(i+2, 1)=v5
+       records(i+2, 2)=v6
        i=i+1
     end do
     print *, n, i

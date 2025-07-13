@@ -48,17 +48,17 @@ contains
 
     allocate(this%coherent_scattering%records(2, sizes(1)*4))
     call this%coherent_scattering%read_section_header(z, ios, MF, MT)
-    call this%coherent_scattering%read_section(z, ios, MF, MT, sizes(1))
+    call this%coherent_scattering%read_section(z, ios, MF, MT, sizes(1), this%coherent_scattering%records)
     print *, ""
 
     allocate(this%incoherent_scattering%records(2, sizes(2)*4))
     call this%incoherent_scattering%read_section_header(z, ios, MF, MT)
-    call this%incoherent_scattering%read_section(z, ios, MF, MT, sizes(2))
+    call this%incoherent_scattering%read_section(z, ios, MF, MT, sizes(2), this%incoherent_scattering%records)
     print *, ""
 
     allocate(this%pair_formation_elec%records(2, sizes(3)*4))
     call this%pair_formation_elec%read_section_header(z, ios, MF, MT)
-    call this%pair_formation_elec%read_section(z, ios, MF, MT, sizes(3))
+    call this%pair_formation_elec%read_section(z, ios, MF, MT, sizes(3), this%pair_formation_elec%records)
     print *, ""
 
     ! Skip 23516
@@ -66,7 +66,7 @@ contains
 
     allocate(this%pair_formation_nuc%records(2, sizes(4)*4))
     call this%pair_formation_nuc%read_section_header(z, ios, MF, MT)
-    call this%pair_formation_nuc%read_section(z, ios, MF, MT, sizes(4))
+    call this%pair_formation_nuc%read_section(z, ios, MF, MT, sizes(4), this%pair_formation_nuc%records)
     print *, ""
 
     ! Skip 23522
@@ -80,7 +80,7 @@ contains
        call this%photo_ionization(i-4)%read_section_header(z, ios, MF, MT)
        if(MT==0 .and. MF==0) exit
        allocate(this%photo_ionization(i-4)%records(2, sizes(i)*4))
-       call this%photo_ionization(i-4)%read_section(z, ios, MF, MT, sizes(i))
+       call this%photo_ionization(i-4)%read_section(z, ios, MF, MT, sizes(i), this%photo_ionization(i-4)%records)
        print *, "", i, i-4, n-8
        i=i+1
     end do
@@ -93,22 +93,22 @@ contains
 
     allocate(this%coherent_factor%records(6, sizes(n-3)))
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
-    call this%coherent_factor%read_section(z, ios, MF, MT, sizes(n-3))
+    call this%coherent_factor%read_section(z, ios, MF, MT, sizes(n-3), this%coherent_factor%records)
     print *, ""
 
     allocate(this%incoherent_function%records(6, sizes(n-2)))
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
-    call this%incoherent_function%read_section(z, ios, MF, MT, sizes(n-2))
+    call this%incoherent_function%read_section(z, ios, MF, MT, sizes(n-2), this%incoherent_function%records)
     print *, ""
 
     allocate(this%imaginary_factor%records(6, sizes(n-1)))
     call this%imaginary_factor%read_section_header(z, ios, MF, MT)
-    call this%imaginary_factor%read_section(z, ios, MF, MT, sizes(n-1))
+    call this%imaginary_factor%read_section(z, ios, MF, MT, sizes(n-1), this%imaginary_factor%records)
     print *, ""
 
     allocate(this%real_factor%records(6, sizes(n)))
     call this%real_factor%read_section_header(z, ios, MF, MT)
-    call this%real_factor%read_section(z, ios, MF, MT, sizes(n))
+    call this%real_factor%read_section(z, ios, MF, MT, sizes(n), this%real_factor%records)
     print *, ""
 
   end subroutine create_mf27
