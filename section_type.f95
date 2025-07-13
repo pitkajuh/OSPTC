@@ -14,53 +14,29 @@ module section_type
   ! MF23
 
   type, extends(section) :: section_coherent_scattering
-     ! integer, allocatable :: records(:, :)
-     ! integer :: n
-   contains
   end type section_coherent_scattering
 
   type, extends(section) :: section_incoherent_scattering
-     ! integer, allocatable :: records(:, :)
-     ! integer :: n
-   contains
   end type section_incoherent_scattering
 
   type, extends(section) :: section_pair_formation
-     ! integer, allocatable :: records(:, :)
-     ! integer :: n
-   contains
   end type section_pair_formation
 
   type, extends(section) :: section_photo_ionization
-     ! integer, allocatable :: records(:, :)
-     ! integer :: n
-   contains
   end type section_photo_ionization
 
   ! MF27
 
   type, extends(section) :: section_coherent_factor
-     ! integer, allocatable :: records(:, :)
-     ! integer :: n
-   contains
   end type section_coherent_factor
 
   type, extends(section) :: section_incoherent_function
-     ! integer, allocatable :: records(:, :)
-     ! integer :: n
-   contains
   end type section_incoherent_function
 
   type, extends(section) :: section_imaginary_factor
-     ! integer, allocatable :: records(:, :)
-     ! integer :: n
-   contains
   end type section_imaginary_factor
 
   type, extends(section) :: section_real_factor
-     ! integer, allocatable :: records(:, :)
-     ! integer :: n
-   contains
   end type section_real_factor
 
 contains
