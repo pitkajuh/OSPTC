@@ -10,20 +10,20 @@ module tape_type
 
 contains
 
-  subroutine read_tape1(this, tape_name)
+  subroutine read_tape(this, tape_name)
     type(tape) :: this
     character(*) :: tape_name
     integer :: ios, z
     z=1
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
-    call read_begin1(this, z, ios)
+    call read_begin(this, z, ios)
     call this%mf23%create(z, ios)
     call this%mf27%create(z, ios)
     close(z)
-  end subroutine read_tape1
+  end subroutine read_tape
 
-  subroutine read_begin1(this, z, ios)
+  subroutine read_begin(this, z, ios)
     type(tape) :: this
     integer :: z, ios, i
     character(75) :: line
@@ -56,5 +56,5 @@ contains
 
     read(z, '(I36,I10,I10,I10)', iostat=ios) N1, MAT, MF, MT
 
-  end subroutine read_begin1
+  end subroutine read_begin
 end module tape_type

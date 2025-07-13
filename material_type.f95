@@ -65,7 +65,7 @@ contains
   subroutine create_steel(this)
     class(steel), intent(inout) :: this
     this%density=7.874
-    call read_tape1(this%endf, 'cross-sections/photoat-026_Fe_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-026_Fe_000.endf')
 
     ! Taken from https://physics.nist.gov/PhysRefData/XrayMassCoef/ElemTab/z26.html
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
@@ -94,7 +94,7 @@ contains
   subroutine create_iodine(this)
     class(iodine), intent(inout) :: this
     this%density=4.930
-    call read_tape1(this%endf, 'cross-sections/photoat-053_I_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-053_I_000.endf')
 
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,9.096E+03,9.078E+03,&
@@ -127,7 +127,7 @@ contains
   subroutine create_sodium(this)
     class(sodium),intent(inout) :: this
     this%density=9.710E-01
-    call read_tape1(this%endf, 'cross-sections/photoat-011_Na_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-011_Na_000.endf')
 
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,6.542E+02,6.522E+02,&
@@ -155,7 +155,7 @@ contains
   subroutine create_titanium(this)
     class(titanium), intent(inout) :: this
     this%density=4.540
-    call read_tape1(this%endf, 'cross-sections/photoat-022_Ti_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-022_Ti_000.endf')
 
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,5.869E+03,5.860E+03,&
@@ -183,7 +183,7 @@ contains
   subroutine create_nitrogen(this)
     class(nitrogen), intent(inout) :: this
     this%density=1.165E-03
-    call read_tape1(this%endf, 'cross-sections/photoat-007_N_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-007_N_000.endf')
 
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,5.869E+03,5.860E+03,&
@@ -211,7 +211,7 @@ contains
   subroutine create_hydrogen(this)
     class(hydrogen), intent(inout) :: this
     this%density=8.375E-05
-    call read_tape1(this%endf, 'cross-sections/photoat-001_H_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-001_H_000.endf')
 
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,7.217E+00,6.820E+00,&
@@ -239,7 +239,7 @@ contains
   subroutine create_oxygen(this)
     class(oxygen), intent(inout) :: this
     this%density=1.332E-03
-    call read_tape1(this%endf, 'cross-sections/photoat-008_O_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-008_O_000.endf')
 
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,4.590E+03,4.576E+03,&

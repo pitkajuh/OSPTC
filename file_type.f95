@@ -53,14 +53,15 @@ contains
 
     call this%pair_formation%read_section_header(z, ios, MF, MT)
     call this%pair_formation%read_section(z, ios, MF, MT)
+    print *, ""
 
     ! Skip 23516
     call this%pair_formation%skip_section(z, ios, MF, MT)
 
-    print *, ""
     call this%pair_formation%read_section_header(z, ios, MF, MT)
     call this%pair_formation%read_section(z, ios, MF, MT)
     print *, ""
+
     ! Skip 23522
     call this%photo_ionization%skip_section(z, ios, MF, MT)
 
