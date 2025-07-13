@@ -43,7 +43,7 @@ contains
        this%header(5, i)=N1
        this%header(6, i)=N2
     end do
-    print *, this%header(6, 4)-4
+
     do
        read(z, '(A65,I1)', iostat=ios) line, N1
        if(N1==3)  exit
@@ -52,7 +52,7 @@ contains
     this%n=this%header(6, 4)-4
     i=1
     allocate(this%sizes(this%n))
-    print *, "SIZE ", this%n
+
     do
        read(z, '(I36,I10,I10,I10)', iostat=ios) N1, MAT, MF, MT
        if(MT/=3) then
@@ -60,7 +60,7 @@ contains
        else if(MAT==501 .or. MAT==516 .or. MAT==522) then
           cycle
        end if
-       this%sizes(i)=MF
+       this%sizes(i)=MF-2
        print *, N1, MAT, MF, MT, this%sizes(i), i
        i=i+1
     end do
