@@ -38,6 +38,19 @@ contains
   subroutine create_mf23(this, z, ios, MF, MT)
     class(MF23), intent(inout) :: this
     integer :: z, ios, MF, MT
+    ! Skip 23501, 23516 and 23522
+    print *, "mf23"
+    call this%coherent_scattering%read_section_header(z, ios, MF, MT)
+    call this%coherent_scattering%skip_section(z, ios, MF, MT)
+    print *, ""
+    call this%coherent_scattering%read_section_header(z, ios, MF, MT)
+    ! read coherent
+    ! read incoherent
+    ! read pair elec
+    ! skip
+    ! read pair nuc
+    ! skip
+    ! read ion
   end subroutine create_mf23
 
   subroutine create_mf27(this, z, ios, MF, MT)
