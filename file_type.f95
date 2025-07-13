@@ -1,67 +1,45 @@
 module file_type
+  use section_type
   implicit none
 
   type, abstract :: file
-     real, dimension(6, 3) :: header
    contains
-     ! procedure, public :: read_file_header
+     procedure(create_file), deferred :: create
   end type file
 
-
+  abstract interface
+     subroutine create_file(this)
+       import file
+       class(file), intent(inout) :: this
+     end subroutine create_file
+  end interface
 
   type, extends(file) :: MF23
+     type(section_coherent_scattering) :: coherent_scattering
+     type(section_incoherent_scattering) :: incoherent_scattering
+     type(section_pair_formation) :: pair_formation
+     type(section_photo_ionization) :: photo_ionization
    contains
+     procedure, pass :: create => create_mf23
   end type MF23
 
   type, extends(file) :: MF27
+     type(section_coherent_factor) :: coherent_factor
+     type(section_incoherent_function) :: incoherent_function
+     type(section_imaginary_factor) :: imaginary_factor
+     type(section_real_factor) :: real_factor
    contains
+     procedure, pass :: create => create_mf27
   end type MF27
-
 
 contains
 
-  ! subroutine read_file_header(this, z, ios, MF, MT)
-  !   class(file), intent(inout) :: this
-  !   real :: ZA, AWR
-  !   integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios
-  !   integer :: n=1
-  !   integer :: to=2
+  subroutine create_mf23(this)
+    class(MF23), intent(inout) :: this
+  end subroutine create_mf23
 
-  !   read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
+  subroutine create_mf27(this)
+    class(MF27), intent(inout) :: this
+  end subroutine create_mf27
 
-  !   if(MF==0 .and. MT==0) return
-
-  !   print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-  !   this%header(1, n)=ZA
-  !   this%header(2, n)=AWR
-  !   this%header(3, n)=L1
-  !   this%header(4, n)=L2
-  !   this%header(5, n)=N1
-  !   this%header(6, n)=N2
-
-  !   do
-  !      read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-  !      print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-  !      this%header(1, n)=ZA
-  !      this%header(2, n)=AWR
-  !      this%header(3, n)=L1
-  !      this%header(4, n)=L2
-  !      this%header(5, n)=N1
-  !      this%header(6, n)=N2
-  !      if(n==to) exit
-  !      n=n+1
-  !   end do
-  !   n=1
-  ! end subroutine read_file_header
-
-  !   subroutine read_section(this, z, ios, MF,  MT)
-  !     type(file) :: this
-  !     real :: v1, v2, v3, v4, v5, v6
-  !     integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios
-
-  !     do
-  !        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
-  !        if(MT==0) exit
-  !     end do
-  !   end subroutine read_section
 end module file_type
