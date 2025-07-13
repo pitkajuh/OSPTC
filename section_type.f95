@@ -56,7 +56,6 @@ contains
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
        if(MT==0) exit
     end do
-
   end subroutine skip_section
 
   subroutine read_section_header(this, z, ios, MF, MT)
@@ -91,11 +90,13 @@ contains
   subroutine read_section(this, z, ios, MF,  MT)
     class(section), intent(inout) :: this
     real :: v1, v2, v3, v4, v5, v6
-    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios
-
+    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, n
+    n=3
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
        if(MT==0) exit
+       n=n+1
     end do
+    print *, n
   end subroutine read_section
 end module section_type

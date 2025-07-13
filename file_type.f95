@@ -94,5 +94,4 @@ contains
     print *, ""
 
   end subroutine create_mf27
-
 end module file_type

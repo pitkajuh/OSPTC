@@ -4,6 +4,8 @@ module tape_type
 
   type :: tape
      real, dimension(6, 4) :: header
+     integer, allocatable :: sizes(:)
+     integer :: n
      type(MF23) :: mf23
      type(MF27) :: mf27
   end type tape
@@ -27,9 +29,8 @@ contains
     type(tape) :: this
     integer :: z, ios, i
     character(75) :: line
-
     real(kind(1.d0)) :: ZA, AWR
-    integer :: L1, L2, N1, N2, MAT, MF, MT, MT1, MF1
+    integer :: L1, L2, N1, N2, MAT, MF, MT, MT1, MF1, n
 
     read(z, *, iostat=ios) line
 
@@ -42,17 +43,29 @@ contains
        this%header(5, i)=N1
        this%header(6, i)=N2
     end do
-
+    print *, this%header(6, 4)-3
     do
        read(z, '(A65,I1)', iostat=ios) line, N1
        if(N1==3)  exit
     end do
 
+    this%n=this%header(6, 4)-3
+    n=1
+    allocate(this%sizes(this%n-3))
+
     do
        read(z, '(I36,I10,I10,I10)', iostat=ios) N1, MAT, MF, MT
-       if(MT/=3) exit
+       if(MT/=3) then
+          exit
+       else if(MAT==501 .or. MAT==516 .or. MAT==522) then
+          cycle
+       end if
+       this%sizes(n)=MF
        print *, N1, MAT, MF, MT
+       n=n+1
     end do
+
+    print *, n
 
     read(z, '(I36,I10,I10,I10)', iostat=ios) N1, MAT, MF, MT
 
