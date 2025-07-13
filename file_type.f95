@@ -11,12 +11,9 @@ contains
 
   subroutine read_file_header(this, z, ios, MF, MT)
     type(file) :: this
-    integer :: z
-    integer :: ios
-    integer :: n=1
-    integer :: to
     real :: ZA, AWR
-    integer :: L1, L2, N1, N2, MAT, MF, MT
+    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, to
+    integer :: n=1
 
     read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
 
@@ -32,7 +29,7 @@ contains
 
     do
        read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-       print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT, n, this%to
+       print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
        this%header(1, n)=ZA
        this%header(2, n)=AWR
        this%header(3, n)=L1
@@ -58,5 +55,6 @@ contains
        if(MT==0) exit
        n=n+1
     end do
+    print *, n
   end subroutine read_section
 end module file_type

@@ -96,7 +96,7 @@ contains
     this%density=4.930
     call read_tape1(this%endf, 'cross-sections/photoat-053_I_000.endf')
 
-    ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
+    ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,9.096E+03,9.078E+03,&
          1.03542E+03,8.465E+03,8.448E+03,1.07210E+03,7.863E+03,7.847E+03,&
          1.07210E+03,8.198E+03,8.181E+03,1.50000E+03,3.919E+03,3.908E+03,&
@@ -129,7 +129,7 @@ contains
     this%density=9.710E-01
     call read_tape1(this%endf, 'cross-sections/photoat-011_Na_000.endf')
 
-    ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
+    ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,6.542E+02,6.522E+02,&
          1.03542E+03,5.960E+02,5.941E+02,1.07210E+03,5.429E+02,5.410E+02,&
          1.07210E+03,6.435E+03,6.320E+03,1.50000E+03,3.194E+03,3.151E+03,&
@@ -157,7 +157,7 @@ contains
     this%density=4.540
     call read_tape1(this%endf, 'cross-sections/photoat-022_Ti_000.endf')
 
-    ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
+    ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,5.869E+03,5.860E+03,&
          1.50000E+03,2.096E+03,2.091E+03,2.00000E+03,9.860E+02,9.824E+02,&
          3.00000E+03,3.323E+02,3.295E+02,4.00000E+03,1.517E+02,1.494E+02,&
@@ -185,7 +185,7 @@ contains
     this%density=1.165E-03
     call read_tape1(this%endf, 'cross-sections/photoat-007_N_000.endf')
 
-    ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
+    ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,5.869E+03,5.860E+03,&
          1.50000E+03,2.096E+03,2.091E+03,2.00000E+03,9.860E+02,9.824E+02,&
          3.00000E+03,3.323E+02,3.295E+02,4.00000E+03,1.517E+02,1.494E+02,&
@@ -211,8 +211,9 @@ contains
   subroutine create_hydrogen(this)
     class(hydrogen), intent(inout) :: this
     this%density=8.375E-05
+    call read_tape1(this%endf, 'cross-sections/photoat-001_H_000.endf')
 
-    ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
+    ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,7.217E+00,6.820E+00,&
          1.50000E-03,2.148E+00,1.752E+00,2.00000E-03,1.059E+00,6.643E-01,&
          3.00000E-03,5.612E-01,1.693E-01,4.00000E-03,4.546E-01,6.549E-02,&
@@ -238,8 +239,9 @@ contains
   subroutine create_oxygen(this)
     class(oxygen), intent(inout) :: this
     this%density=1.332E-03
+    call read_tape1(this%endf, 'cross-sections/photoat-008_O_000.endf')
 
-    ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
+    ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,4.590E+03,4.576E+03,&
          1.50000E-03,1.549E+03,1.545E+03,2.00000E-03,6.949E+02,6.926E+02,&
          3.00000E-03,2.171E+02,2.158E+02,4.00000E-03,9.315E+01,9.221E+01,&

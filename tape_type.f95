@@ -13,12 +13,13 @@ contains
   subroutine read_tape1(this, tape_name)
     type(tape) :: this
     character(*) :: tape_name
-    integer :: ios, z, MF, MT, MFnow
+    integer :: ios, z, MF, MT
     z=1
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin1(this, z, ios)
 
+    ! Get MF23
     do
        call read_file_header(this%mf23, z, ios, MF, MT)
        if(MT==0 .and. MF==0) exit
@@ -26,6 +27,7 @@ contains
        print *, ""
     end do
 
+    ! Get MF27
     do
        call read_file_header(this%mf27, z, ios, MF, MT)
        if(MT==0 .and. MF==0) exit
@@ -37,7 +39,6 @@ contains
   end subroutine read_tape1
 
   subroutine read_begin1(this, z, ios)
-    implicit none
     type(tape) :: this
     integer :: z
     integer :: ios
