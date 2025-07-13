@@ -20,9 +20,9 @@ program main
   real :: c
   call steel1%create()
 
-  ! c=steel1%density*100*get_mu_value(steel1%mu, 10.0, 3, 37)
+  c=steel1%density*100*linear_interpolation(steel1%mu, 11.0, 37)
   ! c=linear_interpolation(steel1%mu, 12.0, 37)
-  ! print *, c
+  print *, c
   ! steel1%get_mu_value(10)
 
   ! t=std_uniform_distribution()
