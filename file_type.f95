@@ -40,12 +40,19 @@ contains
     integer :: z, ios, MF, MT
     ! Skip 23501, 23516 and 23522
     print *, "mf23"
-    call this%coherent_scattering%read_section_header(z, ios, MF, MT)
+    ! call this%coherent_scattering%read_section_header(z, ios, MF, MT)
     call this%coherent_scattering%skip_section(z, ios, MF, MT)
     print *, ""
-    call this%coherent_scattering%read_section_header(z, ios, MF, MT)
     ! read coherent
+    call this%coherent_scattering%read_section_header(z, ios, MF, MT)
+    call this%coherent_scattering%read_section(z, ios, MF, MT)
+    print *, ""
+
+
     ! read incoherent
+    ! call this%incoherent_scattering%read_section_header(z, ios, MF, MT)
+    ! call this%incoherent_scattering%read_section(z, ios, MF, MT)
+    ! print *, ""
     ! read pair elec
     ! skip
     ! read pair nuc
