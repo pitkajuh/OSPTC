@@ -19,7 +19,8 @@ module file_type
   type, extends(file) :: MF23
      type(section_coherent_scattering) :: coherent_scattering
      type(section_incoherent_scattering) :: incoherent_scattering
-     type(section_pair_formation) :: pair_formation
+     type(section_pair_formation) :: pair_formation_elec
+     type(section_pair_formation) :: pair_formation_nuc
      type(section_photo_ionization), allocatable :: photo_ionization(:)
    contains
      procedure, pass :: create => create_mf23
@@ -45,27 +46,27 @@ contains
     call this%coherent_scattering%skip_section(z, ios)
     print *, ""
 
-    ! allocate(this%coherent_scattering%records(10, sizes(1)))
+    allocate(this%coherent_scattering%records(10, sizes(1)))
     call this%coherent_scattering%read_section_header(z, ios, MF, MT)
     call this%coherent_scattering%read_section(z, ios, MF, MT, sizes(1))
     print *, ""
 
-    ! allocate(this%incoherent_scattering%records(10, sizes(2)))
+    allocate(this%incoherent_scattering%records(10, sizes(2)))
     call this%incoherent_scattering%read_section_header(z, ios, MF, MT)
     call this%incoherent_scattering%read_section(z, ios, MF, MT, sizes(2))
     print *, ""
 
-    ! allocate(this%pair_formation%records(10, sizes(3)))
-    call this%pair_formation%read_section_header(z, ios, MF, MT)
-    call this%pair_formation%read_section(z, ios, MF, MT, sizes(3))
+    allocate(this%pair_formation_elec%records(10, sizes(3)))
+    call this%pair_formation_elec%read_section_header(z, ios, MF, MT)
+    call this%pair_formation_elec%read_section(z, ios, MF, MT, sizes(3))
     print *, ""
 
     ! Skip 23516
-    call this%pair_formation%skip_section(z, ios)
+    call this%pair_formation_nuc%skip_section(z, ios)
 
-    ! allocate(this%pair_formation%records(10, sizes(4)))
-    call this%pair_formation%read_section_header(z, ios, MF, MT)
-    call this%pair_formation%read_section(z, ios, MF, MT, sizes(4))
+    allocate(this%pair_formation_nuc%records(10, sizes(4)))
+    call this%pair_formation_nuc%read_section_header(z, ios, MF, MT)
+    call this%pair_formation_nuc%read_section(z, ios, MF, MT, sizes(4))
     print *, ""
 
     ! Skip 23522
@@ -78,7 +79,7 @@ contains
     do
        call this%photo_ionization(i-4)%read_section_header(z, ios, MF, MT)
        if(MT==0 .and. MF==0) exit
-
+       ! allocate(this%photo_ionization(i-4))
        call this%photo_ionization(i-4)%read_section(z, ios, MF, MT, sizes(i))
        print *, "", i, i-4, n-8
        i=i+1
