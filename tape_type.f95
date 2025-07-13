@@ -13,30 +13,13 @@ contains
   subroutine read_tape1(this, tape_name)
     type(tape) :: this
     character(*) :: tape_name
-    integer :: ios, z, MF, MT
+    integer :: ios, z
     z=1
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin1(this, z, ios)
-
-    call this%mf23%create(z, ios, MF, MT)
-    call this%mf27%create(z, ios, MF, MT)
-    ! Get MF23
-    ! do
-       ! call read_file_header(this%mf23, z, ios, MF, MT)
-    !    if(MT==0 .and. MF==0) exit
-    !    call read_section(this%mf23, z, ios, MF, MT)
-    !    print *, ""
-    ! end do
-
-    ! Get MF27
-    ! do
-    !    call read_file_header(this%mf27, z, ios, MF, MT)
-    !    if(MT==0 .and. MF==0) exit
-    !    call read_section(this%mf27, z, ios, MF, MT)
-    !    print *, ""
-    ! end do
-
+    call this%mf23%create(z, ios)
+    call this%mf27%create(z, ios)
     close(z)
   end subroutine read_tape1
 
