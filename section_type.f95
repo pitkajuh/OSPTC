@@ -3,6 +3,8 @@ module section_type
 
   type, abstract :: section
      real, dimension(6, 3) :: header
+     integer, allocatable :: records(:, :)
+     integer :: n
    contains
      procedure, public :: read_section_header
      procedure, public :: read_section
@@ -12,36 +14,52 @@ module section_type
   ! MF23
 
   type, extends(section) :: section_coherent_scattering
+     ! integer, allocatable :: records(:, :)
+     ! integer :: n
    contains
   end type section_coherent_scattering
 
   type, extends(section) :: section_incoherent_scattering
+     ! integer, allocatable :: records(:, :)
+     ! integer :: n
    contains
   end type section_incoherent_scattering
 
   type, extends(section) :: section_pair_formation
+     ! integer, allocatable :: records(:, :)
+     ! integer :: n
    contains
   end type section_pair_formation
 
   type, extends(section) :: section_photo_ionization
+     ! integer, allocatable :: records(:, :)
+     ! integer :: n
    contains
   end type section_photo_ionization
 
   ! MF27
 
   type, extends(section) :: section_coherent_factor
+     ! integer, allocatable :: records(:, :)
+     ! integer :: n
    contains
   end type section_coherent_factor
 
   type, extends(section) :: section_incoherent_function
+     ! integer, allocatable :: records(:, :)
+     ! integer :: n
    contains
   end type section_incoherent_function
 
   type, extends(section) :: section_imaginary_factor
+     ! integer, allocatable :: records(:, :)
+     ! integer :: n
    contains
   end type section_imaginary_factor
 
   type, extends(section) :: section_real_factor
+     ! integer, allocatable :: records(:, :)
+     ! integer :: n
    contains
   end type section_real_factor
 
@@ -58,11 +76,11 @@ contains
     end do
   end subroutine skip_section
 
-  subroutine read_section_header(this, z, ios, MF, MT, n)
+  subroutine read_section_header(this, z, ios, MF, MT)
     class(section), intent(inout) :: this
     real :: ZA, AWR
-    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, i, n
-    print *, n
+    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, i
+
     read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
 
     if(MF==0 .and. MT==0) return
@@ -92,9 +110,12 @@ contains
     real :: v1, v2, v3, v4, v5, v6
     integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, n, i
     i=1
+    ! allocate(this%records(10, n))
+
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
        if(MT==0) exit
+       ! print *, v1, v2, v3, v4, v5, v6
        i=i+1
     end do
     print *, n, i
