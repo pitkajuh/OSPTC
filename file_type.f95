@@ -38,11 +38,11 @@ contains
 
   subroutine create_mf23(this, z, ios, sizes, n)
     class(MF23), intent(inout) :: this
-    integer :: z, ios, MF, MT, n
+    integer :: z, ios, MF, MT, n, i
     integer, allocatable :: sizes(:)
 
     ! Skip 23501
-    call this%coherent_scattering%skip_section(z, ios, MF, MT)
+    call this%coherent_scattering%skip_section(z, ios)
     print *, ""
 
     call this%coherent_scattering%read_section_header(z, ios, MF, MT, sizes(1))
@@ -58,20 +58,22 @@ contains
     print *, ""
 
     ! Skip 23516
-    call this%pair_formation%skip_section(z, ios, MF, MT)
+    call this%pair_formation%skip_section(z, ios)
 
     call this%pair_formation%read_section_header(z, ios, MF, MT, sizes(4))
     call this%pair_formation%read_section(z, ios, MF, MT, sizes(4))
     print *, ""
 
     ! Skip 23522
-    call this%photo_ionization%skip_section(z, ios, MF, MT)
-
+    call this%photo_ionization%skip_section(z, ios)
+    ! print *, "@", n-9, n
+    i=5
     do
-       call this%photo_ionization%read_section_header(z, ios, MF, MT, sizes(4))
+       call this%photo_ionization%read_section_header(z, ios, MF, MT, sizes(i))
        if(MT==0 .and. MF==0) exit
-       call this%photo_ionization%read_section(z, ios, MF, MT, sizes(4))
+       call this%photo_ionization%read_section(z, ios, MF, MT, sizes(i))
        print *, ""
+       i=i+1
     end do
   end subroutine create_mf23
 
@@ -80,20 +82,20 @@ contains
     integer :: z, ios, MF, MT, n
     integer, allocatable :: sizes(:)
 
-    call this%coherent_factor%read_section_header(z, ios, MF, MT, sizes(1))
-    call this%coherent_factor%read_section(z, ios, MF, MT, sizes(1))
+    call this%coherent_factor%read_section_header(z, ios, MF, MT, sizes(n-3))
+    call this%coherent_factor%read_section(z, ios, MF, MT, sizes(n-3))
     print *, ""
 
-    call this%incoherent_function%read_section_header(z, ios, MF, MT, sizes(2))
-    call this%incoherent_function%read_section(z, ios, MF, MT, sizes(2))
+    call this%incoherent_function%read_section_header(z, ios, MF, MT, sizes(n-2))
+    call this%incoherent_function%read_section(z, ios, MF, MT, sizes(n-2))
     print *, ""
 
-    call this%imaginary_factor%read_section_header(z, ios, MF, MT, sizes(3))
-    call this%imaginary_factor%read_section(z, ios, MF, MT, sizes(3))
+    call this%imaginary_factor%read_section_header(z, ios, MF, MT, sizes(n-1))
+    call this%imaginary_factor%read_section(z, ios, MF, MT, sizes(n-1))
     print *, ""
 
-    call this%real_factor%read_section_header(z, ios, MF, MT, sizes(4))
-    call this%real_factor%read_section(z, ios, MF, MT, sizes(4))
+    call this%real_factor%read_section_header(z, ios, MF, MT, sizes(n))
+    call this%real_factor%read_section(z, ios, MF, MT, sizes(n))
     print *, ""
 
   end subroutine create_mf27

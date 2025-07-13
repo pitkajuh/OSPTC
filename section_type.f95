@@ -47,7 +47,7 @@ module section_type
 
 contains
 
-  subroutine skip_section(this, z, ios, MF, MT)
+  subroutine skip_section(this, z, ios)
     class(section), intent(inout) :: this
     real :: v1, v2, v3, v4, v5, v6, ZA
     integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios
@@ -90,13 +90,13 @@ contains
   subroutine read_section(this, z, ios, MF,  MT, n)
     class(section), intent(inout) :: this
     real :: v1, v2, v3, v4, v5, v6
-    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, n
-    print *, n
+    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, n, i
+    i=1
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
        if(MT==0) exit
-
+       i=i+1
     end do
-
+    print *, n, i
   end subroutine read_section
 end module section_type
