@@ -91,22 +91,22 @@ contains
     integer :: z, ios, MF, MT, n
     integer, allocatable :: sizes(:)
 
-    ! allocate(this%coherent_factor%records(10, sizes(n-3))
+    allocate(this%coherent_factor%records(10, sizes(n-3)))
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     call this%coherent_factor%read_section(z, ios, MF, MT, sizes(n-3))
     print *, ""
 
-    ! allocate(this%incoherent_function%records(10, sizes(n-2))
+    allocate(this%incoherent_function%records(10, sizes(n-2)))
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
     call this%incoherent_function%read_section(z, ios, MF, MT, sizes(n-2))
     print *, ""
 
-    ! allocate(this%imaginary_factor%records(10, sizes(n-1))
+    allocate(this%imaginary_factor%records(10, sizes(n-1)))
     call this%imaginary_factor%read_section_header(z, ios, MF, MT)
     call this%imaginary_factor%read_section(z, ios, MF, MT, sizes(n-1))
     print *, ""
 
-    ! allocate(this%real_factor%records(10, sizes(n)))
+    allocate(this%real_factor%records(10, sizes(n)))
     call this%real_factor%read_section_header(z, ios, MF, MT)
     call this%real_factor%read_section(z, ios, MF, MT, sizes(n))
     print *, ""
