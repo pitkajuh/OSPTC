@@ -62,35 +62,30 @@ contains
   subroutine read_section_header(this, z, ios, MF, MT)
     class(section), intent(inout) :: this
     real :: ZA, AWR
-    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios
-    integer :: n=1
-    integer :: to=2
+    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, i
 
     read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
 
     if(MF==0 .and. MT==0) return
 
     print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-    this%header(1, n)=ZA
-    this%header(2, n)=AWR
-    this%header(3, n)=L1
-    this%header(4, n)=L2
-    this%header(5, n)=N1
-    this%header(6, n)=N2
+    this%header(1, 1)=ZA
+    this%header(2, 1)=AWR
+    this%header(3, 1)=L1
+    this%header(4, 1)=L2
+    this%header(5, 1)=N1
+    this%header(6, 1)=N2
 
-    do
+    do i=2, 3
        read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
        print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-       this%header(1, n)=ZA
-       this%header(2, n)=AWR
-       this%header(3, n)=L1
-       this%header(4, n)=L2
-       this%header(5, n)=N1
-       this%header(6, n)=N2
-       if(n==to) exit
-       n=n+1
+       this%header(1, i)=ZA
+       this%header(2, i)=AWR
+       this%header(3, i)=L1
+       this%header(4, i)=L2
+       this%header(5, i)=N1
+       this%header(6, i)=N2
     end do
-    n=1
   end subroutine read_section_header
 
   subroutine read_section(this, z, ios, MF,  MT)
