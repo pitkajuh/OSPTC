@@ -1,9 +1,11 @@
 module material_type
   use random
+  use tape_type
   implicit none
 
   type, abstract :: material
      real :: density
+     type(tape) :: endf
    contains
      procedure(create_intf), deferred :: create
   end type material
@@ -20,7 +22,6 @@ module material_type
      real, dimension(3, 37) :: mu
    contains
      procedure, pass :: create => create_steel
-     ! procedure, pass :: get_mu_value
   end type steel
 
   type, extends(material) :: iodine
@@ -64,6 +65,7 @@ contains
   subroutine create_steel(this)
     class(steel), intent(inout) :: this
     this%density=7.874
+    call read_tape1(this%endf, 'cross-sections/photoat-026_Fe_000.endf')
 
     ! Taken from https://physics.nist.gov/PhysRefData/XrayMassCoef/ElemTab/z26.html
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
@@ -92,6 +94,7 @@ contains
   subroutine create_iodine(this)
     class(iodine), intent(inout) :: this
     this%density=4.930
+    call read_tape1(this%endf, 'cross-sections/photoat-053_I_000.endf')
 
     ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,9.096E+03,9.078E+03,&
@@ -124,6 +127,7 @@ contains
   subroutine create_sodium(this)
     class(sodium),intent(inout) :: this
     this%density=9.710E-01
+    call read_tape1(this%endf, 'cross-sections/photoat-011_Na_000.endf')
 
     ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,6.542E+02,6.522E+02,&
@@ -151,6 +155,7 @@ contains
   subroutine create_titanium(this)
     class(titanium), intent(inout) :: this
     this%density=4.540
+    call read_tape1(this%endf, 'cross-sections/photoat-022_Ti_000.endf')
 
     ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,5.869E+03,5.860E+03,&
@@ -178,6 +183,7 @@ contains
   subroutine create_nitrogen(this)
     class(nitrogen), intent(inout) :: this
     this%density=1.165E-03
+    call read_tape1(this%endf, 'cross-sections/photoat-007_N_000.endf')
 
     ! Energy (eV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,5.869E+03,5.860E+03,&
