@@ -4,8 +4,8 @@ module tape_type
 
   type :: tape
      real, dimension(6, 4) :: header
-     type(file) :: mf23
-     type(file) :: mf27
+     ! type(MF23) :: mf23
+     ! type(MT27) :: mf27
   end type tape
 
 contains
@@ -20,20 +20,20 @@ contains
     call read_begin1(this, z, ios)
 
     ! Get MF23
-    do
-       call read_file_header(this%mf23, z, ios, MF, MT)
-       if(MT==0 .and. MF==0) exit
-       call read_section(this%mf23, z, ios, MF, MT)
-       print *, ""
-    end do
+    ! do
+    !    call read_file_header(this%mf23, z, ios, MF, MT)
+    !    if(MT==0 .and. MF==0) exit
+    !    call read_section(this%mf23, z, ios, MF, MT)
+    !    print *, ""
+    ! end do
 
     ! Get MF27
-    do
-       call read_file_header(this%mf27, z, ios, MF, MT)
-       if(MT==0 .and. MF==0) exit
-       call read_section(this%mf27, z, ios, MF, MT)
-       print *, ""
-    end do
+    ! do
+    !    call read_file_header(this%mf27, z, ios, MF, MT)
+    !    if(MT==0 .and. MF==0) exit
+    !    call read_section(this%mf27, z, ios, MF, MT)
+    !    print *, ""
+    ! end do
 
     close(z)
   end subroutine read_tape1
