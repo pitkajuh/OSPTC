@@ -1,5 +1,4 @@
 program main
-  ! use read_endf
   use interpolate
   use cell_type
   use tape_type
@@ -22,26 +21,26 @@ program main
   call steel1%create()
 
   ! c=steel1%density*100*get_mu_value(steel1%mu, 10.0, 3, 37)
-  c=linear_interpolation(steel1%mu, 12.0, 37)
-  print *, c
+  ! c=linear_interpolation(steel1%mu, 12.0, 37)
+  ! print *, c
   ! steel1%get_mu_value(10)
 
-  t=std_uniform_distribution()
-  t1=std_uniform_distribution()
-  point=coordinate(t, t, t)
-  point1=coordinate(t1, t1, t1)
-  call show(point)
-  call show(point1)
-  ! print *, point-point1
-  point1=coordinate(t1, t1, t1)+100.0
+  ! t=std_uniform_distribution()
+  ! t1=std_uniform_distribution()
+  ! point=coordinate(t, t, t)
+  ! point1=coordinate(t1, t1, t1)
+  ! call show(point)
+  ! call show(point1)
+  ! ! print *, point-point1
+  ! point1=coordinate(t1, t1, t1)+100.0
   ! print *, point+100
   ! print *, point1
 
-  allocate(planex :: a1)
-  ! call a1%create(100.0)
-  ! print *, a1%value1
-  ! call a1%surface_equation(point1)
-  deallocate(a1)
+  ! allocate(planex :: a1)
+  ! ! call a1%create(100.0)
+  ! ! print *, a1%value1
+  ! ! call a1%surface_equation(point1)
+  ! deallocate(a1)
 
 
 

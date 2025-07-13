@@ -4,8 +4,8 @@ module tape_type
 
   type :: tape
      real, dimension(6, 4) :: header
-     ! type(MF23) :: mf23
-     ! type(MT27) :: mf27
+     type(MF23) :: mf23
+     type(MF27) :: mf27
   end type tape
 
 contains
@@ -21,7 +21,7 @@ contains
 
     ! Get MF23
     ! do
-    !    call read_file_header(this%mf23, z, ios, MF, MT)
+       ! call read_file_header(this%mf23, z, ios, MF, MT)
     !    if(MT==0 .and. MF==0) exit
     !    call read_section(this%mf23, z, ios, MF, MT)
     !    print *, ""
