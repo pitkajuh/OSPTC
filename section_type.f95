@@ -58,11 +58,11 @@ contains
     end do
   end subroutine skip_section
 
-  subroutine read_section_header(this, z, ios, MF, MT)
+  subroutine read_section_header(this, z, ios, MF, MT, n)
     class(section), intent(inout) :: this
     real :: ZA, AWR
-    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, i
-
+    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, i, n
+    print *, n
     read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
 
     if(MF==0 .and. MT==0) return
@@ -87,16 +87,16 @@ contains
     end do
   end subroutine read_section_header
 
-  subroutine read_section(this, z, ios, MF,  MT)
+  subroutine read_section(this, z, ios, MF,  MT, n)
     class(section), intent(inout) :: this
     real :: v1, v2, v3, v4, v5, v6
     integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, n
-    n=3
+    print *, n
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
        if(MT==0) exit
-       n=n+1
+
     end do
-    print *, n
+
   end subroutine read_section
 end module section_type
