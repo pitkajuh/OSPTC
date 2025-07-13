@@ -115,7 +115,7 @@ contains
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
        if(MT==0) exit
-       ! print *, v1, v2, v3, v4, v5, v6
+       print *, v1, v2, v3, v4, v5, v6
        i=i+1
     end do
     print *, n, i
