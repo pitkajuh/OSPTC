@@ -47,17 +47,25 @@ contains
     call this%coherent_scattering%read_section_header(z, ios, MF, MT)
     call this%coherent_scattering%read_section(z, ios, MF, MT)
     print *, ""
-
-
     ! read incoherent
-    ! call this%incoherent_scattering%read_section_header(z, ios, MF, MT)
-    ! call this%incoherent_scattering%read_section(z, ios, MF, MT)
-    ! print *, ""
+    call this%incoherent_scattering%read_section_header(z, ios, MF, MT)
+    call this%incoherent_scattering%read_section(z, ios, MF, MT)
+    print *, ""
     ! read pair elec
+    call this%pair_formation%read_section_header(z, ios, MF, MT)
+    call this%pair_formation%read_section(z, ios, MF, MT)
     ! skip
+    call this%pair_formation%skip_section(z, ios, MF, MT)
     ! read pair nuc
+    print *, ""
+    call this%pair_formation%read_section_header(z, ios, MF, MT)
+    call this%pair_formation%read_section(z, ios, MF, MT)
+    print *, ""
     ! skip
+    call this%photo_ionization%skip_section(z, ios, MF, MT)
     ! read ion
+    ! call this%photo_ionization%read_section_header(z, ios, MF, MT)
+    ! call this%photo_ionization%read_section(z, ios, MF, MT)
   end subroutine create_mf23
 
   subroutine create_mf27(this, z, ios, MF, MT)
