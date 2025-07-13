@@ -8,10 +8,11 @@ module file_type
   end type file
 
   abstract interface
-     subroutine create_file(this, z, ios)
+     subroutine create_file(this, z, ios, sizes, n)
        import file
        class(file), intent(inout) :: this
-       integer :: z, ios
+       integer :: z, ios, n
+       integer, allocatable :: sizes(:)
      end subroutine create_file
   end interface
 
@@ -35,10 +36,10 @@ module file_type
 
 contains
 
-  subroutine create_mf23(this, z, ios)
+  subroutine create_mf23(this, z, ios, sizes, n)
     class(MF23), intent(inout) :: this
-    integer :: z, ios, MF, MT
-
+    integer :: z, ios, MF, MT, n
+    integer, allocatable :: sizes(:)
     ! Skip 23501
     call this%coherent_scattering%skip_section(z, ios, MF, MT)
     print *, ""
@@ -73,9 +74,10 @@ contains
     end do
   end subroutine create_mf23
 
-  subroutine create_mf27(this, z, ios)
+  subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
-    integer :: z, ios, MF, MT
+    integer :: z, ios, MF, MT, n
+    integer, allocatable :: sizes(:)
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     call this%coherent_factor%read_section(z, ios, MF, MT)
