@@ -91,46 +91,13 @@ contains
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) e1, v2, e2, v4, e3, v6, MAT, MF, MT
        if(MT==0) exit
-       ! print *, e1, v2, e2, v4, e3, v6
-       ! this%records(i, 1)=e1
-       ! this%records(i, 2)=v2
-       ! this%records(i+1, 1)=e2
-       ! this%records(i+1, 2)=v4
-       ! this%records(i+2, 1)=e3
-       ! this%records(i+2, 2)=v6
-       ! records(i, 1)=e1
-       ! records(i+1, 2)=v2
-       ! records(i+2, 1)=e2
-       ! records(i+3, 2)=v4
-       ! records(i+4, 1)=e3
-       ! records(i+5, 2)=v6
-       ! records(1, i)=e1
-       ! records(2, i+1)=v2
-       ! records(1, i+2)=e2
-       ! records(2, i+3)=v4
-       ! records(1, i+4)=e3
-       ! records(2, i+5)=v6
        records(1, i)=e1
        records(2, i)=v2
        records(1, i+1)=e2
        records(2, i+1)=v4
        records(1, i+2)=e3
        records(2, i+2)=v6
-
-
-
-
-
-
-       ! print *, i, i+1, i+2, i+3, i+4, i+5, MF, MT
-       ! print *, records(i, 1), records(i+1, 2), records(i+2, 1), records(i+3, 2), records(i+4, 1), records(i+5, 2), MF, MT
-
-       ! print *, records(i, 1), records(i+1, 2), records(i+2, 1), records(i+3, 2), records(i+4, 1), records(i+5, 2), MF, MT
-
-       ! print *, records(i, 1), records(i+1, 2), records(i+2, 1), records(i+3, 2), records(i+4, 1), records(i+5, 2), MF, MT
-
        i=i+3
     end do
-    ! print *, n, i
   end subroutine read_section
 end module section_type
