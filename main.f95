@@ -25,9 +25,14 @@ program main
   print *, c
   ! print *, steel1%endf%mf23%incoherent_scattering%records
 
-  do i=1, int(steel1%endf%mf23%incoherent_scattering%header(1, 3))
-     print *, i, steel1%endf%mf23%incoherent_scattering%records(1, i), steel1%endf%mf23%incoherent_scattering%records(2, i)
+  ! do i=1, int(steel1%endf%mf23%incoherent_scattering%header(1, 3))
+  !    print *, i, steel1%endf%mf23%incoherent_scattering%records(1, i), steel1%endf%mf23%incoherent_scattering%records(2, i)
+  ! end do
+
+  do i=1, int(steel1%endf%mf27%coherent_factor%header(1, 3))
+     print *, i, steel1%endf%mf27%coherent_factor%records(1, i), steel1%endf%mf27%coherent_factor%records(2, i)
   end do
+
 
   ! steel1%get_mu_value(10)
 

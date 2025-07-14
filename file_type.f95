@@ -89,22 +89,22 @@ contains
     integer :: z, ios, MF, MT, n
     integer, allocatable :: sizes(:)
 
-    allocate(this%coherent_factor%records(6, sizes(n-3)))
+    allocate(this%coherent_factor%records(2, sizes(n-3)*4))
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     call this%coherent_factor%read_section(z, ios, MF, MT, &
     int(this%coherent_factor%header(1, 3)), this%coherent_factor%records)
 
-    allocate(this%incoherent_function%records(6, sizes(n-2)))
+    allocate(this%incoherent_function%records(2, sizes(n-2)*4))
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
     call this%incoherent_function%read_section(z, ios, MF, MT, &
     int(this%incoherent_function%header(1, 3)), this%incoherent_function%records)
 
-    allocate(this%imaginary_factor%records(6, sizes(n-1)))
+    allocate(this%imaginary_factor%records(2, sizes(n-1)*4))
     call this%imaginary_factor%read_section_header(z, ios, MF, MT)
     call this%imaginary_factor%read_section(z, ios, MF, MT, &
     int(this%imaginary_factor%header(1, 3)), this%imaginary_factor%records)
 
-    allocate(this%real_factor%records(6, sizes(n)))
+    allocate(this%real_factor%records(2, sizes(n)*4))
     call this%real_factor%read_section_header(z, ios, MF, MT)
     call this%real_factor%read_section(z, ios, MF, MT, &
     int(this%real_factor%header(1, 3)), this%real_factor%records)
