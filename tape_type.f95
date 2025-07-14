@@ -1,5 +1,6 @@
 module tape_type
   use file_type
+  use interpolate
   implicit none
 
   type :: tape
@@ -16,7 +17,8 @@ contains
     type(tape), intent(inout) :: this
     real, intent(in) :: energy
     real :: r
-    ! this%mf23%get_cross_section(energy)
+    r=linear_interpolation(this%mf23%coherent_scattering%records, energy, this%mf23%coherent_scattering%n)
+    print *, r
   end function get_cross_section
 
   subroutine read_tape(this, tape_name)

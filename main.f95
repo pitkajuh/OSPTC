@@ -11,7 +11,7 @@ program main
   ! Not working. Must be declared as a pointer.
   ! type(planex) :: test1
   ! call test1%create(100.0)
-  real :: t, t1
+  real :: t, t1, val
   type(coordinate) :: point, point1
   class(surface), allocatable :: a1
   type(tape) :: endf_tape
@@ -29,10 +29,11 @@ program main
   !    print *, i, steel1%endf%mf23%incoherent_scattering%records(1, i), steel1%endf%mf23%incoherent_scattering%records(2, i)
   ! end do
 
-  do i=1, int(steel1%endf%mf27%coherent_factor%header(1, 3))
-     print *, i, steel1%endf%mf27%coherent_factor%records(1, i), steel1%endf%mf27%coherent_factor%records(2, i)
-  end do
+  ! do i=1, int(steel1%endf%mf27%coherent_factor%n)
+  !    print *, i, steel1%endf%mf27%coherent_factor%records(1, i), steel1%endf%mf27%coherent_factor%records(2, i)
+  ! end do
 
+  val=get_cross_section(steel1%endf, 438.0)
 
   ! steel1%get_mu_value(10)
 

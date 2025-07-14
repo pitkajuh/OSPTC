@@ -94,6 +94,7 @@ contains
     real :: e1, v2, e2, v4, e3, v6
     integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, n, i
     i=1
+    this%n=n
 
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) e1, v2, e2, v4, e3, v6, MAT, MF, MT

@@ -3,6 +3,7 @@ module file_type
   implicit none
 
   type, abstract :: file
+     integer :: n_ionization
    contains
      procedure(create_file), deferred :: create
   end type file
@@ -82,6 +83,8 @@ contains
        int(this%photo_ionization(i-4)%header(1, 3)), this%photo_ionization(i-4)%records)
        i=i+1
     end do
+    print *, i-5
+    this%n_ionization=i-5
   end subroutine create_mf23
 
   subroutine create_mf27(this, z, ios, sizes, n)
