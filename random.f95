@@ -10,7 +10,7 @@ contains
 
   function rng(min, max)
     real, intent(in) :: min, max
-    real :: rng
+    real(kind(1.d0)) :: rng
     rng=min+std_uniform_distribution()*(max-min)
   end function rng
 
