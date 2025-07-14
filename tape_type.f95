@@ -58,23 +58,24 @@ contains
        total=total+r
        if(r>0.0) n_not_zero=n_not_zero+1
        limits(5+i)=limits(4+i)+r
-       print *, "ionization", i, r
+       print *, "ionization", i+4, r
     end do
 
     ! total=v(i)
 
     random_value=std_uniform_distribution()
-    print *, "random", std_uniform_distribution()
+    ! 0.93298842883496458
+    print *, "random", random_value
 
     do i=1, 4+this%mf23%n_ionization+1
        ! print *, v(i)/total, limits(i)
-       print *, limits(i)/total
+       print *, i, limits(i)/total
        ! if(v(i)>0.0) total=total+r
     end do
 
     do i=2, 4+this%mf23%n_ionization+1
-       if(random_value>=limits(i-1)/total .and. random_value<limits(i)/total) then
-          print *, i-1
+       if(random_value>=limits(i-1)/total .and. random_value<limits(i)/total .and. limits(i-1)/total/=limits(i)) then
+          print *, i
        end if
        ! print *, v(i)/total, limits(i)
        ! print *, limits(i)/total
