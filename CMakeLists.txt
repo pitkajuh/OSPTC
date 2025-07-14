@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(Co-60)
+project(OSPTC)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
  # set (CMAKE_CXX_FLAGS "-g -Wall -Werror -Wpedantic -fsanitize=address -p" )
