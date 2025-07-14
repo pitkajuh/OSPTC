@@ -2,7 +2,7 @@ module random
   implicit none
 contains
   function std_uniform_distribution()
-    real :: std_uniform_distribution, rnd
+    real(kind(1.d0)) :: std_uniform_distribution, rnd
     call random_seed()
     call random_number(rnd)
     std_uniform_distribution=1-rnd

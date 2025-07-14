@@ -33,7 +33,7 @@ program main
   !    print *, i, steel1%endf%mf23%pair_formation_elec%records(1, i), steel1%endf%mf23%pair_formation_elec%records(2, i)
   ! end do
 
-  val=get_cross_section(steel1%endf, 2.5e6)
+  val=get_cross_section(steel1%endf, 1000.0)
 
   ! steel1%get_mu_value(10)
 

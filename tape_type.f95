@@ -1,4 +1,5 @@
 module tape_type
+  use random
   use file_type
   use interpolate
   implicit none
@@ -16,21 +17,68 @@ contains
   function get_cross_section(this, energy) result(r)
     type(tape), intent(inout) :: this
     real, intent(in) :: energy
-    real :: r
-    integer :: i
+    real :: r, total
+    integer :: i, n_not_zero
+    real(kind(1.d0)) :: random_value
+    real, dimension(4+this%mf23%n_ionization) :: v
+    real(kind(1d0)), dimension(4+this%mf23%n_ionization+1) :: limits
+    limits(1)=0.0
+    n_not_zero=0
     r=linear_interpolation(this%mf23%coherent_scattering%records, energy, this%mf23%coherent_scattering%n)
+    v(1)=r
+    limits(2)=r
+    total=total+r
+    n_not_zero=n_not_zero+1
     print *, "incoherent", r
+
     r=linear_interpolation(this%mf23%incoherent_scattering%records, energy, this%mf23%incoherent_scattering%n)
+    v(2)=r
+    limits(3)=limits(2)+r
+    total=total+r
+    n_not_zero=n_not_zero+1
     print *, "coherent", r
 
     r=linear_interpolation(this%mf23%pair_formation_elec%records, energy, this%mf23%pair_formation_elec%n)
+    v(3)=r
+    total=total+r
+    if(r>0.0) n_not_zero=n_not_zero+1
+    limits(4)=limits(3)+r
     print *, "pair form elec", r
+
     r=linear_interpolation(this%mf23%pair_formation_nuc%records, energy, this%mf23%pair_formation_nuc%n)
+    v(4)=r
+    total=total+r
+    if(r>0.0) n_not_zero=n_not_zero+1
+    limits(5)=limits(4)+r
     print *, "pair form nuc", r
 
     do i=1, this%mf23%n_ionization
        r=linear_interpolation(this%mf23%photo_ionization(i)%records, energy, this%mf23%photo_ionization(i)%n)
+       v(4+i)=r
+       total=total+r
+       if(r>0.0) n_not_zero=n_not_zero+1
+       limits(5+i)=limits(4+i)+r
        print *, "ionization", i, r
+    end do
+
+    ! total=v(i)
+
+    random_value=std_uniform_distribution()
+    print *, "random", std_uniform_distribution()
+
+    do i=1, 4+this%mf23%n_ionization+1
+       ! print *, v(i)/total, limits(i)
+       print *, limits(i)/total
+       ! if(v(i)>0.0) total=total+r
+    end do
+
+    do i=2, 4+this%mf23%n_ionization+1
+       if(random_value>=limits(i-1)/total .and. random_value<limits(i)/total) then
+          print *, i-1
+       end if
+       ! print *, v(i)/total, limits(i)
+       ! print *, limits(i)/total
+       ! if(v(i)>0.0) total=total+r
     end do
 
   end function get_cross_section
