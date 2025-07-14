@@ -46,20 +46,22 @@ contains
     call this%coherent_scattering%skip_section(z, ios)
     ! print *, ""
 
-    allocate(this%coherent_scattering%records(2, sizes(1)*4))
     call this%coherent_scattering%read_section_header(z, ios, MF, MT)
+    allocate(this%coherent_scattering%records(2, int(this%coherent_scattering%header(1, 3))*4))
     call this%coherent_scattering%read_section(z, ios, MF, MT, &
     int(this%coherent_scattering%header(1, 3)), this%coherent_scattering%records)
     ! print *, ""
 
-    allocate(this%incoherent_scattering%records(2, sizes(2)*4))
+
     call this%incoherent_scattering%read_section_header(z, ios, MF, MT)
+    allocate(this%incoherent_scattering%records(2, int(this%incoherent_scattering%header(1, 3))*4))
     call this%incoherent_scattering%read_section(z, ios, MF, MT, &
     int(this%incoherent_scattering%header(1, 3)), this%incoherent_scattering%records)
     ! print *, ""
 
-    allocate(this%pair_formation_elec%records(2, sizes(3)*4))
+
     call this%pair_formation_elec%read_section_header(z, ios, MF, MT)
+    allocate(this%pair_formation_elec%records(2, sizes(3)*4))
     call this%pair_formation_elec%read_section(z, ios, MF, MT, &
     int(this%pair_formation_elec%header(1, 3)), this%pair_formation_elec%records)
     ! print *, ""
