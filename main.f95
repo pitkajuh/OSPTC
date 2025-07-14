@@ -16,11 +16,15 @@ program main
   class(surface), allocatable :: a1
   type(tape) :: endf_tape
   type(cylinder) :: t12
-  type(steel) :: steel1
+  ! type(steel) :: steel1
+  class(material), allocatable :: steel1
   real :: c
+
+  allocate(steel :: steel1)
   call steel1%create()
 
   c=steel1%density*100*linear_interpolation(steel1%mu, 11.0, 37)
+
   ! c=linear_interpolation(steel1%mu, 12.0, 37)
   ! print *, c
   ! print *, steel1%endf%mf23%incoherent_scattering%records

@@ -61,18 +61,13 @@ contains
     print *, "random", random_value
 
     do i=1, 4+this%mf23%n_ionization+1
-       ! print *, v(i)/total, limits(i)
        print *, i, limits(i)/total
-       ! if(v(i)>0.0) total=total+r
     end do
 
     do i=2, 4+this%mf23%n_ionization+1
        if(random_value>=limits(i-1)/total .and. random_value<limits(i)/total .and. limits(i-1)/total/=limits(i)) then
           print *, i
        end if
-       ! print *, v(i)/total, limits(i)
-       ! print *, limits(i)/total
-       ! if(v(i)>0.0) total=total+r
     end do
 
   end function get_cross_section

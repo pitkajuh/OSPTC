@@ -1,11 +1,12 @@
 module cell_type
   use surface_type
+  use material_type
   implicit none
 
   type, abstract :: cell
      character :: name
      integer :: hits
-     ! type(material) :: material
+     class(material), allocatable :: cell_material
    contains
      procedure(create_cell_test), deferred :: cell_test
      procedure(create_cell_distance), deferred :: cell_distance
