@@ -6,7 +6,7 @@ program main
   use material_type
   implicit none
 
-  integer :: res
+  integer :: res, i
 
   ! Not working. Must be declared as a pointer.
   ! type(planex) :: test1
@@ -23,6 +23,12 @@ program main
   c=steel1%density*100*linear_interpolation(steel1%mu, 11.0, 37)
   ! c=linear_interpolation(steel1%mu, 12.0, 37)
   print *, c
+  ! print *, steel1%endf%mf23%incoherent_scattering%records
+
+  do i=1, 391
+     print *, i, steel1%endf%mf23%incoherent_scattering%records(1, i), steel1%endf%mf23%incoherent_scattering%records(2, i)
+  end do
+
   ! steel1%get_mu_value(10)
 
   ! t=std_uniform_distribution()
