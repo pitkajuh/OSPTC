@@ -12,6 +12,13 @@ module tape_type
 
 contains
 
+  function get_cross_section(this, energy) result(r)
+    type(tape), intent(inout) :: this
+    real, intent(in) :: energy
+    real :: r
+    ! this%mf23%get_cross_section(energy)
+  end function get_cross_section
+
   subroutine read_tape(this, tape_name)
     type(tape) :: this
     character(*) :: tape_name

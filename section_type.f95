@@ -9,6 +9,7 @@ module section_type
      procedure, public :: read_section_header
      procedure, public :: read_section
      procedure, public :: skip_section
+     procedure, public :: get_cross_section1
   end type section
 
   ! MF23
@@ -40,6 +41,12 @@ module section_type
   end type section_real_factor
 
 contains
+
+  subroutine get_cross_section1(this, energy)
+    class(section), intent(inout) :: this
+    real, intent(in) :: energy
+    real :: r
+  end subroutine get_cross_section1
 
   subroutine skip_section(this, z, ios)
     class(section), intent(inout) :: this
