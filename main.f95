@@ -29,11 +29,11 @@ program main
   !    print *, i, steel1%endf%mf23%incoherent_scattering%records(1, i), steel1%endf%mf23%incoherent_scattering%records(2, i)
   ! end do
 
-  ! do i=1, int(steel1%endf%mf27%coherent_factor%n)
-  !    print *, i, steel1%endf%mf27%coherent_factor%records(1, i), steel1%endf%mf27%coherent_factor%records(2, i)
+  ! do i=1, int(steel1%endf%mf23%pair_formation_elec%n)
+  !    print *, i, steel1%endf%mf23%pair_formation_elec%records(1, i), steel1%endf%mf23%pair_formation_elec%records(2, i)
   ! end do
 
-  val=get_cross_section(steel1%endf, 1.0)
+  val=get_cross_section(steel1%endf, 2.5e6)
 
   ! steel1%get_mu_value(10)
 
