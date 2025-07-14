@@ -83,7 +83,6 @@ contains
        int(this%photo_ionization(i-4)%header(1, 3)), this%photo_ionization(i-4)%records)
        i=i+1
     end do
-    print *, i-5
     this%n_ionization=i-5
   end subroutine create_mf23
 

@@ -17,8 +17,22 @@ contains
     type(tape), intent(inout) :: this
     real, intent(in) :: energy
     real :: r
+    integer :: i
     r=linear_interpolation(this%mf23%coherent_scattering%records, energy, this%mf23%coherent_scattering%n)
-    print *, r
+    print *, "incoherent", r
+    r=linear_interpolation(this%mf23%incoherent_scattering%records, energy, this%mf23%incoherent_scattering%n)
+    print *, "coherent", r
+
+    r=linear_interpolation(this%mf23%pair_formation_elec%records, energy, this%mf23%pair_formation_elec%n)
+    print *, "pair form elec", r
+    r=linear_interpolation(this%mf23%pair_formation_nuc%records, energy, this%mf23%pair_formation_nuc%n)
+    print *, "pair form nuc", r
+
+    do i=1, this%mf23%n_ionization
+       r=linear_interpolation(this%mf23%photo_ionization(i)%records, energy, this%mf23%photo_ionization(i)%n)
+       print *, "ionization", i, r
+    end do
+
   end function get_cross_section
 
   subroutine read_tape(this, tape_name)
@@ -70,7 +84,7 @@ contains
           cycle
        end if
        this%sizes(i)=MF-2
-       print *, N1, MAT, MF, MT, this%sizes(i), i
+       ! print *, N1, MAT, MF, MT, this%sizes(i), i
        i=i+1
     end do
 

@@ -22,7 +22,7 @@ program main
 
   c=steel1%density*100*linear_interpolation(steel1%mu, 11.0, 37)
   ! c=linear_interpolation(steel1%mu, 12.0, 37)
-  print *, c
+  ! print *, c
   ! print *, steel1%endf%mf23%incoherent_scattering%records
 
   ! do i=1, int(steel1%endf%mf23%incoherent_scattering%header(1, 3))
@@ -33,7 +33,7 @@ program main
   !    print *, i, steel1%endf%mf27%coherent_factor%records(1, i), steel1%endf%mf27%coherent_factor%records(2, i)
   ! end do
 
-  val=get_cross_section(steel1%endf, 438.0)
+  val=get_cross_section(steel1%endf, 1.0)
 
   ! steel1%get_mu_value(10)
 
