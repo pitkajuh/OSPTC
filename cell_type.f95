@@ -27,7 +27,7 @@ module cell_type
        import cell
        class(cell), intent(inout) :: this
        type(coordinate), intent(in) :: from, to
-       real :: result1
+       real(kind(1.d0)) :: result1
      end function create_cell_distance
 
      function create_initial_position(this) result(result1)
@@ -85,9 +85,9 @@ contains
   function cell_distance_box(this, from, to) result(result1)
     class(cell_box_3d), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
-    real :: result1, distance
+    real(kind(1.d0)) :: result1, distance
     integer :: i
-    real, dimension(5) :: distances
+    real(kind(1.d0)), dimension(5) :: distances
     distances(1)=this%wallx_negative%surface_distance(from, to)
     distances(2)=this%wallx_positive%surface_distance(from, to)
     distances(3)=this%wally_negative%surface_distance(from, to)
@@ -133,9 +133,9 @@ contains
   function cell_distance_cylinder_z(this, from, to) result(result1)
     class(cell_cylinder_truncated_z), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
-    real :: result1, distance
+    real(kind(1.d0)) :: result1, distance
     integer :: i
-    real, dimension(2) :: distances
+    real(kind(1.d0)), dimension(2) :: distances
     distances=(/this%wallz_negative%surface_distance(from, to),  this%wallz_positive%surface_distance(from, to)/)
     distance=this%surface_cylinder%surface_distance(from, to)
 
@@ -153,7 +153,7 @@ contains
   function cell_initial_position_cylinder_z(this) result(result1)
     class(cell_cylinder_truncated_z), intent(inout) :: this
     type(coordinate) :: result1
-    real :: radial, azimuthal_angle
+    real(kind(1.d0)) :: radial, azimuthal_angle
     radial=this%surface_cylinder%value1*std_uniform_distribution()**0.5
     azimuthal_angle=2*3.14159265*std_uniform_distribution()
 
@@ -161,5 +161,4 @@ contains
     result1%y=radial*sin(azimuthal_angle)
     result1%z=this%wallz_negative%value1+(this%wallz_positive%value1-this%wallz_negative%value1)*std_uniform_distribution()
   end function cell_initial_position_cylinder_z
-
 end module cell_type

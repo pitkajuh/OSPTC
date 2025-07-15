@@ -18,12 +18,12 @@ program main
   type(cylinder) :: t12
   ! type(steel) :: steel1
   class(material), allocatable :: steel1
-  real :: c
+  real(kind(1.d0)) :: c
 
   allocate(steel :: steel1)
   call steel1%create()
 
-  c=steel1%density*100*linear_interpolation(steel1%mu, 11.0, 37)
+  c=steel1%density*100*linear_interpolation(steel1%mu, 11.0_8, 37)
 
   ! c=linear_interpolation(steel1%mu, 12.0, 37)
   ! print *, c
@@ -37,10 +37,12 @@ program main
   !    print *, i, steel1%endf%mf23%pair_formation_elec%records(1, i), steel1%endf%mf23%pair_formation_elec%records(2, i)
   ! end do
 
-  ! val=get_cross_section(steel1%endf, real(rng(1.0, 1e9)))
-  val=get_cross_section(steel1%endf, 8.209905920)
-  print *, ""
-  val=get_cross_section(steel1%endf, 8209905920.0)
+  val=get_cross_section(steel1%endf, rng(1.0_8, 1e9_8))
+  ! val=get_cross_section(steel1%endf, 687018944.0_8)
+  ! val=get_cross_section(steel1%endf, 922858368.0)
+  ! val=get_cross_section(steel1%endf, 8.209905920)
+  ! print *, ""
+  ! val=get_cross_section(steel1%endf, 8209905920.0)
   ! steel1%get_mu_value(10)
 
   ! t=std_uniform_distribution()

@@ -3,7 +3,7 @@ module coordinate_type
   implicit none
 
   type :: coordinate
-     real :: x, y, z
+     real(kind(1.d0)) :: x, y, z
   end type coordinate
 
   interface operator(+)
@@ -37,7 +37,7 @@ contains
 
   pure function add_scalar(v1, v2)
     type(coordinate), intent(in) :: v1
-    real, intent(in) :: v2
+    real(kind(1.d0)), intent(in) :: v2
     type(coordinate) :: add_scalar
 
     add_scalar%x=v1%x+v2
@@ -47,7 +47,7 @@ contains
 
   pure function add_scalar_reverse(v1, v2)
     type(coordinate), intent(in) :: v2
-    real, intent(in) :: v1
+    real(kind(1.d0)), intent(in) :: v1
     type(coordinate) :: add_scalar_reverse
 
     add_scalar_reverse%x=v1+v2%x
@@ -66,7 +66,7 @@ contains
 
   pure function subtract_scalar(v1, v2)
     type(coordinate), intent(in) :: v1
-    real, intent(in) :: v2
+    real(kind(1.d0)), intent(in) :: v2
     type(coordinate) :: subtract_scalar
 
     subtract_scalar%x=v1%x-v2
@@ -76,7 +76,7 @@ contains
 
   pure function subtract_scalar_reverse(v1, v2)
     type(coordinate), intent(in) :: v2
-    real, intent(in) :: v1
+    real(kind(1.d0)), intent(in) :: v1
     type(coordinate) :: subtract_scalar_reverse
 
     subtract_scalar_reverse%x=v1-v2%x
@@ -95,7 +95,7 @@ contains
 
   pure function multiply_scalar(v1, v2)
     type(coordinate), intent(in) :: v1
-    real, intent(in) :: v2
+    real(kind(1.d0)), intent(in) :: v2
     type(coordinate) :: multiply_scalar
 
     multiply_scalar%x=v1%x*v2
@@ -105,7 +105,7 @@ contains
 
   pure function multiply_scalar_reverse(v1, v2)
     type(coordinate), intent(in) :: v2
-    real, intent(in) :: v1
+    real(kind(1.d0)), intent(in) :: v1
     type(coordinate) :: multiply_scalar_reverse
 
     multiply_scalar_reverse%x=v1*v2%x
@@ -120,12 +120,12 @@ contains
 
   function distance(from, to)
     type(coordinate), intent(in) :: from, to
-    real :: distance
+    real(kind(1.d0)) :: distance
     distance=((to%x-from%x)**2+(to%y-from%y)**2+(to%z-from%z)**2)**0.5
   end function distance
 
   function generate_random(xmin, xmax, ymin, ymax, zmin, zmax)
-    real, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax
+    real(kind(1.d0)), intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax
     type(coordinate) :: generate_random
     generate_random%x=rng(xmin, xmax)
     generate_random%y=rng(ymin, ymax)
@@ -135,7 +135,7 @@ contains
   function random_emission_direction()
     ! Create an unit vector pointing in random direction using spherical coordinates. The radius of the sphere is not sampled because the sampling is done from the origin of the sphere.
     type(coordinate) :: random_emission_direction
-    real :: azimuthal_angle, polar_angle
+    real(kind(1.d0)) :: azimuthal_angle, polar_angle
 
     azimuthal_angle=2*3.14159265*std_uniform_distribution()
     polar_angle=3.14159265*std_uniform_distribution()

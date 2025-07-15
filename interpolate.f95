@@ -4,8 +4,8 @@ contains
 
   function linear_interpolation(array, y, ny)
     integer :: ny, i
-    real :: y, linear_interpolation
-    real, dimension(:, :) :: array
+    real(kind(1.d0)) :: y, linear_interpolation
+    real(kind(1.d0)), dimension(:, :) :: array
     ! A naive solution. Binary search would be better.
     do i=1, ny
        if(array(1, i)>=y) exit

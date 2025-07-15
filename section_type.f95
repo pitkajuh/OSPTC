@@ -2,8 +2,8 @@ module section_type
   implicit none
 
   type, abstract :: section
-     real, dimension(6, 3) :: header
-     real, allocatable :: records(:, :)
+     real(kind(1.d0)), dimension(6, 3) :: header
+     real(kind(1.d0)), allocatable :: records(:, :)
      integer :: n
    contains
      procedure, public :: read_section_header
@@ -44,13 +44,13 @@ contains
 
   subroutine get_cross_section1(this, energy)
     class(section), intent(inout) :: this
-    real, intent(in) :: energy
-    real :: r
+    real(kind(1.d0)), intent(in) :: energy
+    real(kind(1.d0)) :: r
   end subroutine get_cross_section1
 
   subroutine skip_section(this, z, ios)
     class(section), intent(inout) :: this
-    real :: v1, v2, v3, v4, v5, v6, ZA
+    real(kind(1.d0)) :: v1, v2, v3, v4, v5, v6, ZA
     integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios
 
     do
@@ -61,7 +61,7 @@ contains
 
   subroutine read_section_header(this, z, ios, MF, MT)
     class(section), intent(inout) :: this
-    real :: ZA, AWR
+    real(kind(1.d0)) :: ZA, AWR
     integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, i
 
     read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
@@ -90,8 +90,8 @@ contains
 
   subroutine read_section(this, z, ios, MF,  MT, n, records)
     class(section), intent(inout) :: this
-    real, allocatable :: records(:, :)
-    real :: e1, v2, e2, v4, e3, v6
+    real(kind(1.d0)), allocatable :: records(:, :)
+    real(kind(1.d0)) :: e1, v2, e2, v4, e3, v6
     integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, n, i
     i=1
     this%n=n

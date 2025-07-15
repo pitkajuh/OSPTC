@@ -4,7 +4,7 @@ module surface_type
 
   type, abstract :: surface
      ! For general quadratic surface S(x, y, z)=Ax^2+By^2+Cz^2+Dxy+Eyz+F zx+Gx+Hy+Iz+J
-     real :: value1=0, A=0, B=0, C=0, D=0, E=0, F=0, G=0, H=0, I=0, J=0, L=0, M=0, K=0
+     real(kind(1.d0)) :: value1=0, A=0, B=0, C=0, D=0, E=0, F=0, G=0, H=0, I=0, J=0, L=0, M=0, K=0
    contains
      procedure(create_interface), deferred :: create
      procedure(create_surface_equation), deferred :: surface_equation
@@ -16,7 +16,7 @@ module surface_type
      subroutine create_interface(this, v)
        import surface
        class(surface), intent(inout) :: this
-       real, intent(in) :: v
+       real(kind(1.d0)), intent(in) :: v
      end subroutine create_interface
 
      function create_surface_equation(this, p) result(result1)
@@ -24,7 +24,7 @@ module surface_type
        import surface
        class(surface), intent(inout) :: this
        type(coordinate), intent(in) :: p
-       real :: result1
+       real(kind(1.d0)) :: result1
      end function create_surface_equation
 
      function create_surface_distance(this, from, to) result(result1)
@@ -32,7 +32,7 @@ module surface_type
        import surface
        class(surface), intent(inout) :: this
        type(coordinate), intent(in) :: from, to
-       real :: result1
+       real(kind(1.d0)) :: result1
      end function create_surface_distance
 
      function create_surface_test(this, p) result(result1)
@@ -80,7 +80,7 @@ module surface_type
 contains
 
   function get_surface_test(v)
-    real :: v
+    real(kind(1.d0)) :: v
     logical :: get_surface_test
 
     ! Return true if the point is inside(<0) or on(==0) the surface.
@@ -93,7 +93,7 @@ contains
 
   subroutine create_planex(this, v)
     class(planex), intent(inout) :: this
-    real, intent(in) :: v
+    real(kind(1.d0)), intent(in) :: v
     this%value1=v
     this%G=1
     this%J=-v
@@ -102,14 +102,14 @@ contains
   function surface_equation_x(this, p) result(result1)
     class(planex), intent(inout) :: this
     type(coordinate), intent(in) :: p
-    real :: result1
+    real(kind(1.d0)) :: result1
     result1=p%x+this%J
   end function surface_equation_x
 
   function surface_distance_x(this, from, to) result(result1)
     class(planex), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
-    real :: result1
+    real(kind(1.d0)) :: result1
 
     if(to%x==0) then
        result1=-1
@@ -127,7 +127,7 @@ contains
 
   subroutine create_planey(this, v)
     class(planey), intent(inout) :: this
-    real, intent(in) :: v
+    real(kind(1.d0)), intent(in) :: v
     this%value1=v
     this%H=1
     this%J=-v
@@ -136,14 +136,14 @@ contains
   function surface_equation_y(this, p) result(result1)
     class(planey), intent(inout) :: this
     type(coordinate), intent(in) :: p
-    real :: result1
+    real(kind(1.d0)) :: result1
     result1=p%y+this%J
   end function surface_equation_y
 
   function surface_distance_y(this, from, to) result(result1)
     class(planey), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
-    real :: result1
+    real(kind(1.d0)) :: result1
 
     if(to%y==0) then
        result1=-1
@@ -161,7 +161,7 @@ contains
 
   subroutine create_planez(this, v)
     class(planez), intent(inout) :: this
-    real, intent(in) :: v
+    real(kind(1.d0)), intent(in) :: v
     this%value1=v
     this%I=1
     this%J=-v
@@ -170,14 +170,14 @@ contains
   function surface_equation_z(this, p) result(result1)
     class(planez), intent(inout) :: this
     type(coordinate), intent(in) :: p
-    real :: result1
+    real(kind(1.d0)) :: result1
     result1=p%z+this%J
   end function surface_equation_z
 
   function surface_distance_z(this, from, to) result(result1)
     class(planez), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
-    real :: result1
+    real(kind(1.d0)) :: result1
 
     if(to%z==0) then
        result1=-1
@@ -197,7 +197,7 @@ contains
   subroutine create_cylinder(this, v)
     class(cylinder), intent(inout) :: this
     ! type(coordinate), intent(in) :: at
-    real, intent(in) :: v
+    real(kind(1.d0)), intent(in) :: v
     this%value1=v
     ! this%centered_at=at
     this%A=1
@@ -208,7 +208,7 @@ contains
   function surface_equation_cylinder(this, p) result(result1)
     class(cylinder), intent(inout) :: this
     type(coordinate), intent(in) :: p
-    real :: result1
+    real(kind(1.d0)) :: result1
     ! result1=0
     result1=(p%x-this%centered_at%x)**2+(p%y-this%centered_at%y)**2+this%J;
   end function surface_equation_cylinder
@@ -217,11 +217,11 @@ contains
     class(cylinder), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
     type(coordinate) :: centered_at
-    real :: result1, inSqrt
-    real :: sqrtValue
-    real :: optionPositive
-    real :: optionNegative
-    real :: x, y, x0, y0, u, v
+    real(kind(1.d0)) :: result1, inSqrt
+    real(kind(1.d0)) :: sqrtValue
+    real(kind(1.d0)) :: optionPositive
+    real(kind(1.d0)) :: optionNegative
+    real(kind(1.d0)) :: x, y, x0, y0, u, v
 
     ! Equation should be A*(x-x0)*(x-x0)+B*(y-y0)*(y-y0)+J, but A and B are omitted because they are 1.
 

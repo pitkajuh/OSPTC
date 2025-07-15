@@ -5,8 +5,8 @@ module material_type
 
   type, abstract :: material
      integer :: n
-     real :: density
-     real, allocatable :: mu(:, :)
+     real(kind(1.d0)) :: density
+     real(kind(1.d0)), allocatable :: mu(:, :)
      type(tape) :: endf
    contains
      procedure(create_intf), deferred :: create
