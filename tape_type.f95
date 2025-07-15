@@ -17,7 +17,7 @@ contains
   function get_cross_section(this, energy) result(r)
     type(tape), intent(inout) :: this
     real, intent(in) :: energy
-    real :: r, total
+    real(kind(1.d0)) :: r, total
     integer :: i
     real(kind(1.d0)) :: random_value
     real, dimension(4+this%mf23%n_ionization) :: v
@@ -26,50 +26,67 @@ contains
     limits(1)=0.0
     r=linear_interpolation(this%mf23%coherent_scattering%records, energy, this%mf23%coherent_scattering%n)
     v(1)=r
-    limits(2)=r
+    limits(2)=r+limits(1)
     total=total+r
-    print *, "incoherent", r
+    print *, "incoherent", r, limits(2)
 
     r=linear_interpolation(this%mf23%incoherent_scattering%records, energy, this%mf23%incoherent_scattering%n)
     v(2)=r
     limits(3)=limits(2)+r
     total=total+r
-    print *, "coherent", r
+    print *, "coherent", r, limits(3)
 
     r=linear_interpolation(this%mf23%pair_formation_elec%records, energy, this%mf23%pair_formation_elec%n)
     v(3)=r
     total=total+r
     limits(4)=limits(3)+r
-    print *, "pair form elec", r
+    print *, "pair form elec", r, limits(4)
 
     r=linear_interpolation(this%mf23%pair_formation_nuc%records, energy, this%mf23%pair_formation_nuc%n)
     v(4)=r
     total=total+r
     limits(5)=limits(4)+r
-    print *, "pair form nuc", r
+    print *, "pair form nuc", r, limits(5)
 
     do i=1, this%mf23%n_ionization
        r=linear_interpolation(this%mf23%photo_ionization(i)%records, energy, this%mf23%photo_ionization(i)%n)
        v(4+i)=r
        total=total+r
        limits(5+i)=limits(4+i)+r
-       print *, "ionization", i+4, r
+       print *, "ionization", i+4, r, limits(5+i)
     end do
 
-    random_value=std_uniform_distribution()
-
-    print *, "random", random_value
+    ! random_value=std_uniform_distribution()
+    random_value=0.54253607643302337
+    print *, "random", random_value, total
 
     do i=1, 4+this%mf23%n_ionization+1
-       print *, i, limits(i)/total
+       ! print *, i, (limits(i)+limits(i-1))/total
+       print *, i, (limits(i))/total
     end do
+    print *, ""
+    ! do i=2, 4+this%mf23%n_ionization
+    !    ! print *, i, (limits(i)+limits(i-1))/total
+    !    limits
+    !    print *, i, (limits(i))/total
+    ! end do
 
-    do i=2, 4+this%mf23%n_ionization+1
-       if(random_value>=limits(i-1)/total .and. random_value<limits(i)/total .and. limits(i-1)/total/=limits(i)) then
-          print *, i
+    do i=2, 4+this%mf23%n_ionization
+       ! if(random_value>=limits(i-1)/total .and. random_value<limits(i)/total) then
+       if(random_value<limits(i)/total) then
+          ! print *, i, limits(i-1)/total, random_value, limits(i)/total
+          exit
        end if
+       ! if(random_value>=limits(i-1)/total+limits(i)/total &
+       !    .and. random_value<limits(i)/total+limits(i-1)/total .and. limits(i-1)/total+limits(i)/total/=limits(i)) then
+       ! if(random_value>=limits(i-1)/total+limits(i)/total &
+       !      .and. random_value<limits(i)/total+limits(i-1)/total) then
+       !    ! print *, i
+       !    print *, i, limits(i-1)/total+limits(i)/total, limits(i)/total+limits(i-1)/total
+       ! print *, i, limits(i-1)/total+limits(i)/total, limits(i)/total+limits(i-1)/total
+       ! end if
     end do
-
+    print *, i, limits(i-1)/total, random_value, limits(i)/total
   end function get_cross_section
 
   subroutine read_tape(this, tape_name)
