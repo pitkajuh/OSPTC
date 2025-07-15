@@ -29,45 +29,24 @@ contains
     type(tape), intent(inout) :: this
     real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)) :: r, total
-    integer :: i
     real(kind(1.d0)) :: random_value
     real(kind(1.d0)), dimension(4+this%mf23%n_ionization+1) :: limits
+    integer :: i
 
     r=0
     limits(1)=0.0
     total=0
 
-    ! r=linear_interpolation(this%mf23%coherent_scattering%records, energy, this%mf23%coherent_scattering%n)
-    ! limits(2)=r+limits(1)
-    ! total=total+r
-
     call sum1(limits, this%mf23%coherent_scattering%records, energy, this%mf23%coherent_scattering%n, total, 2)
-
-    ! r=linear_interpolation(this%mf23%incoherent_scattering%records, energy, this%mf23%incoherent_scattering%n)
-    ! limits(3)=limits(2)+r
-    ! total=total+r
 
     call sum1(limits, this%mf23%incoherent_scattering%records, energy, this%mf23%incoherent_scattering%n, total, 3)
 
-    ! r=linear_interpolation(this%mf23%pair_formation_elec%records, energy, this%mf23%pair_formation_elec%n)
-    ! total=total+r
-    ! limits(4)=limits(3)+r
-
     call sum1(limits, this%mf23%pair_formation_elec%records, energy, this%mf23%pair_formation_elec%n, total, 4)
-
-    ! r=linear_interpolation(this%mf23%pair_formation_nuc%records, energy, this%mf23%pair_formation_nuc%n)
-    ! total=total+r
-    ! limits(5)=limits(4)+r
 
     call sum1(limits, this%mf23%pair_formation_nuc%records, energy, this%mf23%pair_formation_nuc%n, total, 5)
 
     do i=1, this%mf23%n_ionization
-       ! r=linear_interpolation(this%mf23%photo_ionization(i)%records, energy, this%mf23%photo_ionization(i)%n)
-       ! total=total+r
-       ! limits(5+i)=limits(4+i)+r
-
        call sum1(limits, this%mf23%photo_ionization(i)%records, energy, this%mf23%photo_ionization(i)%n, total, 5+i)
-
     end do
     print *, total
     random_value=std_uniform_distribution()
