@@ -14,60 +14,63 @@ module tape_type
 
 contains
 
+  subroutine sum1(limits, records, energy, n, total, i)
+    real(kind(1.d0)), intent(in) :: energy
+    real(kind(1.d0)) :: r, total
+    real(kind(1.d0)), dimension(:) :: limits
+    integer :: n, i
+    real(kind(1.d0)), allocatable :: records(:, :)
+    r=linear_interpolation(records, energy, n)
+    limits(i)=r+limits(i-1)
+    total=total+r
+  end subroutine sum1
+
   function get_cross_section(this, energy) result(r)
     type(tape), intent(inout) :: this
     real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)) :: r, total
     integer :: i
     real(kind(1.d0)) :: random_value
-    real(kind(1.d0)), dimension(4+this%mf23%n_ionization) :: v
     real(kind(1.d0)), dimension(4+this%mf23%n_ionization+1) :: limits
-    print *, "ENERGY", energy
+
+    r=0
     limits(1)=0.0
-    r=linear_interpolation(this%mf23%coherent_scattering%records, energy, this%mf23%coherent_scattering%n)
-    v(1)=r
-    limits(2)=r+limits(1)
-    total=total+r
-    print *, "incoherent", r
+    total=0
 
-    r=linear_interpolation(this%mf23%incoherent_scattering%records, energy, this%mf23%incoherent_scattering%n)
-    v(2)=r
-    limits(3)=limits(2)+r
-    total=total+r
-    print *, "coherent", r
+    ! r=linear_interpolation(this%mf23%coherent_scattering%records, energy, this%mf23%coherent_scattering%n)
+    ! limits(2)=r+limits(1)
+    ! total=total+r
 
-    r=linear_interpolation(this%mf23%pair_formation_elec%records, energy, this%mf23%pair_formation_elec%n)
-    v(3)=r
-    total=total+r
-    limits(4)=limits(3)+r
-    print *, "pair form elec", r
+    call sum1(limits, this%mf23%coherent_scattering%records, energy, this%mf23%coherent_scattering%n, total, 2)
 
-    r=linear_interpolation(this%mf23%pair_formation_nuc%records, energy, this%mf23%pair_formation_nuc%n)
-    v(4)=r
-    total=total+r
-    limits(5)=limits(4)+r
-    print *, "pair form nuc", r
+    ! r=linear_interpolation(this%mf23%incoherent_scattering%records, energy, this%mf23%incoherent_scattering%n)
+    ! limits(3)=limits(2)+r
+    ! total=total+r
+
+    call sum1(limits, this%mf23%incoherent_scattering%records, energy, this%mf23%incoherent_scattering%n, total, 3)
+
+    ! r=linear_interpolation(this%mf23%pair_formation_elec%records, energy, this%mf23%pair_formation_elec%n)
+    ! total=total+r
+    ! limits(4)=limits(3)+r
+
+    call sum1(limits, this%mf23%pair_formation_elec%records, energy, this%mf23%pair_formation_elec%n, total, 4)
+
+    ! r=linear_interpolation(this%mf23%pair_formation_nuc%records, energy, this%mf23%pair_formation_nuc%n)
+    ! total=total+r
+    ! limits(5)=limits(4)+r
+
+    call sum1(limits, this%mf23%pair_formation_nuc%records, energy, this%mf23%pair_formation_nuc%n, total, 5)
 
     do i=1, this%mf23%n_ionization
-       r=linear_interpolation(this%mf23%photo_ionization(i)%records, energy, this%mf23%photo_ionization(i)%n)
-       v(4+i)=r
-       total=total+r
-       limits(5+i)=limits(4+i)+r
-       print *, "ionization", i+4, r
+       ! r=linear_interpolation(this%mf23%photo_ionization(i)%records, energy, this%mf23%photo_ionization(i)%n)
+       ! total=total+r
+       ! limits(5+i)=limits(4+i)+r
+
+       call sum1(limits, this%mf23%photo_ionization(i)%records, energy, this%mf23%photo_ionization(i)%n, total, 5+i)
+
     end do
-
+    print *, total
     random_value=std_uniform_distribution()
-
-    random_value=0.90916407854021808
-    ! random_value=0.95994811417603576
-    ! random_value=0.97377273156984423
-    print *, "random", random_value, total
-
-    ! do i=1, 4+this%mf23%n_ionization+1
-    !    ! print *, i, (limits(i)+limits(i-1))/total
-    !    print *, i, (limits(i))/total
-    ! end do
-    print *, ""
 
     do i=2, 4+this%mf23%n_ionization
        if(random_value<limits(i)/total) exit

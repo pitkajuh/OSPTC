@@ -37,8 +37,8 @@ program main
   !    print *, i, steel1%endf%mf23%pair_formation_elec%records(1, i), steel1%endf%mf23%pair_formation_elec%records(2, i)
   ! end do
 
-  val=get_cross_section(steel1%endf, rng(1.0_8, 1e9_8))
-  ! val=get_cross_section(steel1%endf, 687018944.0_8)
+  ! val=get_cross_section(steel1%endf, rng(1.0_8, 1e9_8))
+  val=get_cross_section(steel1%endf, 738554597.65174651_8)
   ! val=get_cross_section(steel1%endf, 922858368.0)
   ! val=get_cross_section(steel1%endf, 8.209905920)
   ! print *, ""
