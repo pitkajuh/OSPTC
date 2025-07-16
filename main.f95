@@ -57,6 +57,7 @@ program main
   ! point=coordinate(t, t, t)
   point1=coordinate(t1, t1, t1)
   a1=create(10.0_8, 2.0_8, point1)
+  print *, a1%surface_equation(point1)
   ! call show(point)
   ! call show(point1)
   ! ! print *, point-point1

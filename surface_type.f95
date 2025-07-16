@@ -83,13 +83,9 @@ contains
   function get_surface_test(v)
     real(kind(1.d0)) :: v
     logical :: get_surface_test
-
+    get_surface_test=.false.
     ! Return true if the point is inside(<0) or on(==0) the surface.
-    if(v<=0) then
-       get_surface_test=.true.
-    else
-       get_surface_test=.false.
-    end if
+    if(v<=0) get_surface_test=.true.
   end function get_surface_test
 
   subroutine create_planex(this, v)
@@ -111,12 +107,8 @@ contains
     class(planex), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
     real(kind(1.d0)) :: result1
-
-    if(to%x==0) then
-       result1=-1
-    else
-       result1=-(from%x+this%J)/to%x
-    end if
+    result1=-(from%x+this%J)/to%x
+    if(to%x==0) result1=-1
   end function surface_distance_x
 
   function surface_test_x(this, p) result(result1)
@@ -145,12 +137,8 @@ contains
     class(planey), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
     real(kind(1.d0)) :: result1
-
-    if(to%y==0) then
-       result1=-1
-    else
-       result1=-(from%y+this%J)/to%y
-    end if
+    result1=-(from%y+this%J)/to%y
+    if(to%y==0) result1=-1
   end function surface_distance_y
 
   function surface_test_y(this, p) result(result1)
@@ -179,12 +167,8 @@ contains
     class(planez), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
     real(kind(1.d0)) :: result1
-
-    if(to%z==0) then
-       result1=-1
-    else
-       result1=-(from%z+this%J)/to%z
-    end if
+    result1=-(from%z+this%J)/to%z
+    if(to%z==0) result1=-1
   end function surface_distance_z
 
   function surface_test_z(this, p) result(result1)
@@ -240,14 +224,13 @@ contains
     else
        option_positive=(-L+in_sqrt**0.5)/(2*M)
        option_negative=(-L-in_sqrt**0.5)/(2*M)
+       result1=option_negative
 
        if(option_positive<0 .and. option_negative<0) then
           ! No solution exists, the surface is away from line-of-sight.
           result1=-1
        else if(option_positive>0 .and. option_negative<0 .and. option_positive>option_negative) then
           result1=option_positive
-       else
-          result1=option_negative
        end if
     end if
   end function surface_distance_cylinder
@@ -278,6 +261,5 @@ contains
     class(surface), allocatable :: cyl
     allocate(cylinder :: cyl)
     cyl=cylinder(value1, value2, centered_at)
-    ! call cyl%create(value1, centered_at)
   end function create_cylinder1
 end module surface_creator
