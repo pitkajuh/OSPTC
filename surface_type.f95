@@ -9,67 +9,67 @@ module surface_type
    contains
      ! procedure(create_interface), deferred :: create
      ! procedure(create_interface), deferred :: create
-     ! procedure(create_surface_equation), deferred :: surface_equation
-     ! procedure(create_surface_distance), deferred :: surface_distance
-     ! procedure(create_surface_test), deferred :: surface_test
+     procedure(create_surface_equation), deferred :: surface_equation
+     procedure(create_surface_distance), deferred :: surface_distance
+     procedure(create_surface_test), deferred :: surface_test
   end type surface
 
-  ! abstract interface
-     ! subroutine create_interface(this, v)
+  abstract interface
+     subroutine create_interface(this, v)
      ! subroutine create_interface(this)
-     !   import :: surface
-     !   class(surface), intent(in) :: this
-     !   ! real(kind(1.d0)), intent(in) :: v
-     ! end subroutine create_interface
+       import :: surface
+       class(surface), intent(in) :: this
+       ! real(kind(1.d0)), intent(in) :: v
+     end subroutine create_interface
 
-     ! function create_surface_equation(this, p) result(result1)
-     !   use coordinate_type
-     !   import surface
-     !   class(surface), intent(inout) :: this
-     !   type(coordinate), intent(in) :: p
-     !   real(kind(1.d0)) :: result1
-     ! end function create_surface_equation
+     function create_surface_equation(this, p) result(result1)
+       use coordinate_type
+       import surface
+       class(surface), intent(inout) :: this
+       type(coordinate), intent(in) :: p
+       real(kind(1.d0)) :: result1
+     end function create_surface_equation
 
-     ! function create_surface_distance(this, from, to) result(result1)
-     !   use coordinate_type
-     !   import surface
-     !   class(surface), intent(inout) :: this
-     !   type(coordinate), intent(in) :: from, to
-     !   real(kind(1.d0)) :: result1
-     ! end function create_surface_distance
+     function create_surface_distance(this, from, to) result(result1)
+       use coordinate_type
+       import surface
+       class(surface), intent(inout) :: this
+       type(coordinate), intent(in) :: from, to
+       real(kind(1.d0)) :: result1
+     end function create_surface_distance
 
-     ! function create_surface_test(this, p) result(result1)
-     !   use coordinate_type
-     !   import surface
-     !   class(surface), intent(inout) :: this
-     !   type(coordinate), intent(in) :: p
-     !   logical :: result1
-     ! end function create_surface_test
-  ! end interface
+     function create_surface_test(this, p) result(result1)
+       use coordinate_type
+       import surface
+       class(surface), intent(inout) :: this
+       type(coordinate), intent(in) :: p
+       logical :: result1
+     end function create_surface_test
+  end interface
 
   type, extends(surface) :: planex
    contains
      procedure, pass :: create => create_planex
-     ! procedure, pass :: surface_equation => surface_equation_x
-     ! procedure, pass :: surface_distance => surface_distance_x
-     ! procedure, pass :: surface_test => surface_test_x
+     procedure, pass :: surface_equation => surface_equation_x
+     procedure, pass :: surface_distance => surface_distance_x
+     procedure, pass :: surface_test => surface_test_x
   end type planex
 
   type, extends(surface) :: planey
    contains
      procedure, pass :: create => create_planey
-     ! procedure, pass :: surface_equation => surface_equation_y
-     ! procedure, pass :: surface_distance => surface_distance_y
-     ! procedure, pass :: surface_test => surface_test_y
+     procedure, pass :: surface_equation => surface_equation_y
+     procedure, pass :: surface_distance => surface_distance_y
+     procedure, pass :: surface_test => surface_test_y
   end type planey
 
   type, extends(surface) :: planez
    contains
      ! procedure, pass :: create => create_planez
      procedure :: create => create_planez
-     ! procedure, pass :: surface_equation => surface_equation_z
-     ! procedure, pass :: surface_distance => surface_distance_z
-     ! procedure, pass :: surface_test => surface_test_z
+     procedure, pass :: surface_equation => surface_equation_z
+     procedure, pass :: surface_distance => surface_distance_z
+     procedure, pass :: surface_test => surface_test_z
   end type planez
 
   type, extends(surface) :: cylinder
@@ -78,9 +78,9 @@ module surface_type
    contains
      ! procedure, pass :: create => create_cylinder
      procedure :: create => create_cylinder
-     ! procedure, pass :: surface_equation => surface_equation_cylinder
-     ! procedure, pass :: surface_distance => surface_distance_cylinder
-     ! procedure, pass :: surface_test => surface_test_cylinder
+     procedure, pass :: surface_equation => surface_equation_cylinder
+     procedure, pass :: surface_distance => surface_distance_cylinder
+     procedure, pass :: surface_test => surface_test_cylinder
   end type cylinder
 
 contains
