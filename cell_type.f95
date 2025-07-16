@@ -73,12 +73,11 @@ contains
     b4=this%wally_positive%surface_test(p)
     b5=.not. this%wallz_negative%surface_test(p)
     b6=this%wallz_positive%surface_test(p)
+    result1=.false.
 
     if(b1 .and. b2 .and. b3 .and. b4 .and. b4 .and. b5 .and. b6) then
        this%hits=this%hits+1
        result1=.true.
-    else
-       result1=.false.
     end if
   end function cell_test_box
 
@@ -121,12 +120,10 @@ contains
     b1=.not. this%surface_cylinder%surface_test(p)
     b2=this%wallz_positive%surface_test(p)
     b3=.not. this%wallz_negative%surface_test(p)
-
+    result1=.false.
     if(b1 .and. b2 .and. b3) then
        this%hits=this%hits+1
        result1=.true.
-    else
-       result1=.false.
     end if
   end function cell_test_cylinder_z
 
