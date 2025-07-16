@@ -4,6 +4,7 @@ program main
   use tape_type
   use radionuclide_type
   use material_type
+  use surface_creator
   implicit none
 
   integer :: res, i
@@ -19,6 +20,12 @@ program main
   ! type(steel) :: steel1
   class(material), allocatable :: steel1
   real(kind(1.d0)) :: c
+
+  ! allocate(cylinder :: a1)
+  ! call a1%create()
+
+
+
 
   allocate(steel :: steel1)
   call steel1%create()
@@ -48,7 +55,8 @@ program main
   ! t=std_uniform_distribution()
   ! t1=std_uniform_distribution()
   ! point=coordinate(t, t, t)
-  ! point1=coordinate(t1, t1, t1)
+  point1=coordinate(t1, t1, t1)
+  a1=create(10.0_8, point1)
   ! call show(point)
   ! call show(point1)
   ! ! print *, point-point1
