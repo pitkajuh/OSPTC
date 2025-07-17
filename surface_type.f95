@@ -10,11 +10,6 @@ module surface_type
   end type surface
 
   abstract interface
-     ! subroutine create_interface(this)
-     !   import :: surface
-     !   class(surface), intent(in) :: this
-     ! end subroutine create_interface
-
      function create_surface_equation(this, p) result(result1)
        use coordinate_type
        import surface
@@ -43,7 +38,6 @@ module surface_type
   type, extends(surface) :: planex
      real(kind(1.d0)) :: v, G, J
    contains
-     ! procedure :: create => create_planex
      procedure, pass :: surface_equation => surface_equation_x
      procedure, pass :: surface_distance => surface_distance_x
      procedure, pass :: surface_test => surface_test_x
@@ -52,7 +46,6 @@ module surface_type
   type, extends(surface) :: planey
      real(kind(1.d0)) :: v, H, J
    contains
-     ! procedure :: create => create_planey
      procedure, pass :: surface_equation => surface_equation_y
      procedure, pass :: surface_distance => surface_distance_y
      procedure, pass :: surface_test => surface_test_y
@@ -61,7 +54,6 @@ module surface_type
   type, extends(surface) :: planez
      real(kind(1.d0)) :: v, I, J
    contains
-     ! procedure :: create => create_planez
      procedure, pass :: surface_equation => surface_equation_z
      procedure, pass :: surface_distance => surface_distance_z
      procedure, pass :: surface_test => surface_test_z
@@ -71,8 +63,6 @@ module surface_type
      real(kind(1.d0)) :: v, J
      type(coordinate) :: centered_at
    contains
-     ! procedure, pass :: create => create_cylinder
-     ! procedure :: create => create_cylinder
      procedure, pass :: surface_equation => surface_equation_cylinder
      procedure, pass :: surface_distance => surface_distance_cylinder
      procedure, pass :: surface_test => surface_test_cylinder
