@@ -50,4 +50,25 @@ contains
     print *, i-1, limits(i-1)/total, random_value, limits(i)/total
     reaction_id=i-1
   end function select_reaction
+
+  subroutine reaction_function(endf, energy)
+    type(tape), intent(inout) :: endf
+    real(kind(1.d0)), intent(in) :: energy
+    integer :: reaction_id
+    reaction_id=select_reaction(endf, energy)
+
+    select case (reaction_id)
+    case(1)
+       print *, "coherent scattering"
+    case(2)
+       print *, "incoherent scattering"
+    case(3)
+       print *, "pair formation in electric field"
+    case(4)
+       print *, "pair formation in nuclear field"
+    case default
+       print *, "ionization", reaction_id
+    end select
+  end subroutine reaction_function
+
 end module physics_routine

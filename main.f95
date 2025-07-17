@@ -44,8 +44,8 @@ program main
   !    print *, i, steel1%endf%mf23%pair_formation_elec%records(1, i), steel1%endf%mf23%pair_formation_elec%records(2, i)
   ! end do
 
-  reac=select_reaction(steel1%endf, rng(1.0_8, 1e9_8))
-  print *, reac
+  call reaction_function(steel1%endf, rng(1.0_8, 1e9_8))
+  ! print *, reac
   ! t=std_uniform_distribution()
   ! t1=std_uniform_distribution()
   ! point=coordinate(t, t, t)
