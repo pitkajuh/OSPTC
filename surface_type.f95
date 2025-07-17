@@ -10,10 +10,10 @@ module surface_type
   end type surface
 
   abstract interface
-     subroutine create_interface(this)
-       import :: surface
-       class(surface), intent(in) :: this
-     end subroutine create_interface
+     ! subroutine create_interface(this)
+     !   import :: surface
+     !   class(surface), intent(in) :: this
+     ! end subroutine create_interface
 
      function create_surface_equation(this, p) result(result1)
        use coordinate_type
@@ -43,7 +43,7 @@ module surface_type
   type, extends(surface) :: planex
      real(kind(1.d0)) :: v, G, J
    contains
-     procedure :: create => create_planex
+     ! procedure :: create => create_planex
      procedure, pass :: surface_equation => surface_equation_x
      procedure, pass :: surface_distance => surface_distance_x
      procedure, pass :: surface_test => surface_test_x
@@ -52,7 +52,7 @@ module surface_type
   type, extends(surface) :: planey
      real(kind(1.d0)) :: v, H, J
    contains
-     procedure :: create => create_planey
+     ! procedure :: create => create_planey
      procedure, pass :: surface_equation => surface_equation_y
      procedure, pass :: surface_distance => surface_distance_y
      procedure, pass :: surface_test => surface_test_y
@@ -61,7 +61,7 @@ module surface_type
   type, extends(surface) :: planez
      real(kind(1.d0)) :: v, I, J
    contains
-     procedure :: create => create_planez
+     ! procedure :: create => create_planez
      procedure, pass :: surface_equation => surface_equation_z
      procedure, pass :: surface_distance => surface_distance_z
      procedure, pass :: surface_test => surface_test_z
@@ -72,7 +72,7 @@ module surface_type
      type(coordinate) :: centered_at
    contains
      ! procedure, pass :: create => create_cylinder
-     procedure :: create => create_cylinder
+     ! procedure :: create => create_cylinder
      procedure, pass :: surface_equation => surface_equation_cylinder
      procedure, pass :: surface_distance => surface_distance_cylinder
      procedure, pass :: surface_test => surface_test_cylinder
@@ -107,8 +107,8 @@ contains
     class(planex), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
     real(kind(1.d0)) :: result1
-    result1=-(from%x+this%J)/to%x
-    if(to%x==0) result1=-1
+    result1=-1
+    if(to%x>0) result1=-(from%x+this%J)/to%x
   end function surface_distance_x
 
   function surface_test_x(this, p) result(result1)
@@ -137,8 +137,8 @@ contains
     class(planey), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
     real(kind(1.d0)) :: result1
-    result1=-(from%y+this%J)/to%y
-    if(to%y==0) result1=-1
+    result1=-1
+    if(to%y>0) result1=-(from%y+this%J)/to%y
   end function surface_distance_y
 
   function surface_test_y(this, p) result(result1)
@@ -167,8 +167,8 @@ contains
     class(planez), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
     real(kind(1.d0)) :: result1
-    result1=-(from%z+this%J)/to%z
-    if(to%z==0) result1=-1
+    result1=-1
+    if(to%z>0) result1=-(from%z+this%J)/to%z
   end function surface_distance_z
 
   function surface_test_z(this, p) result(result1)
@@ -191,7 +191,7 @@ contains
     class(cylinder), intent(inout) :: this
     type(coordinate), intent(in) :: p
     real(kind(1.d0)) :: result1
-    result1=(p%x-this%centered_at%x)**2+(p%y-this%centered_at%y)**2+this%J;
+    result1=(p%x-this%centered_at%x)**2+(p%y-this%centered_at%y)**2+this%J
   end function surface_equation_cylinder
 
   function surface_distance_cylinder(this, from, to) result(result1)
@@ -213,14 +213,14 @@ contains
     u=to%x
     v=to%y
 
-    K=(x-x0)**2+(y-y0)**2+this%J;
-    L=2*(u*(x-x0)+v*(y-y0));
-    M=u*u+v*v;
+    K=(x-x0)**2+(y-y0)**2+this%J
+    L=2*(u*(x-x0)+v*(y-y0))
+    M=u*u+v*v
 
-    in_sqrt=L*L-4*M*K;
+    in_sqrt=L*L-4*M*K
 
     if(in_sqrt<0 .or. M==0) then
-       result1=-1;
+       result1=-1
     else
        option_positive=(-L+in_sqrt**0.5)/(2*M)
        option_negative=(-L-in_sqrt**0.5)/(2*M)
@@ -243,23 +243,3 @@ contains
   end function surface_test_cylinder
 
 end module surface_type
-
-module surface_creator
-  use surface_type, only: surface, cylinder
-  use coordinate_type
-  implicit none
-
-  interface create
-     module procedure create_cylinder1
-  end interface create
-
-contains
-
-  function create_cylinder1(value1, value2, centered_at) result(cyl)
-    type(coordinate), intent(in) :: centered_at
-    real(kind(1.d0)), intent(in) :: value1, value2
-    class(surface), allocatable :: cyl
-    allocate(cylinder :: cyl)
-    cyl=cylinder(value1, value2, centered_at)
-  end function create_cylinder1
-end module surface_creator

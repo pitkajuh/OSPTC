@@ -4,7 +4,7 @@ program main
   use tape_type
   use radionuclide_type
   use material_type
-  use surface_creator
+  ! use surface_creator
   implicit none
 
   integer :: res, i
@@ -56,7 +56,7 @@ program main
   ! t1=std_uniform_distribution()
   ! point=coordinate(t, t, t)
   point1=coordinate(t1, t1, t1)
-  a1=create(10.0_8, 2.0_8, point1)
+  a1=cylinder(10.0_8, 2.0_8, point1)
   print *, a1%surface_equation(point1)
   ! call show(point)
   ! call show(point1)
