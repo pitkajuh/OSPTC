@@ -23,10 +23,21 @@ contains
     r=energy/(1+(energy/0.51099895069e6_8)*(1-mu))
   end function energyprimev
 
+  function klein_nishina(energy, mu) result(r)
+    real(kind(1.d0)), intent(in) :: energy, mu
+    real(kind(1.d0)) :: r, energyprime, k, kprime, kk, muprime
+    energyprime=energyprimev(energy, mu)
+    k=energy/0.51099895069E+06_8
+    kprime=energyprime/0.51099895069E+06_8
+    kk=kprime/k
+    muprime=1-mu
+    r=3.14159265_8*2.8179403227E-15_8*2.8179403227E-15_8*kk*kk*(1+mu*mu+k*kprime*muprime*muprime)
+  end function klein_nishina
+
   function dsigmadmu(energy, mu, v) result(r)
     real(kind(1.d0)), intent(in) :: energy, mu, v
     real(kind(1.d0)) :: r
-    r=v!*klein_nishina(energy, mu)
+    r=v*klein_nishina(energy, mu)
   end function dsigmadmu
 
   function d2sigmaEdmu(energy, energyprime, mu, width, v) result(r)
