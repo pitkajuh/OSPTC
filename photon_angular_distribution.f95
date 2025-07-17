@@ -53,12 +53,43 @@ contains
     integer :: i
     real(kind(1.d0)) :: incoherent_function_value
 
-
     do i=1, n1
        print *, i, incoherent(1, i), incoherent(2, i)
        ! incoherent_function_value=linear_interpolation(incoherent_function, x(incoherent(1, i), mu), n2)
     end do
 
   end subroutine create_incoherent
+
+  function thomson(mu) result(r)
+    real(kind(1.d0)), intent(in) :: mu
+    real(kind(1.d0)) :: r
+    r=3.14159265*2.8179403227E-15_8*2.8179403227E-15_8*(1+mu*mu)
+  end function thomson
+
+  function dsigmadmu_coherent(energy, mu, F, Fprime, Fprimeprime) result(r)
+    real(kind(1.d0)), intent(in) :: energy, mu, F, Fprime, Fprimeprime
+    real(kind(1.d0)) :: r, FF
+    ! F=coherentFactor->GetLibraryValue(x(E, mu), 502);
+    ! F=linear_interpolation(coherent_function, x(E, mu), n2)
+    ! Fprime=realFactor->GetLibraryValue(E, 506);
+    ! Fprimeprime=imaginaryFactor->GetLibraryValue(E, 505);
+    FF=F+Fprime;
+    r=thomson(mu)*(FF*FF+Fprimeprime*Fprimeprime)
+  end function dsigmadmu_coherent
+
+  function d2sigmaEdmu_coherent(energy, energyprime, mu, width, F, Fprime, Fprimeprime) result(r)
+    real(kind(1.d0)), intent(in) :: energy, energyprime, mu, width, F, Fprime, Fprimeprime
+    real(kind(1.d0)) :: r
+    r=dsigmadmu_coherent(energy, mu, F, Fprime, Fprimeprime)*dirac_delta(energyprime-energy, width)
+  end function d2sigmaEdmu_coherent
+
+  subroutine create_coherent(coherent, coherent_factor, real_factor, imaginary_factor, n1, n2, n3, n4)
+    real(kind(1.d0)), allocatable :: coherent(:, :)
+    real(kind(1.d0)), allocatable :: coherent_factor(:, :)
+    real(kind(1.d0)), allocatable :: real_factor(:, :)
+    real(kind(1.d0)), allocatable :: imaginary_factor(:, :)
+    integer, intent(in) :: n1, n2, n3, n4
+    real(kind(1.d0)) :: F, Fprime, Fprimeprime
+  end subroutine create_coherent
 
 end module photon_angular_distribution
