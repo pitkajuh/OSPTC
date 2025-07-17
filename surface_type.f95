@@ -198,39 +198,28 @@ contains
     class(cylinder), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
     type(coordinate) :: centered_at
-    real(kind(1.d0)) :: result1, in_sqrt
-    real(kind(1.d0)) :: option_positive
-    real(kind(1.d0)) :: option_negative
-    real(kind(1.d0)) :: x, y, x0, y0, u, v, K, L, M
+    real(kind(1.d0)) :: result1, in_sqrt, positive, negative, K, L, M
 
     ! Equation should be A*(x-x0)*(x-x0)+B*(y-y0)*(y-y0)+J, but A and B are omitted because they are 1.
 
-    x=from%x
-    y=from%y
-    x0=centered_at%x
-    y0=centered_at%y
-    ! Direction vector by using direction cosine.
-    u=to%x
-    v=to%y
-
-    K=(x-x0)**2+(y-y0)**2+this%J
-    L=2*(u*(x-x0)+v*(y-y0))
-    M=u*u+v*v
+    K=(from%x-centered_at%x)**2+(from%y-centered_at%y)**2+this%J
+    L=2*(to%x*(from%x-centered_at%x)+to%y*(from%y-centered_at%y))
+    M=to%x*to%x+to%y*to%y
 
     in_sqrt=L*L-4*M*K
 
     if(in_sqrt<0 .or. M==0) then
        result1=-1
     else
-       option_positive=(-L+in_sqrt**0.5)/(2*M)
-       option_negative=(-L-in_sqrt**0.5)/(2*M)
-       result1=option_negative
+       positive=(-L+in_sqrt**0.5)/(2*M)
+       negative=(-L-in_sqrt**0.5)/(2*M)
+       result1=negative
 
-       if(option_positive<0 .and. option_negative<0) then
+       if(positive<0 .and. negative<0) then
           ! No solution exists, the surface is away from line-of-sight.
           result1=-1
-       else if(option_positive>0 .and. option_negative<0 .and. option_positive>option_negative) then
-          result1=option_positive
+       else if(positive>0 .and. negative<0 .and. positive>negative) then
+          result1=positive
        end if
     end if
   end function surface_distance_cylinder
