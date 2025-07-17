@@ -4,6 +4,7 @@ program main
   use tape_type
   use radionuclide_type
   use material_type
+  use physics_routine
   implicit none
 
   integer :: res, i
@@ -19,7 +20,7 @@ program main
   ! type(steel) :: steel1
   class(material), allocatable :: steel1
   real(kind(1.d0)) :: c
-
+  integer :: reac
   ! allocate(cylinder :: a1)
   ! call a1%create()
 
@@ -43,8 +44,8 @@ program main
   !    print *, i, steel1%endf%mf23%pair_formation_elec%records(1, i), steel1%endf%mf23%pair_formation_elec%records(2, i)
   ! end do
 
-  val=get_cross_section(steel1%endf, rng(1.0_8, 1e9_8))
-
+  reac=select_reaction(steel1%endf, rng(1.0_8, 1e9_8))
+  print *, reac
   ! t=std_uniform_distribution()
   ! t1=std_uniform_distribution()
   ! point=coordinate(t, t, t)

@@ -14,48 +14,48 @@ module tape_type
 
 contains
 
-  subroutine sum1(limits, records, energy, n, total, i)
-    real(kind(1.d0)), intent(in) :: energy
-    real(kind(1.d0)) :: r, total
-    real(kind(1.d0)), dimension(:) :: limits
-    integer :: n, i
-    real(kind(1.d0)), allocatable :: records(:, :)
-    r=linear_interpolation(records, energy, n)
-    limits(i)=r+limits(i-1)
-    total=total+r
-  end subroutine sum1
+  ! subroutine sum1(limits, records, energy, n, total, i)
+  !   real(kind(1.d0)), intent(in) :: energy
+  !   real(kind(1.d0)) :: r, total
+  !   real(kind(1.d0)), dimension(:) :: limits
+  !   integer :: n, i
+  !   real(kind(1.d0)), allocatable :: records(:, :)
+  !   r=linear_interpolation(records, energy, n)
+  !   limits(i)=r+limits(i-1)
+  !   total=total+r
+  ! end subroutine sum1
 
-  function get_cross_section(this, energy) result(r)
-    type(tape), intent(inout) :: this
-    real(kind(1.d0)), intent(in) :: energy
-    real(kind(1.d0)) :: r, total, random_value
-    real(kind(1.d0)), dimension(4+this%mf23%n_ionization+1) :: limits
-    integer :: i
+  ! function get_cross_section(this, energy) result(r)
+  !   type(tape), intent(inout) :: this
+  !   real(kind(1.d0)), intent(in) :: energy
+  !   real(kind(1.d0)) :: r, total, random_value
+  !   real(kind(1.d0)), dimension(4+this%mf23%n_ionization+1) :: limits
+  !   integer :: i
 
-    r=0
-    limits(1)=0.0
-    total=0
+  !   r=0
+  !   limits(1)=0.0
+  !   total=0
 
-    call sum1(limits, this%mf23%coherent_scattering%records, energy, this%mf23%coherent_scattering%n, total, 2)
+  !   call sum1(limits, this%mf23%coherent_scattering%records, energy, this%mf23%coherent_scattering%n, total, 2)
 
-    call sum1(limits, this%mf23%incoherent_scattering%records, energy, this%mf23%incoherent_scattering%n, total, 3)
+  !   call sum1(limits, this%mf23%incoherent_scattering%records, energy, this%mf23%incoherent_scattering%n, total, 3)
 
-    call sum1(limits, this%mf23%pair_formation_elec%records, energy, this%mf23%pair_formation_elec%n, total, 4)
+  !   call sum1(limits, this%mf23%pair_formation_elec%records, energy, this%mf23%pair_formation_elec%n, total, 4)
 
-    call sum1(limits, this%mf23%pair_formation_nuc%records, energy, this%mf23%pair_formation_nuc%n, total, 5)
+  !   call sum1(limits, this%mf23%pair_formation_nuc%records, energy, this%mf23%pair_formation_nuc%n, total, 5)
 
-    do i=1, this%mf23%n_ionization
-       call sum1(limits, this%mf23%photo_ionization(i)%records, energy, this%mf23%photo_ionization(i)%n, total, 5+i)
-    end do
+  !   do i=1, this%mf23%n_ionization
+  !      call sum1(limits, this%mf23%photo_ionization(i)%records, energy, this%mf23%photo_ionization(i)%n, total, 5+i)
+  !   end do
 
-    random_value=std_uniform_distribution()
+  !   random_value=std_uniform_distribution()
 
-    do i=2, 4+this%mf23%n_ionization
-       if(random_value<limits(i)/total) exit
-    end do
+  !   do i=2, 4+this%mf23%n_ionization
+  !      if(random_value<limits(i)/total) exit
+  !   end do
 
-    print *, i, limits(i-1)/total, random_value, limits(i)/total
-  end function get_cross_section
+  !   print *, i, limits(i-1)/total, random_value, limits(i)/total
+  ! end function get_cross_section
 
   subroutine read_tape(this, tape_name)
     type(tape) :: this
