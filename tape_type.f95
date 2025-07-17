@@ -28,8 +28,7 @@ contains
   function get_cross_section(this, energy) result(r)
     type(tape), intent(inout) :: this
     real(kind(1.d0)), intent(in) :: energy
-    real(kind(1.d0)) :: r, total
-    real(kind(1.d0)) :: random_value
+    real(kind(1.d0)) :: r, total, random_value
     real(kind(1.d0)), dimension(4+this%mf23%n_ionization+1) :: limits
     integer :: i
 
@@ -48,7 +47,7 @@ contains
     do i=1, this%mf23%n_ionization
        call sum1(limits, this%mf23%photo_ionization(i)%records, energy, this%mf23%photo_ionization(i)%n, total, 5+i)
     end do
-    print *, total
+
     random_value=std_uniform_distribution()
 
     do i=2, 4+this%mf23%n_ionization
