@@ -89,7 +89,12 @@ contains
     real(kind(1.d0)), allocatable :: real_factor(:, :)
     real(kind(1.d0)), allocatable :: imaginary_factor(:, :)
     integer, intent(in) :: n1, n2, n3, n4
-    real(kind(1.d0)) :: F, Fprime, Fprimeprime
+    real(kind(1.d0)) :: F, Fprime, Fprimeprime, energy, mu
+    energy=10.0_8
+    mu=0.5_8
+    F=linear_interpolation(coherent_factor, x(energy, mu), n2)
+    Fprime=linear_interpolation(real_factor, energy, n3)
+    Fprimeprime=linear_interpolation(imaginary_factor, energy, n4)
   end subroutine create_coherent
 
 end module photon_angular_distribution

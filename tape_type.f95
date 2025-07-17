@@ -31,7 +31,17 @@ contains
     ! create incoherent angular distribution
     call create_incoherent(this%mf23%incoherent_scattering%records, &
          this%mf27%incoherent_function%records, &
-         this%mf23%incoherent_scattering%n, this%mf27%incoherent_function%n)
+         this%mf23%incoherent_scattering%n, &
+         this%mf27%incoherent_function%n)
+
+    call create_coherent(this%mf27%coherent_factor%records, &
+         this%mf27%incoherent_function%records, &
+         this%mf27%imaginary_factor%records, &
+         this%mf27%real_factor%records, &
+         this%mf27%coherent_factor%n, &
+         this%mf27%incoherent_function%n, &
+         this%mf27%imaginary_factor%n, &
+         this%mf27%real_factor%n)
   end subroutine read_tape
 
   subroutine read_begin(this, z, ios)
