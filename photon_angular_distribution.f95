@@ -69,10 +69,6 @@ contains
   function dsigmadmu_coherent(energy, mu, F, Fprime, Fprimeprime) result(r)
     real(kind(1.d0)), intent(in) :: energy, mu, F, Fprime, Fprimeprime
     real(kind(1.d0)) :: r, FF
-    ! F=coherentFactor->GetLibraryValue(x(E, mu), 502);
-    ! F=linear_interpolation(coherent_function, x(E, mu), n2)
-    ! Fprime=realFactor->GetLibraryValue(E, 506);
-    ! Fprimeprime=imaginaryFactor->GetLibraryValue(E, 505);
     FF=F+Fprime;
     r=thomson(mu)*(FF*FF+Fprimeprime*Fprimeprime)
   end function dsigmadmu_coherent
@@ -89,12 +85,22 @@ contains
     real(kind(1.d0)), allocatable :: real_factor(:, :)
     real(kind(1.d0)), allocatable :: imaginary_factor(:, :)
     integer, intent(in) :: n1, n2, n3, n4
-    real(kind(1.d0)) :: F, Fprime, Fprimeprime, energy, mu
+    real(kind(1.d0)) :: F, Fprime, Fprimeprime, energy, mu, deltax, a1
+    integer :: i
     energy=10.0_8
     mu=0.5_8
     F=linear_interpolation(coherent_factor, x(energy, mu), n2)
     Fprime=linear_interpolation(real_factor, energy, n3)
     Fprimeprime=linear_interpolation(imaginary_factor, energy, n4)
+
+    deltax=coherent_factor(2, n2)
+    print *, deltax/n2
+    do i=2, n2
+       ! print *, coherent_factor(1, i), coherent_factor(2, i)
+       a1=0.5*deltax*(coherent_factor(2, i)+coherent_factor(2, i-1))
+       print *, a1
+    end do
+
   end subroutine create_coherent
 
 end module photon_angular_distribution
