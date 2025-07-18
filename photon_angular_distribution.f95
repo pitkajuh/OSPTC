@@ -83,18 +83,18 @@ contains
   function F1(x1, coherent_factor, n2) result(r)
     real(kind(1.d0)), intent(in) :: x1
     integer, intent(in) :: n2
-    real(kind(1.d0)), allocatable :: coherent_factor(:, :)
+    real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)) :: r
     r=linear_interpolation(coherent_factor, x1, n2)
   end function F1
 
   subroutine create_coherent(coherent, coherent_factor, real_factor, imaginary_factor, n1, n2, n3, n4)
-    real(kind(1.d0)), allocatable :: coherent(:, :)
-    real(kind(1.d0)), allocatable :: coherent_factor(:, :)
-    real(kind(1.d0)), allocatable :: real_factor(:, :)
-    real(kind(1.d0)), allocatable :: imaginary_factor(:, :)
+    real(kind(1.d0)), intent(in), allocatable :: coherent(:, :)
+    real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
+    real(kind(1.d0)), intent(in), allocatable :: real_factor(:, :)
+    real(kind(1.d0)), intent(in), allocatable :: imaginary_factor(:, :)
     integer, intent(in) :: n1, n2, n3, n4
-    real(kind(1.d0)) :: Fprime, Fprimeprime, energy, deltamu, a1, e, mu, x1, deltae, hc, deltatheta, theta, elim, f
+    real(kind(1.d0)) :: Fprime, Fprimeprime, energy, deltamu, a1, e, mu, x1, deltae, hc, elim, f
     integer :: i, j
     hc=4.135667696e-15_8*299792458.0_8
     energy=10.0_8
@@ -103,12 +103,11 @@ contains
     ! Fprime=linear_interpolation(real_factor, energy, n3)
     ! Fprimeprime=linear_interpolation(imaginary_factor, energy, n4)
     deltae=100!coherent_factor(1, n2)/n2
-    ! deltax=2/n2
     e=deltae
     mu=0.0
     deltamu=-1/n2
     elim=2.00E6_8
-    ! theta=0.0
+
     x1=0.0
     print *, elim/deltae
     do i=1, n2
