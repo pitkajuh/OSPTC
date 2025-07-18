@@ -8,10 +8,11 @@ contains
 
   subroutine sum1(limits, records, energy, n, total, i)
     real(kind(1.d0)), intent(in) :: energy
-    real(kind(1.d0)) :: r, total
+    real(kind(1.d0)), intent(out) :: total
     real(kind(1.d0)), dimension(:) :: limits
-    integer :: n, i
+    integer, intent(in) :: n, i
     real(kind(1.d0)), allocatable :: records(:, :)
+    real(kind(1.d0)) :: r
     r=linear_interpolation(records, energy, n)
     limits(i)=r+limits(i-1)
     total=total+r
@@ -28,13 +29,18 @@ contains
     limits(1)=0.0
     total=0
 
-    call sum1(limits, endf%mf23%coherent_scattering%records, energy, endf%mf23%coherent_scattering%n, total, 2)
-    call sum1(limits, endf%mf23%incoherent_scattering%records, energy, endf%mf23%incoherent_scattering%n, total, 3)
-    call sum1(limits, endf%mf23%pair_formation_elec%records, energy, endf%mf23%pair_formation_elec%n, total, 4)
-    call sum1(limits, endf%mf23%pair_formation_nuc%records, energy, endf%mf23%pair_formation_nuc%n, total, 5)
+    call sum1(limits, endf%mf23%coherent_scattering%records, &
+         energy, endf%mf23%coherent_scattering%n, total, 2)
+    call sum1(limits, endf%mf23%incoherent_scattering%records, &
+         energy, endf%mf23%incoherent_scattering%n, total, 3)
+    call sum1(limits, endf%mf23%pair_formation_elec%records, &
+         energy, endf%mf23%pair_formation_elec%n, total, 4)
+    call sum1(limits, endf%mf23%pair_formation_nuc%records, &
+         energy, endf%mf23%pair_formation_nuc%n, total, 5)
 
     do i=1, endf%mf23%n_ionization
-       call sum1(limits, endf%mf23%photo_ionization(i)%records, energy, endf%mf23%photo_ionization(i)%n, total, 5+i)
+       call sum1(limits, endf%mf23%photo_ionization(i)%records, &
+            energy, endf%mf23%photo_ionization(i)%n, total, 5+i)
     end do
 
     random_value=std_uniform_distribution()

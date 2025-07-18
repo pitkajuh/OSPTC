@@ -53,10 +53,10 @@ contains
     integer :: i
     real(kind(1.d0)) :: incoherent_function_value
 
-    do i=1, n1
-       print *, i, incoherent(1, i), incoherent(2, i)
-       ! incoherent_function_value=linear_interpolation(incoherent_function, x(incoherent(1, i), mu), n2)
-    end do
+    ! do i=1, n1
+    !    print *, i, incoherent(1, i), incoherent(2, i)
+    !    ! incoherent_function_value=linear_interpolation(incoherent_function, x(incoherent(1, i), mu), n2)
+    ! end do
 
   end subroutine create_incoherent
 
@@ -98,7 +98,7 @@ contains
     do i=2, n2
        ! print *, coherent_factor(1, i), coherent_factor(2, i)
        a1=0.5*deltax*(coherent_factor(2, i)+coherent_factor(2, i-1))
-       print *, a1
+       print *, coherent_factor(1, i), a1
     end do
 
   end subroutine create_coherent
