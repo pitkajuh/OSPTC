@@ -86,6 +86,7 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)) :: r
     r=linear_interpolation(coherent_factor, x1, n2)
+    r=r*r
   end function F1
 
   subroutine create_coherent(coherent, coherent_factor, real_factor, imaginary_factor, n1, n2, n3, n4)
@@ -94,7 +95,7 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: real_factor(:, :)
     real(kind(1.d0)), intent(in), allocatable :: imaginary_factor(:, :)
     integer, intent(in) :: n1, n2, n3, n4
-    real(kind(1.d0)) :: Fprime, Fprimeprime, energy, deltamu, a1, e, mu, x1, deltae, hc, elim, f
+    real(kind(1.d0)) :: Fprime, Fprimeprime, energy, deltamu, a1, e, mu, x1, deltae, hc, elim, f, deltax
     integer :: i, j
     hc=4.135667696e-15_8*299792458.0_8
     energy=10.0_8
@@ -107,8 +108,8 @@ contains
     mu=0.0
     deltamu=-1/n2
     elim=2.00E6_8
-
     x1=0.0
+    deltax=x(deltae, 1.0_8/n2)
     print *, elim/deltae
     do i=1, n2
 
@@ -116,6 +117,8 @@ contains
           if(e==elim) exit
           ! x1=(e/hc)*((1-mu)/2)**0.5
           f=F1(x(e, mu), coherent_factor, n2)
+          ! a1=0.5*deltax*(coherent_factor(2, i)+coherent_factor(2, i-1))
+          a1=0.5*deltax*(F1(x(e, mu), coherent_factor, n2)+F1(x(e-deltae, mu-deltamu), coherent_factor, n2))
           ! print *, i, j, x1, e
           e=e+deltae
        end do
