@@ -93,7 +93,7 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     integer, intent(in) :: n1
     real(kind(1.d0)), intent(in) :: elim, deltae
-    real(kind(1.d0)) :: deltamu, a1, e, mu, hc, deltax, x2, ymax
+    real(kind(1.d0)) :: deltamu, a1, e, mu, hc, deltax, x2, ymax, x1
     integer :: i, j
     i=1
     j=1
@@ -112,7 +112,8 @@ contains
           x2=x(e, mu, hc)
           a1=0.5*deltax*(F1(x2, coherent_factor, n1)+F1(x2-deltax, &
                coherent_factor, n1))
-          A(i, j)=a1
+          ! A(i, j)=a1
+          A(i, j)=A(i, j)+a1
           ! print *, i, j, a1, e
           e=e+deltae
           j=j+1
@@ -125,14 +126,17 @@ contains
     end do
     print *, i, mu!, A(i-1, n1-1)
 
-    ymax=(5000.0_8/(4.135667696e-15_8*299792458.0_8))**2
+    ymax=(5000.0_8/(4.135667696e-15_8*299792458.0_8))
+    x1=deltax
+    i=0
 
     ! do
+    !    if(x1>ymax) exit
 
-    !    ! do
-
-    !    ! end do
+    !    x1=x1+deltax
+    !    i=i+1
     ! end do
+    ! print *, ymax, x1, i, deltax
   end subroutine create_coherent
 
 end module photon_angular_distribution
