@@ -9,7 +9,7 @@ module tape_type
      real(kind(1.d0)), dimension(6, 4) :: header
      real(kind(1.d0)), allocatable :: coherent_A(:, :)
      integer, allocatable :: sizes(:)
-     integer :: n
+     integer :: n, Ax, Ay
      type(MF23) :: mf23
      type(MF27) :: mf27
   end type tape
@@ -36,17 +36,12 @@ contains
     !      this%mf27%incoherent_function%n)
 
     ! create coherent angular distribution
-
+    this%Ax=this%mf27%coherent_factor%n
+    this%Ay=int(2.00E6_8/100.0_8)
     allocate(this%coherent_A(this%mf27%coherent_factor%n, int(2.00E6_8/100.0_8)))
 
     call create_coherent(this%mf27%coherent_factor%records, &
-         this%mf27%incoherent_function%records, &
-         this%mf27%imaginary_factor%records, &
-         this%mf27%real_factor%records, &
-         this%mf27%coherent_factor%n, &
-         this%mf27%incoherent_function%n, &
-         this%mf27%imaginary_factor%n, &
-         this%mf27%real_factor%n, 2.00E6_8, 100.0_8)!, this%coherent_A)
+         this%mf27%coherent_factor%n, 2.00E6_8, 100.0_8, this%coherent_A)
   end subroutine read_tape
 
   subroutine read_begin(this, z, ios)
