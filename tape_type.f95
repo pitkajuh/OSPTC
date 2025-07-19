@@ -28,13 +28,6 @@ contains
     call this%mf27%create(z, ios, this%sizes, this%n)
     close(z)
 
-
-    ! create incoherent angular distribution
-    ! call create_incoherent(this%mf23%incoherent_scattering%records, &
-    !      this%mf27%incoherent_function%records, &
-    !      this%mf23%incoherent_scattering%n, &
-    !      this%mf27%incoherent_function%n)
-
     ! create coherent angular distribution
     this%Ax=this%mf27%coherent_factor%n
     this%Ay=int(2.00E6_8/100.0_8)
