@@ -79,12 +79,12 @@ contains
     r=dsigmadmu_coherent(energy, mu, F, Fprime, Fprimeprime)*dirac_delta(energyprime-energy, width)
   end function d2sigmaEdmu_coherent
 
-  function F1(x1, coherent_factor, n2) result(r)
+  function F1(x1, coherent_factor, n) result(r)
     real(kind(1.d0)), intent(in) :: x1
-    integer, intent(in) :: n2
+    integer, intent(in) :: n
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)) :: r
-    r=linear_interpolation(coherent_factor, x1, n2)
+    r=linear_interpolation(coherent_factor, x1, n)
     r=r*r
   end function F1
 
@@ -93,7 +93,7 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     integer, intent(in) :: n1
     real(kind(1.d0)), intent(in) :: elim, deltae
-    real(kind(1.d0)) :: deltamu, a1, e, mu, hc, deltax, x2
+    real(kind(1.d0)) :: deltamu, a1, e, mu, hc, deltax, x2, ymax
     integer :: i, j
     i=1
     j=1
@@ -124,6 +124,15 @@ contains
        i=i+1
     end do
     print *, i, mu!, A(i-1, n1-1)
+
+    ymax=(5000.0_8/(4.135667696e-15_8*299792458.0_8))**2
+
+    ! do
+
+    !    ! do
+
+    !    ! end do
+    ! end do
   end subroutine create_coherent
 
 end module photon_angular_distribution
