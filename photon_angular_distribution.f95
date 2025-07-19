@@ -99,25 +99,28 @@ contains
     j=1
     hc=4.135667696e-15_8*299792458.0_8
     e=deltae
-    mu=0.0_8
-    deltamu=-1.0_8/n1
+    mu=1.0_8
+    deltamu=-2.0_8/n1
     deltax=x(deltae, 1.0_8/n1, hc)
-
-    print *, n1, int(elim/deltae)
+    print *, "ok", n1
     do i=1, n1
+       print *, mu
        do
           if(e>elim) exit
           x2=x(e, mu, hc)
           a1=0.5*deltax*(F1(x2, coherent_factor, n1)+F1(x2-deltax, &
                coherent_factor, n1))
           A(i, j)=a1
+          ! print *, i, j, a1, e
           e=e+deltae
           j=j+1
        end do
+       ! exit
        j=1
        e=deltae
        mu=mu+deltamu
     end do
+    print *, i, mu!, A(i-1, n1-1)
   end subroutine create_coherent
 
 end module photon_angular_distribution

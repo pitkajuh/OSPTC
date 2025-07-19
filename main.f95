@@ -19,7 +19,7 @@ program main
   type(cylinder) :: t12
   ! type(steel) :: steel1
   class(material), allocatable :: steel1
-  real(kind(1.d0)) :: c
+  real(kind(1.d0)) :: c, ymax, Amax
   integer :: reac
   ! allocate(cylinder :: a1)
   ! call a1%create()
@@ -45,12 +45,23 @@ program main
   ! end do
 
   call reaction_function(steel1%endf, rng(1.0_8, 1e9_8))
+
+  c=5000.0_8
+  ymax=(c/(4.135667696e-15_8*299792458.0_8))**2
+  print *, "ymax ", ymax, ymax**0.5, c
+  ! Amax=linear_interpolation2(steel1%endf%coherent_A, ymax, steel1%endf%Ax, steel1%endf%Ay)
+  ! print *, "res", Amax
+
+  ! Amax=linear_interpolation(steel1%endf%coherent_A, ymax, steel1%endf%Ay)
+  ! print *, Amax
+
   ! print *, reac
   ! t=std_uniform_distribution()
   ! t1=std_uniform_distribution()
   ! point=coordinate(t, t, t)
   point1=coordinate(t1, t1, t1)
   a1=cylinder(10.0_8, 2.0_8, point1)
+
   print *, a1%surface_equation(point1)
   ! call show(point)
   ! call show(point1)
