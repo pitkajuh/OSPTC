@@ -7,7 +7,7 @@ module tape_type
 
   type :: tape
      real(kind(1.d0)), dimension(6, 4) :: header
-     ! real(kind(1.d0)), allocatable :: coherent_A(:, :)
+     real(kind(1.d0)), allocatable :: coherent_A(:, :)
      integer, allocatable :: sizes(:)
      integer :: n
      type(MF23) :: mf23
@@ -37,7 +37,7 @@ contains
 
     ! create coherent angular distribution
 
-    ! allocate(this%coherent_A(this%mf27%coherent_factor%n, 2.00E6_8/100.0_8))
+    allocate(this%coherent_A(this%mf27%coherent_factor%n, int(2.00E6_8/100.0_8)))
 
     call create_coherent(this%mf27%coherent_factor%records, &
          this%mf27%incoherent_function%records, &
