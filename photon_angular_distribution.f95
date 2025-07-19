@@ -104,7 +104,7 @@ contains
     deltax=x(deltae, 1.0_8/n1, hc)
     print *, "ok", n1
     do i=1, n1
-       print *, mu
+       ! print *, mu
        do
           if(e>elim) exit
           x2=x(e, mu, hc)
