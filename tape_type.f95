@@ -7,6 +7,7 @@ module tape_type
 
   type :: tape
      real(kind(1.d0)), dimension(6, 4) :: header
+     ! real(kind(1.d0)), allocatable :: coherent_A(:, :)
      integer, allocatable :: sizes(:)
      integer :: n
      type(MF23) :: mf23
@@ -26,13 +27,17 @@ contains
     call this%mf23%create(z, ios, this%sizes, this%n)
     call this%mf27%create(z, ios, this%sizes, this%n)
     close(z)
-    ! create coherent angular distribution
+
 
     ! create incoherent angular distribution
-    call create_incoherent(this%mf23%incoherent_scattering%records, &
-         this%mf27%incoherent_function%records, &
-         this%mf23%incoherent_scattering%n, &
-         this%mf27%incoherent_function%n)
+    ! call create_incoherent(this%mf23%incoherent_scattering%records, &
+    !      this%mf27%incoherent_function%records, &
+    !      this%mf23%incoherent_scattering%n, &
+    !      this%mf27%incoherent_function%n)
+
+    ! create coherent angular distribution
+
+    ! allocate(this%coherent_A(this%mf27%coherent_factor%n, 2.00E6_8/100.0_8))
 
     call create_coherent(this%mf27%coherent_factor%records, &
          this%mf27%incoherent_function%records, &
@@ -41,7 +46,7 @@ contains
          this%mf27%coherent_factor%n, &
          this%mf27%incoherent_function%n, &
          this%mf27%imaginary_factor%n, &
-         this%mf27%real_factor%n)
+         this%mf27%real_factor%n, 2.00E6_8, 100.0_8)!, this%coherent_A)
   end subroutine read_tape
 
   subroutine read_begin(this, z, ios)

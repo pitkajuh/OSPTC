@@ -11,11 +11,10 @@ contains
     r=exp(-v*v/(2*width*width))/(width*sqrt(2*3.14159265))
   end function dirac_delta
 
-  function x(energy, mu) result(r)
-    real(kind(1.d0)), intent(in) :: energy, mu
-    real(kind(1.d0)) :: r, a
-    a=4.135667696e-15_8*299792458_8
-    r=(energy/a)*((1-mu)/2)**0.5
+  function x(energy, mu, hc) result(r)
+    real(kind(1.d0)), intent(in) :: energy, mu, hc
+    real(kind(1.d0)) :: r
+    r=(energy/hc)*((1-mu)/2)**0.5
   end function x
 
   function energyprimev(energy, mu) result(r)
@@ -89,35 +88,36 @@ contains
     r=r*r
   end function F1
 
-  subroutine create_coherent(coherent, coherent_factor, real_factor, imaginary_factor, n1, n2, n3, n4)
-    real(kind(1.d0)), intent(in), allocatable :: coherent(:, :)
+  subroutine create_coherent(coherent, coherent_factor, real_factor, &
+       imaginary_factor, n1, n2, n3, n4, elim, deltae)!, A)
+    real(kind(1.d0)), intent(in), allocatable :: coherent(:, :)!, A
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)), intent(in), allocatable :: real_factor(:, :)
     real(kind(1.d0)), intent(in), allocatable :: imaginary_factor(:, :)
     integer, intent(in) :: n1, n2, n3, n4
-    real(kind(1.d0)) :: Fprime, Fprimeprime, energy, deltamu, a1, e, mu, x1, deltae, hc, elim, f, deltax, x2
+    real(kind(1.d0)), intent(in) :: elim, deltae
+    real(kind(1.d0)) :: Fprime, Fprimeprime, energy, deltamu, a1, e, mu, &
+         x1, hc, f, deltax, x2
     integer :: i, j
     hc=4.135667696e-15_8*299792458.0_8
-    energy=10.0_8
-    mu=0.5_8
     ! F=linear_interpolation(coherent_factor, x(energy, mu), n2)
     ! Fprime=linear_interpolation(real_factor, energy, n3)
     ! Fprimeprime=linear_interpolation(imaginary_factor, energy, n4)
-    deltae=100_8!coherent_factor(1, n2)/n2
+    ! deltae=100_8!coherent_factor(1, n2)/n2
     e=deltae
     mu=0.0_8
     deltamu=-1.0_8/n2
-    elim=2.00E6_8
     x1=0.0_8
-    deltax=x(deltae, 1.0_8/n2)
-    print *, elim/deltae
+    deltax=x(deltae, 1.0_8/n2, hc)
+    print *, 1.0_8/n2, elim/deltae
     do i=1, n2
 
        do
           if(e==elim) exit
-          x2=x(e, mu)
-          a1=0.5*deltax*(F1(x2, coherent_factor, n2)+F1(x2-deltax, coherent_factor, n2))
-          ! print *, e, a1
+          x2=x(e, mu, hc)
+          a1=0.5*deltax*(F1(x2, coherent_factor, n2)+F1(x2-deltax, &
+               coherent_factor, n2))
+          ! print *, x2*x2*10.0_8**(-12), a1
           e=e+deltae
        end do
        exit
