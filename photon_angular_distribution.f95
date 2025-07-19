@@ -88,19 +88,17 @@ contains
     r=r*r
   end function F1
 
-  ! subroutine create_coherent(coherent, coherent_factor, real_factor, &
-  !      imaginary_factor, n1, n2, n3, n4, elim, deltae, A)
   subroutine create_coherent(coherent_factor, n1, elim, deltae, A)
-    ! real(kind(1.d0)), intent(in), allocatable :: coherent(:, :)
-    real(kind(1.d0)), intent(in), allocatable :: A(:, :)
+    real(kind(1.d0)), intent(inout), allocatable :: A(:, :)
+    ! real(kind(1.d0)), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
-    ! real(kind(1.d0)), intent(in), allocatable :: real_factor(:, :)
-    ! real(kind(1.d0)), intent(in), allocatable :: imaginary_factor(:, :)
     integer, intent(in) :: n1
     real(kind(1.d0)), intent(in) :: elim, deltae
     real(kind(1.d0)) :: Fprime, Fprimeprime, energy, deltamu, a1, e, mu, &
          x1, hc, f, deltax, x2
     integer :: i, j
+    i=1
+    j=1
     hc=4.135667696e-15_8*299792458.0_8
     ! F=linear_interpolation(coherent_factor, x(energy, mu), n2)
     ! Fprime=linear_interpolation(real_factor, energy, n3)
@@ -111,18 +109,24 @@ contains
     deltamu=-1.0_8/n1
     x1=0.0_8
     deltax=x(deltae, 1.0_8/n1, hc)
-    print *, 1.0_8/n1, elim/deltae
+    ! allocate(A(n1, int(elim/deltae)))
+    print *, n1, int(elim/deltae)
     do i=1, n1
-
+       ! print *, i
+       ! A(i, i)=0.0_8
        do
-          if(e==elim) exit
+          if(e>elim) exit
           x2=x(e, mu, hc)
           a1=0.5*deltax*(F1(x2, coherent_factor, n1)+F1(x2-deltax, &
                coherent_factor, n1))
-          print *, x2*x2*10.0_8**(-12), a1
+          ! print *, i, j
+          A(i, j)=a1
+          ! exit
           e=e+deltae
+          j=j+1
        end do
-       exit
+       ! exit
+       j=1
        e=deltae
        mu=mu+deltamu
     end do

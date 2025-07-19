@@ -41,7 +41,7 @@ contains
     allocate(this%coherent_A(this%mf27%coherent_factor%n, int(2.00E6_8/100.0_8)))
 
     call create_coherent(this%mf27%coherent_factor%records, &
-         this%mf27%coherent_factor%n, 2.00E6_8, 100.0_8, this%coherent_A)
+         this%mf27%coherent_factor%n, 1.5E6_8, 200.0_8, this%coherent_A)
   end subroutine read_tape
 
   subroutine read_begin(this, z, ios)
