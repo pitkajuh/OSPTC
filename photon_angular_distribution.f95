@@ -101,9 +101,11 @@ contains
     e=deltae
     mu=1.0_8
     deltamu=-2.0_8/n1
-    deltax=x(deltae, 1.0_8/n1, hc)
+    deltax=x(deltae, deltamu, hc)
     print *, "ok", n1
-    do i=1, n1
+
+    do
+       if(mu<-1) exit
        ! print *, mu
        do
           if(e>elim) exit
@@ -119,6 +121,7 @@ contains
        j=1
        e=deltae
        mu=mu+deltamu
+       i=i+1
     end do
     print *, i, mu!, A(i-1, n1-1)
   end subroutine create_coherent
