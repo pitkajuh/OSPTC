@@ -44,7 +44,13 @@ program main
   !    print *, i, steel1%endf%mf23%pair_formation_elec%records(1, i), steel1%endf%mf23%pair_formation_elec%records(2, i)
   ! end do
 
-  call reaction_function(steel1%endf, rng(1.0_8, 1e9_8))
+  ! call reaction_function(steel1%endf, rng(1.0_8, 1e9_8))
+  call reaction_function(steel1%endf, 2e6_8)
+  call reaction_function(steel1%endf, 1e6_8)
+  call reaction_function(steel1%endf, 1e5_8)
+  call reaction_function(steel1%endf, 1e4_8)
+  call reaction_function(steel1%endf, 1e3_8)
+  call reaction_function(steel1%endf, 1e2_8)
   ! sum1=0.0_8
   ! c=5000.0_8
   ! ymax=c/(4.135667696e-15_8*299792458.0_8)

@@ -97,30 +97,35 @@ contains
     integer :: i, j
     hc=4.135667696e-15_8*299792458.0_8
 
-    deltax=deltae/hc
+    ! deltax=deltae/hc
+    deltax=deltae
     ymax=elim/hc
     x2=2*deltax
     i=2
+    ! ymax=1e-30
+    ymax=elim
     print *, ymax, deltax, ymax/deltax, elim/deltae
     ! allocate(A(int(ymax/deltax)))
-
+    A(i)=0.0_8
     do
        if(x2>ymax) exit
        a1=0.5*deltax*(F1(x2, coherent_factor, n)+F1(x2-deltax, &
             coherent_factor, n))
        ! sum1=sum1+a1
        A(i)=A(i-1)+a1
+       ! print *, A(i)
        x2=x2+deltax
        i=i+1
-    end do
-    print *, i, A(i-1)
 
-    deltax=deltae/hc
-    ymax=5000.0_8/hc
-    x2=2*deltax
-    ! i=2
-    sum1=0.0_8
-    print *, ymax, deltax, ymax/deltax
+    end do
+    ! print *, i, A(i-1)
+    print *, A(1), A(2), A(i-1)
+    ! deltax=deltae/hc
+    ! ymax=5000.0_8/hc
+    ! x2=2*deltax
+    ! ! i=2
+    ! sum1=0.0_8
+    ! print *, ymax, deltax, ymax/deltax, A(2)
     ! allocate(A(int(ymax/deltax)))
 
     ! do
