@@ -45,10 +45,25 @@ program main
   ! end do
 
   call reaction_function(steel1%endf, rng(1.0_8, 1e9_8))
+  ! sum1=0.0_8
+  ! c=5000.0_8
+  ! ymax=c/(4.135667696e-15_8*299792458.0_8)
+  ! ymax=100.0_8/(4.135667696e-15_8*299792458.0_8)
+  ! x2=2*deltax
+  ! print *, "ymax ", ymax, ymax**0.5, c
 
-  c=5000.0_8
-  ymax=(c/(4.135667696e-15_8*299792458.0_8))**2
-  print *, "ymax ", ymax, ymax**0.5, c
+  ! do
+  !    if(x2>ymax) exit
+  !    a1=0.5*deltax*(F1(x2, steel1%endf%mf27%coherent_factor, steel1%endf%n)+F1(x2-deltax, &
+  !         steel1%endf%mf27%coherent_factor, steel1%endf%n))
+  !    sum1=sum1+a1
+  !    ! A(i)=A(i-1)+a1
+  !    x2=x2+deltax
+  !    ! i=i+1
+  ! end do
+  ! print *, i, sum1
+
+
   ! Amax=linear_interpolation2(steel1%endf%coherent_A, ymax, steel1%endf%Ax, steel1%endf%Ay)
   ! print *, "res", Amax
 
