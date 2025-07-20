@@ -93,59 +93,106 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     integer, intent(in) :: n1
     real(kind(1.d0)), intent(in) :: elim, deltae
-    real(kind(1.d0)) :: deltamu, a1, e, mu, hc, deltax, x2, ymax, x1
+    real(kind(1.d0)) :: deltamu, a1, e, mu, hc, deltax, x2, ymax, x1, sum1
     integer :: i, j
-    i=1
-    j=2
     hc=4.135667696e-15_8*299792458.0_8
-    e=deltae
-    deltamu=-2.0_8/n1
-    mu=1.0_8+deltamu
-    deltax=x(e, mu, hc)/2
-    ! deltax=100
-    print *, "ok", n1, deltax
-    ! A(1, 1)=0.0_8
-    do
-       if(mu<-1) exit
-       ! print *, mu
-       ! A(i, 1)=0.0_8
-       ! print *, i
-       do
-          if(e>elim-deltae) exit
-          x2=x(e, mu, hc)
-          ! print *, e, mu
-          ! print *, "j", j
-          a1=0.5*deltax*(F1(x2, coherent_factor, n1)+F1(x2-deltax, &
-               coherent_factor, n1))
-          ! A(i, j)=a1
-          ! A(i, j)=A(i, j)+a1
 
-          A(i, j)=A(i, j-1)+a1
-          print *, A(i, j)
-          ! print *, i, F1(x2, coherent_factor, n1), F1(x2-deltax, coherent_factor, n1), x2!, A(i, j)
-          ! print *, "i", i, j-1, A(i, j-1), a1
-          ! print *, i, j, a1, e
-          e=e+deltae
-          j=j+1
-       end do
-       ! exit
-       j=2
-       e=deltae
-       mu=mu+deltamu
+
+
+
+    ymax=5000.0_8/hc
+    x2=2*deltax
+    i=0
+    sum1=0.0
+
+    do
+       if(x2>ymax) exit
+       a1=0.5*deltax*(F1(x2, coherent_factor, n1)+F1(x2-deltax, &
+            coherent_factor, n1))
+       sum1=sum1+a1
+       x2=x2+deltax
        i=i+1
     end do
-    print *, i, mu!, A(i-1, n1-1)
 
-    ymax=(5000.0_8/(4.135667696e-15_8*299792458.0_8))
-    x1=deltax
-    i=0
 
+
+
+
+    ! e=deltae
+    ! deltamu=-2.0_8/n1
+    ! mu=1.0_8+deltamu
+    ! deltax=x(e, mu, hc)/2
+    ! ymax=5000.0_8/hc
+    ! x2=2*deltax
+    ! i=1
+    ! sum1=0.0
+    ! print *, ymax, x2
     ! do
-    !    if(x1>ymax) exit
-
-    !    x1=x1+deltax
+    !    if(x2>ymax) exit
+    !    a1=0.5*deltax*(F1(x2, coherent_factor, n1)+F1(x2-deltax, &
+    !         coherent_factor, n1))
+    !    ! print *, a1
+    !    sum1=sum1+a1
+    !    x2=x2+deltax
     !    i=i+1
     ! end do
+    ! print *, "SUM", sum1
+
+    ! x2=0.0
+    ! i=1
+    ! j=2
+
+    ! e=deltae
+    ! deltamu=-2.0_8/n1
+    ! mu=1.0_8+deltamu
+    ! deltax=x(e, mu, hc)/2
+    ! ! deltax=100
+    ! print *, "ok", n1, deltax
+    ! ! A(1, 1)=0.0_8
+    ! do
+    !    if(mu<-1) exit
+    !    ! print *, mu
+    !    ! A(i, 1)=0.0_8
+    !    ! print *, i
+    !    do
+    !       if(e>elim-deltae) exit
+    !       x2=x(e, mu, hc)
+
+    !       a1=0.5*deltax*(F1(x2, coherent_factor, n1)+F1(x2-deltax, &
+    !            coherent_factor, n1))
+    !       ! print *, F1(x2, coherent_factor, n1), F1(x2-deltax, coherent_factor, n1)
+
+    !       A(i, j)=A(i, j-1)+a1
+    !       ! if(A(i, j)>=sum1) print *, i, j
+    !       e=e+deltae
+    !       j=j+1
+    !    end do
+    !    print *, A(i, j-1)
+    !    ! exit
+    !    j=2
+    !    e=deltae
+    !    mu=mu+deltamu
+    !    i=i+1
+    ! end do
+
+
+
+    ! print *, i, mu!, A(i-1, n1-1)
+
+    ! ymax=(5000.0_8/(4.135667696e-15_8*299792458.0_8))
+    ! x2=2*deltax
+    ! i=0
+    ! sum1=0.0
+
+    ! do
+    !    if(x2>ymax) exit
+    !    a1=0.5*deltax*(F1(x2, coherent_factor, n1)+F1(x2-deltax, &
+    !         coherent_factor, n1))
+    !    sum1=sum1+a1
+    !    x2=x2+deltax
+    !    i=i+1
+    ! end do
+    ! print *, "SUM", sum1
     ! print *, ymax, x1, i, deltax
   end subroutine create_coherent
 
