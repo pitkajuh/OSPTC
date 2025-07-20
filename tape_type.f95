@@ -32,7 +32,7 @@ contains
     this%Ax=this%mf27%coherent_factor%n
     this%Ay=int(1.5E4_8/100.0_8)
     allocate(this%coherent_A(this%Ax, this%Ay))
-
+    print *, this%Ax, this%Ay
     call create_coherent(this%mf27%coherent_factor%records, &
          this%mf27%coherent_factor%n, 1.5E4_8, 100.0_8, this%coherent_A)
   end subroutine read_tape
