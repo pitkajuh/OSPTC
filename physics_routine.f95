@@ -6,8 +6,9 @@ module physics_routine
 
 contains
 
-  subroutine coherent_scattering_reaction(coherent_factor, n, energy, deltae)
+  subroutine coherent_scattering_reaction(coherent_factor, n, energy, deltae, A)
     real(kind(1.d0)), allocatable :: coherent_factor(:, :)
+    real(kind(1.d0)), allocatable :: A(:)
     real(kind(1.d0)), intent(in) :: energy, deltae
     integer, intent(in) :: n
     real(kind(1.d0)) :: sum1, a1, hc, x2, deltax, ymax
@@ -90,7 +91,8 @@ contains
     select case (reaction_id)
     case(1)
        print *, "coherent scattering"
-       call coherent_scattering_reaction(endf%mf27%coherent_factor%records, endf%mf27%coherent_factor%n, energy, 100.0_8)
+       call coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
+            endf%mf27%coherent_factor%n, energy, 100.0_8, endf%coherent_A)
     case(2)
        print *, "incoherent scattering"
     case(3)
