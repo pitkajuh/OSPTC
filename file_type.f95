@@ -86,14 +86,14 @@ contains
     this%n_ionization=i-5
   end subroutine create_mf23
 
-  subroutine extend_scattering(array, n, deltax)
+  subroutine extend_scattering(array, n, deltax, n1)
     real(kind(1.d0)), intent(inout), allocatable :: array(:, :)
     real(kind(1.d0)), intent(in) :: deltax
-    integer, intent(in) :: n
+    integer, intent(in) :: n, n1
     integer :: i
     real(kind(1.d0)) :: enext, e, deltae
 
-    do i=n, n+1000
+    do i=n, n+n1
        array(1, i)=array(1, i-1)+deltax
        array(2, i)=array(2, i-1)+(array(1, i)-array(1, i-1))*((array(2, i-1))/(array(1, i-1)))
     end do
@@ -101,23 +101,24 @@ contains
 
   subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
-    integer :: z, ios, MF, MT, n
+    integer :: z, ios, MF, MT, n, n1
     integer, allocatable :: sizes(:)
     real(kind(1.d0)) :: enext, hc, energylimit, deltax
     hc=4.135667696e-15_8*299792458.0_8
     energylimit=2.1e6_8
+    n1=1000
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
-    allocate(this%coherent_factor%records(2, 2*int(this%coherent_factor%header(1, 3))+1000))
+    allocate(this%coherent_factor%records(2, 2*int(this%coherent_factor%header(1, 3))+n1))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          int(this%coherent_factor%header(1, 3)), &
          this%coherent_factor%records)
 
-    deltax=int((energylimit/hc-this%coherent_factor%records(1, this%coherent_factor%n))/1000)
+    deltax=int((energylimit/hc-this%coherent_factor%records(1, this%coherent_factor%n))/n1)
     ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
-    ! so more values are added by interpolating.
-    call extend_scattering(this%coherent_factor%records, this%coherent_factor%n, deltax)
-    this%coherent_factor%n=this%coherent_factor%n+1000
+    ! so more values (1000) are added by interpolating.
+    call extend_scattering(this%coherent_factor%records, this%coherent_factor%n, deltax, n1)
+    this%coherent_factor%n=this%coherent_factor%n+n1
 
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
     allocate(this%incoherent_function%records(2, 2*int(this%incoherent_function%header(1, 3))))
