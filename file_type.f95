@@ -96,20 +96,16 @@ contains
     do i=n, n+1000
        array(1, i)=array(1, i-1)+deltax
        array(2, i)=array(2, i-1)+(array(1, i)-array(1, i-1))*((array(2, i-1))/(array(1, i-1)))
-
-       print *, array(1, i), array(2, i)
-
     end do
-
-    print *, n, i
   end subroutine extend_scattering
 
   subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
     integer :: z, ios, MF, MT, n
     integer, allocatable :: sizes(:)
-    real(kind(1.d0)) :: enext, hc, e, deltax
+    real(kind(1.d0)) :: enext, hc, energylimit, deltax
     hc=4.135667696e-15_8*299792458.0_8
+    energylimit=2.1e6_8
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int(this%coherent_factor%header(1, 3))+1000))
@@ -117,8 +113,11 @@ contains
          int(this%coherent_factor%header(1, 3)), &
          this%coherent_factor%records)
 
-    deltax=int((2e6_8/hc-this%coherent_factor%records(1, this%coherent_factor%n))/1000)
+    deltax=int((energylimit/hc-this%coherent_factor%records(1, this%coherent_factor%n))/1000)
+    ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
+    ! so more values are added by interpolating.
     call extend_scattering(this%coherent_factor%records, this%coherent_factor%n, deltax)
+    this%coherent_factor%n=this%coherent_factor%n+1000
 
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
     allocate(this%incoherent_function%records(2, 2*int(this%incoherent_function%header(1, 3))))
