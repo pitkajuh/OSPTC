@@ -93,31 +93,32 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     integer, intent(in) :: n
     real(kind(1.d0)), intent(in) :: elim, deltae
-    real(kind(1.d0)) :: hc, deltax, x2, ymax
+    real(kind(1.d0)) :: hc, deltax, x2, xmax
     integer :: i, j
     hc=4.135667696e-15_8*299792458.0_8
 
     deltax=deltae/hc
-    ymax=elim/hc
+    xmax=elim/hc
     x2=2*deltax
     i=2
 
-    print *, n, int(ymax/deltax), int(elim/deltae)
+    ! print *, n, int(xmax/deltax), int(elim/deltae)
     A(1)=0.0_8
 
-    do
-       if(x2>ymax+deltax) exit
-
+    do i=2, int(elim/deltae)
+       ! deltax=x2-(x2-deltax)
        A(i)=A(i-1)+0.5*deltax*(F1(x2, coherent_factor, n)+ &
             F1(x2-deltax, coherent_factor, n))
        x2=x2+deltax
-       i=i+1
-
     end do
-    print *, A(1), A(2), A(i-1), A(i)
-    do i=1, int(elim/deltae)
-       print *, i, A(i)
-    end do
+    ! open(1, file="test.txt", status="new")
+    print *, A(1), A(2), A(i-1), A(n)
+    print *, deltae, deltax
+    ! do i=1, int(elim/deltae)
+    !    ! print *, i, A(i)
+    !    ! write(1, *) array(1, i), array(2, i)
+    !    write(1, *) A(i)
+    ! end do
 
   end subroutine create_coherent
 

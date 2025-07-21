@@ -92,10 +92,14 @@ contains
     integer, intent(in) :: n, n1
     integer :: i
     real(kind(1.d0)) :: enext, e, deltae
-
+    ! 39.6915375156568_8*xmax**(-2.9845939684527_8)
+    print *, "deltax", deltax
     do i=n, n+n1
        array(1, i)=array(1, i-1)+deltax
-       array(2, i)=array(2, i-1)+(array(1, i)-array(1, i-1))*((array(2, i-1))/(array(1, i-1)))
+       array(2, i)=39.6915375156568_8*array(1, i)**(-2.9845939684527_8)
+       ! array(2, i)=array(2, i-1)+(array(1, i)-array(1, i-1))*((array(2, i-1))/(array(1, i-1)))
+       ! print *, array(1, i), array(2, i)
+
     end do
   end subroutine extend_scattering
 
@@ -110,6 +114,7 @@ contains
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int(this%coherent_factor%header(1, 3))+n1))
+    ! allocate(this%coherent_factor%records(2, 2*int(this%coherent_factor%header(1, 3))))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          int(this%coherent_factor%header(1, 3)), &
          this%coherent_factor%records)
