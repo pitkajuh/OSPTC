@@ -31,7 +31,7 @@ contains
     call this%mf23%create(z, ios, this%sizes, this%n)
     call this%mf27%create(z, ios, this%sizes, this%n)
     close(z)
-
+    print *, "closed"
     ! create coherent angular distribution
     ! emax=2E8_8
     ! deltae=100.0_8

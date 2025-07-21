@@ -29,8 +29,8 @@ program main
 
   allocate(steel :: steel1)
   call steel1%create()
-
-  c=steel1%density*100*linear_interpolation(steel1%mu, 11.0_8, 37)
+  print *, "trlutr"
+  ! c=steel1%density*100*linear_interpolation(steel1%mu, 11.0_8, 37)
 
   ! c=linear_interpolation(steel1%mu, 12.0, 37)
   ! print *, c
@@ -45,12 +45,14 @@ program main
   ! end do
 
   ! call reaction_function(steel1%endf, rng(1.0_8, 1e9_8))
-  call reaction_function(steel1%endf, 2e6_8)
-  call reaction_function(steel1%endf, 1e6_8)
-  call reaction_function(steel1%endf, 1e5_8)
-  call reaction_function(steel1%endf, 1e4_8)
-  call reaction_function(steel1%endf, 1e3_8)
-  call reaction_function(steel1%endf, 1e2_8)
+  ! call reaction_function(steel1%endf, 2e6_8)
+  ! call reaction_function(steel1%endf, 1e6_8)
+  ! call reaction_function(steel1%endf, 1e5_8)
+  ! call reaction_function(steel1%endf, 1e4_8)
+  ! call reaction_function(steel1%endf, 1e3_8)
+  ! call reaction_function(steel1%endf, 1e2_8)
+
+
   ! sum1=0.0_8
   ! c=5000.0_8
   ! ymax=c/(4.135667696e-15_8*299792458.0_8)

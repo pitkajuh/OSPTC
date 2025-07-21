@@ -88,14 +88,18 @@ contains
     end do
   end subroutine read_section_header
 
+  subroutine create_section(records)
+    real(kind(1.d0)), allocatable :: records(:, :)
+  end subroutine create_section
+
   subroutine read_section(this, z, ios, MF,  MT, n, records)
     class(section), intent(inout) :: this
     real(kind(1.d0)), allocatable :: records(:, :)
     real(kind(1.d0)) :: e1, v2, e2, v4, e3, v6
-    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, n, i
+    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, n, i, j
     i=1
     this%n=n
-
+    print *, "section", n, mod(n, 2), mod(20, 2), n/2.0, n/2
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) e1, v2, e2, v4, e3, v6, MAT, MF, MT
        if(MT==0) exit
@@ -105,7 +109,18 @@ contains
        records(2, i+1)=v4
        records(1, i+2)=e3
        records(2, i+2)=v6
+
+       ! if(mod(n, 2)==1) then
+
+       !    j=2*n/2+(2*n/2-n)
+       !    print *, "rccc", j
+       ! end if
+
+
+       ! print *, records(1, i), records(2, i), records(1, i+1), records(2, i+1), records(1, i+2), records(2, i+2)
+
        i=i+3
     end do
+    print *, ",k2", i
   end subroutine read_section
 end module section_type
