@@ -114,9 +114,9 @@ contains
          int(this%coherent_factor%header(1, 3)), &
          this%coherent_factor%records)
 
-    deltax=int((energylimit/hc-this%coherent_factor%records(1, this%coherent_factor%n))/n1)
     ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
     ! so more values (1000) are added by interpolating.
+    deltax=int((energylimit/hc-this%coherent_factor%records(1, this%coherent_factor%n))/n1)
     call extend_scattering(this%coherent_factor%records, this%coherent_factor%n, deltax, n1)
     this%coherent_factor%n=this%coherent_factor%n+n1
 

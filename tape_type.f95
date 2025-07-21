@@ -49,10 +49,11 @@ contains
     ! ! call create_coherent(this%mf27%coherent_factor%records, &
     ! !      this%mf27%coherent_factor%n, emax, deltae, this%coherent_A)
 
-    emax=2E4_8
+    emax=2.1E6_8
     deltae=20.0_8
-    ! call create_coherent(this%mf27%coherent_factor%records, &
-    !      this%mf27%coherent_factor%n, emax, deltae, this%coherent_A)
+    allocate(this%coherent_A(int(emax/deltae)))
+    call create_coherent(this%mf27%coherent_factor%records, &
+         this%mf27%coherent_factor%n, emax, deltae, this%coherent_A)
   end subroutine read_tape
 
   subroutine read_begin(this, z, ios)
