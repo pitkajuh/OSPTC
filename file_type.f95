@@ -90,27 +90,46 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: array(:, :)
     integer, intent(in) :: n
     integer :: i
-    real(kind(1.d0)) :: enext
-    print *, n
+    real(kind(1.d0)) :: enext, hc, e, deltae
+    hc=4.135667696e-15_8*299792458.0_8
+    i=1
+    deltae=(array(1, n)-array(1, n-1))
+    e=array(1, n)
+
+    do
+       if(e>2e6_8/hc) exit
+       e=e+deltae
+       i=i+1
+    end do
+    print *, n, 2e6_8/hc, i
     ! do i=1, n
     !    print *, array(1, i), array(2, i)
 
     ! end do
-    print *, "ok", array(1, n)+(array(1, n)-array(1, n-1))
+    ! print *, "ok", int(e/deltae), n
+    print *, n
   end subroutine extend_scattering
 
   subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
     integer :: z, ios, MF, MT, n
+    ! integer(8) :: n1
     integer, allocatable :: sizes(:)
+    real(kind(1.d0)) :: enext, hc, e, deltae
+    hc=4.135667696e-15_8*299792458.0_8
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int(this%coherent_factor%header(1, 3))))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          int(this%coherent_factor%header(1, 3)), &
          this%coherent_factor%records)
-
-    call extend_scattering(this%coherent_factor%records, int(this%coherent_factor%header(1, 3)))
+    print *, "AE", int((2e6_8/hc-this%coherent_factor%records(1, this%coherent_factor%n))/1000)
+    ! n1=int(this%coherent_factor%header(1, 3))+int(2e6_8/hc)
+    ! hc=2e6_8/hc
+    ! print *, hc
+    ! n1=transfer(hc, n1)!+int(this%coherent_factor%header(1, 3))
+    ! print *, n1
+    call extend_scattering(this%coherent_factor%records, this%coherent_factor%n)
 
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
     allocate(this%incoherent_function%records(2, 2*int(this%incoherent_function%header(1, 3))))

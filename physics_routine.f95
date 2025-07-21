@@ -94,8 +94,8 @@ contains
     real(kind(1.d0)), intent(in) :: energy
     integer :: reaction_id
     reaction_id=select_reaction(endf, energy)
-    ! call coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
-    !      endf%mf27%coherent_factor%n, energy, energy/1000.0_8, endf%coherent_A)
+    call coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
+         endf%mf27%coherent_factor%n, energy, energy/1000.0_8, endf%coherent_A)
 
 
 
