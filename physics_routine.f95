@@ -12,31 +12,20 @@ contains
     real(kind(1.d0)), intent(in) :: energy, deltae
     integer, intent(in) :: n
     real(kind(1.d0)) :: hc, xmax, value1, deltax, a1, x2, sum1
+    integer :: i
     hc=4.135667696e-15_8*299792458.0_8
     xmax=energy/hc
     value1=0.0_8
     deltax=deltae/hc
     sum1=0.0_8
     x2=2*deltax
-    ! At high x, F approaches zero.
-    ! if(xmax>1e9_8) then
-    !    ! print *, "xmax>1e9"
-    !    value1=39.6915375156568_8*xmax**(-2.9845939684527_8)
-    !    value1=value1*value1
-    ! else
-       ! value1=F1(xmax, coherent_factor, n)
-    ! end if
-    ! print *, "xmax ", xmax, xmax**0.5, c
 
-    do
-       if(x2>xmax) exit
-       ! deltax=x2-(x2-deltax)
+    do i=1, int(energy/deltae)
+       ! if(x2>xmax) exit
        a1=0.5*deltax*(F1(x2, coherent_factor, n)+F1(x2-deltax, &
             coherent_factor, n))
        sum1=sum1+a1
-       ! A(i)=A(i-1)+a1
        x2=x2+deltax
-       ! i=i+1
     end do
     print *, "energy", energy, "xmax", xmax, "Sum", sum1, deltax
   end subroutine coherent_scattering_reaction
@@ -98,7 +87,7 @@ contains
     integer :: reaction_id
     real(kind(1.d0)) :: deltae
     reaction_id=select_reaction(endf, energy)
-    deltae=20.0
+    deltae=20.0_8
     call coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
          endf%mf27%coherent_factor%n, energy, deltae, endf%coherent_A)
 
