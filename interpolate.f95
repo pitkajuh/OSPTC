@@ -10,7 +10,7 @@ contains
     do i=1, ny
        if(array(1, i)>=y) exit
     end do
-
+    if(i>=ny) print *, "problem", y
     linear_interpolation=array(2, i-1)+(y-array(1, i-1))*(array(2, i)-array(2, i-1))/(array(1, i)-array(1, i-1))
   end function linear_interpolation
 

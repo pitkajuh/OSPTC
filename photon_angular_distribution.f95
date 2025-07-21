@@ -140,4 +140,80 @@ contains
     ! print *, i, sum1
   end subroutine create_coherent
 
+  ! subroutine create_coherent(coherent_factor, n, elim, deltae, A)
+  !   real(kind(1.d0)), intent(inout), allocatable :: A(:, :)
+  !   real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
+  !   integer, intent(in) :: n
+  !   real(kind(1.d0)), intent(in) :: elim, deltae
+  !   real(kind(1.d0)) :: deltamu, a1, e, mu, hc, deltax, x2, ymax, x1, sum1
+  !   integer :: i, j
+  !   hc=4.135667696e-15_8*299792458.0_8
+
+
+  !   e=0.0_8
+  !   i=1
+  !   j=2
+  !   e=deltae
+  !   deltamu=-2.0_8/n
+  !   mu=1.0_8+deltamu
+  !   ! deltax=x(deltae, -1*deltamu, hc)
+  !   deltax=1000
+  !   print *, n, 2.0_8/n, deltamu, elim/deltae, deltae/hc
+  !   allocate(A(int(-1*deltamu), int(elim/deltae)))
+
+  !   do
+  !      if(mu<-1) exit
+
+  !      do
+  !         if(e>elim) exit
+  !         x2=x(e, mu, hc)
+  !         a1=0.5*deltax*(F1(x2, coherent_factor, n)+F1(x2-deltax, &
+  !              coherent_factor, n))
+  !         ! if(x2>1E9_8) exit
+  !         ! print *, e, x2, deltax, a1, mu, i, j
+  !         ! print *, a1
+  !         j=j+1
+  !         e=e+deltae
+  !      end do
+  !      ! exit
+  !      e=deltae
+  !      mu=mu+deltamu
+  !      j=2
+  !      i=i+1
+  !   end do
+
+
+  !   ! do
+  !   !    if(x2>ymax) exit
+  !   !    a1=0.5*deltax*(F1(x2, coherent_factor, n)+F1(x2-deltax, &
+  !   !         coherent_factor, n))
+  !   !    ! sum1=sum1+a1
+  !   !    A(i)=A(i-1)+a1
+  !   !    ! print *, A(i)
+  !   !    x2=x2+deltax
+  !   !    i=i+1
+
+  !   ! end do
+  !   ! print *, i, A(i-1)
+  !   ! print *, A(1), A(2), A(i-1)
+  !   ! deltax=deltae/hc
+  !   ! ymax=5000.0_8/hc
+  !   ! x2=2*deltax
+  !   ! ! i=2
+  !   ! sum1=0.0_8
+  !   ! print *, ymax, deltax, ymax/deltax, A(2)
+  !   ! allocate(A(int(ymax/deltax)))
+
+  !   ! do
+  !   !    if(x2>ymax) exit
+  !   !    a1=0.5*deltax*(F1(x2, coherent_factor, n)+F1(x2-deltax, &
+  !   !         coherent_factor, n))
+  !   !    sum1=sum1+a1
+  !   !    ! A(i)=A(i-1)+a1
+  !   !    x2=x2+deltax
+  !   !    ! i=i+1
+  !   ! end do
+  !   ! print *, i, sum1
+  ! end subroutine create_coherent
+
 end module photon_angular_distribution

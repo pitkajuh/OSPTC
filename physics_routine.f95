@@ -17,11 +17,13 @@ contains
     value1=0.0_8
 
     ! At high x, F approaches zero.
-    if(ymax>1e9_8) then
-       value1=0.0_8
-    else
+    ! if(ymax>1e9_8) then
+    !    ! print *, "ymax>1e9"
+    !    value1=39.6915375156568_8*ymax**(-2.9845939684527_8)
+    !    value1=value1*value1
+    ! else
        value1=F1(ymax, coherent_factor, n)
-    end if
+    ! end if
     ! print *, "ymax ", ymax, ymax**0.5, c
     print *, "value", value1, "ymax", ymax
     ! do
@@ -92,8 +94,8 @@ contains
     real(kind(1.d0)), intent(in) :: energy
     integer :: reaction_id
     reaction_id=select_reaction(endf, energy)
-    call coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
-         endf%mf27%coherent_factor%n, energy, energy/1000.0_8, endf%coherent_A)
+    ! call coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
+    !      endf%mf27%coherent_factor%n, energy, energy/1000.0_8, endf%coherent_A)
 
 
 
@@ -101,8 +103,8 @@ contains
     ! select case (reaction_id)
     ! case(1)
     !    print *, "coherent scattering"
-    !    call coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
-    !         endf%mf27%coherent_factor%n, energy, 100.0_8, endf%coherent_A)
+    !    ! call coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
+    !    !      endf%mf27%coherent_factor%n, energy, 100.0_8, endf%coherent_A)
     ! case(2)
     !    print *, "incoherent scattering"
     ! case(3)

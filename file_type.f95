@@ -1,5 +1,6 @@
 module file_type
   use section_type
+  use interpolate
   implicit none
 
   type, abstract :: file
@@ -45,11 +46,14 @@ contains
 
     ! Skip 23501
     call this%coherent_scattering%skip_section(z, ios)
-
     call this%coherent_scattering%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_scattering%records(2, int(this%coherent_scattering%header(1, 3))*4))
     call this%coherent_scattering%read_section(z, ios, MF, MT, &
     int(this%coherent_scattering%header(1, 3)), this%coherent_scattering%records)
+
+    print *, int(this%coherent_scattering%header(1, 3))
+    call extend_scattering(this%coherent_scattering%records, int(this%coherent_scattering%header(1, 3)))
+
 
     call this%incoherent_scattering%read_section_header(z, ios, MF, MT)
     allocate(this%incoherent_scattering%records(2, int(this%incoherent_scattering%header(1, 3))*4))
@@ -86,6 +90,17 @@ contains
     this%n_ionization=i-5
   end subroutine create_mf23
 
+  subroutine extend_scattering(array, n)
+    real(kind(1.d0)), intent(in), allocatable :: array(:, :)
+    integer, intent(in) :: n
+    integer :: i
+    print *, n
+    do i=1, n
+       print *, array(1, i), array(2, i)
+    end do
+
+  end subroutine extend_scattering
+
   subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
     integer :: z, ios, MF, MT, n
@@ -93,23 +108,31 @@ contains
 
     allocate(this%coherent_factor%records(2, sizes(n-3)*4))
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
+    ! print *, this%coherent_factor%header
+    ! print *, sizes(n-3)*4, sizes(n-2)*4, sizes(n-1)*4, sizes(n)*4, int(this%coherent_factor%header(6, 3))
+    ! print *, int(this%coherent_factor%header(1, 3))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
-    int(this%coherent_factor%header(1, 3)), this%coherent_factor%records)
+         int(this%coherent_factor%header(1, 3)), &
+         this%coherent_factor%records)
+
+    ! call extend_scattering(this%coherent_factor%records, int(this%coherent_factor%header(1, 3)))
 
     allocate(this%incoherent_function%records(2, sizes(n-2)*4))
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
     call this%incoherent_function%read_section(z, ios, MF, MT, &
-    int(this%incoherent_function%header(1, 3)), this%incoherent_function%records)
+         int(this%incoherent_function%header(1, 3)), &
+         this%incoherent_function%records)
 
     allocate(this%imaginary_factor%records(2, sizes(n-1)*4))
     call this%imaginary_factor%read_section_header(z, ios, MF, MT)
     call this%imaginary_factor%read_section(z, ios, MF, MT, &
-    int(this%imaginary_factor%header(1, 3)), this%imaginary_factor%records)
+         int(this%imaginary_factor%header(1, 3)), &
+         this%imaginary_factor%records)
 
     allocate(this%real_factor%records(2, sizes(n)*4))
     call this%real_factor%read_section_header(z, ios, MF, MT)
     call this%real_factor%read_section(z, ios, MF, MT, &
-    int(this%real_factor%header(1, 3)), this%real_factor%records)
+         int(this%real_factor%header(1, 3)), this%real_factor%records)
 
   end subroutine create_mf27
 end module file_type
