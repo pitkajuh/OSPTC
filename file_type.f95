@@ -91,7 +91,6 @@ contains
     real(kind(1.d0)), intent(in) :: deltax
     integer, intent(in) :: n, n1
     integer :: i
-    real(kind(1.d0)) :: enext, e, deltae, xnext
 
     do i=n, n+n1-1
        array(1, i+1)=array(1, i)+deltax
@@ -111,7 +110,6 @@ contains
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int(this%coherent_factor%header(1, 3))+n1))
-    ! allocate(this%coherent_factor%records(2, 2*int(this%coherent_factor%header(1, 3))))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          int(this%coherent_factor%header(1, 3)), &
          this%coherent_factor%records)

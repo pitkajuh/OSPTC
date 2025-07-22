@@ -24,7 +24,7 @@ contains
        Amax=Amax+deltax*F1((i*deltax)**0.5, coherent_factor, n)
     end do
 
-    print *, "energy", energy, "xmax", xmax, "Sum", Amax, F1(xmax**0.5, coherent_factor, n)!, linear_interpolation(A, xmax, n)
+    print *, "energy", energy, "xmax", xmax, "Sum", Amax, F1(xmax**0.5, coherent_factor, n), linear_interpolation(A, xmax, n)
   end function coherent_scattering_reaction
 
   subroutine sum1(limits, records, energy, n, total, i)

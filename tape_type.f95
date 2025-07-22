@@ -8,7 +8,6 @@ module tape_type
   type :: tape
      real(kind(1.d0)), dimension(6, 4) :: header
      real(kind(1.d0)), allocatable :: coherent_A(:, :)
-     ! real(kind(1.d0)), allocatable :: coherent_A(:, :)
      integer, allocatable :: sizes(:)
      integer :: n, Ax
      type(MF23) :: mf23
@@ -23,7 +22,6 @@ contains
     integer :: ios, z
     real(kind(1.d0)) :: emax
     integer, parameter :: d=selected_real_kind(p=15, r=50)
-    real(kind=d) :: deltae, min
     z=1
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
@@ -36,7 +34,7 @@ contains
 
     emax=1E9_8
     emax=2.1E6_8
-    deltae=20.0_8
+
     allocate(this%coherent_A(2, this%mf27%coherent_factor%n))
     call create_coherent(this%mf27%coherent_factor%records, &
          this%mf27%coherent_factor%n, emax, this%coherent_A)
