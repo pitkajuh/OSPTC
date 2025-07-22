@@ -15,28 +15,13 @@ contains
     integer :: i
     hc=4.135667696e-15_8*299792458.0_8
     xmax=(energy/hc)**2
-    ! deltax=deltae/hc
     deltax=xmax/n
-    sum1=0.0_8
-
-    ! do i=1, int(energy/deltae)
-    ! do i=1, n
-    !    ! if(x2>xmax) exit
-    !    a1=0.5_8*deltax*(F1(x2, coherent_factor, n)+F1(x2-deltax, &
-    !         coherent_factor, n))
-    !    sum1=sum1+a1
-    !    x2=x2+deltax
-    ! end do
-
-    ! xmax=energy/hc
-    ! deltax=xmax/n
 
     sum1=0.5_8*deltax*(F1((n*deltax)**0.5, coherent_factor, n)+&
          F1(deltax**0.5, coherent_factor, n))
-    ! print *, "sum1", sum1
+
     do i=2, n
        sum1=sum1+deltax*F1((i*deltax)**0.5, coherent_factor, n)
-       ! print *, i*deltax, sum1
     end do
 
     print *, "energy", energy, "xmax", xmax, "Sum", sum1, "deltax", deltax, F1(xmax**0.5, coherent_factor, n)
