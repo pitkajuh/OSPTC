@@ -92,10 +92,7 @@ contains
     integer, intent(in) :: n, n1
     integer :: i
     real(kind(1.d0)) :: enext, e, deltae, xnext
-    ! 39.6915375156568_8*xmax**(-2.9845939684527_8)
     print *, "deltax", deltax
-
-
 
     do i=n, n+n1-1
        array(1, i+1)=array(1, i)+deltax
@@ -120,7 +117,7 @@ contains
          this%coherent_factor%records)
 
     ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
-    ! so more values (1000) are added by interpolating.
+    ! so more values (1000) are added by extrapolating.
     deltax=int((energylimit/hc-this%coherent_factor%records(1, this%coherent_factor%n))/n1)
     call extend_scattering(this%coherent_factor%records, this%coherent_factor%n, deltax, n1)
     this%coherent_factor%n=this%coherent_factor%n+n1

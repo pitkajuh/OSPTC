@@ -41,7 +41,7 @@ contains
        ! print *, i*deltax, sum1
     end do
 
-    print *, "energy", energy, "xmax", xmax, "Sum", sum1, deltax
+    print *, "energy", energy, "xmax", xmax, "Sum", sum1, deltax, F1(xmax, coherent_factor, n)
   end subroutine coherent_scattering_reaction
 
   subroutine sum1(limits, records, energy, n, total, i)

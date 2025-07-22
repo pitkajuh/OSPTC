@@ -119,11 +119,6 @@ contains
 
     do i=2, n
        A(i)=A(i-1)+deltax*F1(i*deltax, coherent_factor, n)
-       ! print *, i*deltax, A(i)
-       ! deltax=x2-(x2-deltax)
-       ! A(i)=A(i-1)+0.5*deltax*(F1(x2, coherent_factor, n)+ &
-       !      F1(x2-deltax, coherent_factor, n))
-       ! x2=x2+deltax
     end do
 
     print *, A(1), A(2), A(n)
