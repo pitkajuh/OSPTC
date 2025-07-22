@@ -97,18 +97,9 @@ contains
 
 
 
-    do i=n+1, n+n1
-
-       array(2, i)=array(2, i-1)+(array(2, i)-array(2, i-1))*((array(1, i)+deltax-array(1, i-1))/(array(1, i)-array(1, i-1)))
-
-
-       ! xnext=array(1, i-1)+deltax
-       ! ! array(2, i)=39.6915375156568_8*array(1, i)**(-2.9845939684527_8)
-       ! ! array(2, i)=array(2, i-1)+(array(1, i)-array(1, i-1))*((array(2, i-1))/(array(1, i-1)))
-       ! array(2, i)=array(2, i-1)+(array(2, i)-array(2, i-1))*((xnext-array(1, i-1))/(array(1, i)-array(1, i-1)))
-       array(1, i)=array(1, i-1)+deltax
-       ! print *, array(1, i), array(2, i)
-
+    do i=n, n+n1-1
+       array(1, i+1)=array(1, i)+deltax
+       array(2, i+1)=array(2, i-1)+(array(2, i)-array(2, i-1))*((array(1, i+1)-array(1, i-1))/(array(1, i)-array(1, i-1)))
     end do
   end subroutine extend_scattering
 
