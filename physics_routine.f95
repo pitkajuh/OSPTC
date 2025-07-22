@@ -14,12 +14,11 @@ contains
     real(kind(1.d0)) :: hc, xmax, value1, deltax, a1, x2, sum1
     integer :: i
     hc=4.135667696e-15_8*299792458.0_8
-    xmax=energy/hc
+    xmax=(energy/hc)**2
     value1=0.0_8
     ! deltax=deltae/hc
     deltax=xmax/n
     sum1=0.0_8
-    x2=2*deltax
 
     ! do i=1, int(energy/deltae)
     ! do i=1, n
@@ -30,18 +29,18 @@ contains
     !    x2=x2+deltax
     ! end do
 
-    xmax=energy/hc
-    deltax=xmax/n
+    ! xmax=energy/hc
+    ! deltax=xmax/n
 
-    sum1=0.5_8*deltax*(F1(n*deltax, coherent_factor, n)+&
-         F1(deltax, coherent_factor, n))
-
+    sum1=0.5_8*deltax*(F1((n*deltax)**0.5, coherent_factor, n)+&
+         F1(deltax**0.5, coherent_factor, n))
+    ! print *, "sum1", sum1
     do i=2, n
-       sum1=sum1+deltax*F1(i*deltax, coherent_factor, n)
+       sum1=sum1+deltax*F1((i*deltax)**0.5, coherent_factor, n)
        ! print *, i*deltax, sum1
     end do
 
-    print *, "energy", energy, "xmax", xmax, "Sum", sum1, deltax, F1(xmax, coherent_factor, n)
+    print *, "energy", energy, "xmax", xmax, "Sum", sum1, deltax, F1(xmax**0.5, coherent_factor, n)
   end subroutine coherent_scattering_reaction
 
   subroutine sum1(limits, records, energy, n, total, i)
