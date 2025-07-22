@@ -100,8 +100,7 @@ contains
     ! deltax=deltae/hc
     xmax=(elim/hc)**2
     deltax=xmax/n
-    i=2
-
+    print *, "deltax", deltax
     ! print *, n, int(xmax/deltax), int(elim/deltae)
     ! A(1)=0.0_8
 

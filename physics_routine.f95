@@ -11,11 +11,10 @@ contains
     real(kind(1.d0)), allocatable :: A(:)
     real(kind(1.d0)), intent(in) :: energy, deltae
     integer, intent(in) :: n
-    real(kind(1.d0)) :: hc, xmax, value1, deltax, a1, x2, sum1
+    real(kind(1.d0)) :: hc, xmax, deltax, a1, x2, sum1
     integer :: i
     hc=4.135667696e-15_8*299792458.0_8
     xmax=(energy/hc)**2
-    value1=0.0_8
     ! deltax=deltae/hc
     deltax=xmax/n
     sum1=0.0_8
@@ -40,7 +39,7 @@ contains
        ! print *, i*deltax, sum1
     end do
 
-    print *, "energy", energy, "xmax", xmax, "Sum", sum1, deltax, F1(xmax**0.5, coherent_factor, n)
+    print *, "energy", energy, "xmax", xmax, "Sum", sum1, "deltax", deltax, F1(xmax**0.5, coherent_factor, n)
   end subroutine coherent_scattering_reaction
 
   subroutine sum1(limits, records, energy, n, total, i)
