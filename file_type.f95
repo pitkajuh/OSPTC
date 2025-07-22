@@ -91,13 +91,22 @@ contains
     real(kind(1.d0)), intent(in) :: deltax
     integer, intent(in) :: n, n1
     integer :: i
-    real(kind(1.d0)) :: enext, e, deltae
+    real(kind(1.d0)) :: enext, e, deltae, xnext
     ! 39.6915375156568_8*xmax**(-2.9845939684527_8)
     print *, "deltax", deltax
-    do i=n, n+n1
+
+
+
+    do i=n+1, n+n1
+
+       array(2, i)=array(2, i-1)+(array(2, i)-array(2, i-1))*((array(1, i)+deltax-array(1, i-1))/(array(1, i)-array(1, i-1)))
+
+
+       ! xnext=array(1, i-1)+deltax
+       ! ! array(2, i)=39.6915375156568_8*array(1, i)**(-2.9845939684527_8)
+       ! ! array(2, i)=array(2, i-1)+(array(1, i)-array(1, i-1))*((array(2, i-1))/(array(1, i-1)))
+       ! array(2, i)=array(2, i-1)+(array(2, i)-array(2, i-1))*((xnext-array(1, i-1))/(array(1, i)-array(1, i-1)))
        array(1, i)=array(1, i-1)+deltax
-       array(2, i)=39.6915375156568_8*array(1, i)**(-2.9845939684527_8)
-       ! array(2, i)=array(2, i-1)+(array(1, i)-array(1, i-1))*((array(2, i-1))/(array(1, i-1)))
        ! print *, array(1, i), array(2, i)
 
     end do
