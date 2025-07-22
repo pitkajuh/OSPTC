@@ -92,7 +92,6 @@ contains
     integer, intent(in) :: n, n1
     integer :: i
     real(kind(1.d0)) :: enext, e, deltae, xnext
-    print *, "deltax", deltax
 
     do i=n, n+n1-1
        array(1, i+1)=array(1, i)+deltax
@@ -106,7 +105,8 @@ contains
     integer, allocatable :: sizes(:)
     real(kind(1.d0)) :: enext, hc, energylimit, deltax
     hc=4.135667696e-15_8*299792458.0_8
-    energylimit=2.0e6_8
+    energylimit=1E9_8
+    energylimit=2.1E6_8
     n1=1000
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
@@ -138,6 +138,5 @@ contains
     allocate(this%real_factor%records(2, 2*int(this%real_factor%header(1, 3))))
     call this%real_factor%read_section(z, ios, MF, MT, &
          int(this%real_factor%header(1, 3)), this%real_factor%records)
-
   end subroutine create_mf27
 end module file_type

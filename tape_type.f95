@@ -7,7 +7,7 @@ module tape_type
 
   type :: tape
      real(kind(1.d0)), dimension(6, 4) :: header
-     real(kind(1.d0)), allocatable :: coherent_A(:)
+     real(kind(1.d0)), allocatable :: coherent_A(:, :)
      ! real(kind(1.d0)), allocatable :: coherent_A(:, :)
      integer, allocatable :: sizes(:)
      integer :: n, Ax
@@ -31,29 +31,15 @@ contains
     call this%mf23%create(z, ios, this%sizes, this%n)
     call this%mf27%create(z, ios, this%sizes, this%n)
     close(z)
-    print *, "closed"
+
     ! create coherent angular distribution
-    ! emax=2E8_8
-    ! deltae=100.0_8
 
-    ! emax=1e-44_d
-    ! min=1e-50_d
-    ! this%Ax=int(min/deltae)
-    ! ! deltae=(emax-min)/this%Ax
-    ! deltae=min/this%Ax
-    ! print *, deltae, this%Ax, min/deltae, min
-    ! ! this%Ax=this%mf27%coherent_factor%n
-    ! ! print *, "min", this%Ax
-    ! ! allocate(this%coherent_A(int(emax/deltae)))
-    ! ! print *, this%Ax, this%Ay
-    ! ! call create_coherent(this%mf27%coherent_factor%records, &
-    ! !      this%mf27%coherent_factor%n, emax, deltae, this%coherent_A)
-
+    emax=1E9_8
     emax=2.1E6_8
     deltae=20.0_8
-    allocate(this%coherent_A(int(emax/deltae)))
+    allocate(this%coherent_A(2, this%mf27%coherent_factor%n))
     call create_coherent(this%mf27%coherent_factor%records, &
-         this%mf27%coherent_factor%n, emax, deltae, this%coherent_A)
+         this%mf27%coherent_factor%n, emax, this%coherent_A)
   end subroutine read_tape
 
   subroutine read_begin(this, z, ios)

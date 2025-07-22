@@ -6,26 +6,26 @@ module physics_routine
 
 contains
 
-  subroutine coherent_scattering_reaction(coherent_factor, n, energy, deltae, A)
+  function coherent_scattering_reaction(coherent_factor, n, energy, A) result(Amax)
     real(kind(1.d0)), allocatable :: coherent_factor(:, :)
-    real(kind(1.d0)), allocatable :: A(:)
-    real(kind(1.d0)), intent(in) :: energy, deltae
+    real(kind(1.d0)), allocatable :: A(:, :)
+    real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n
-    real(kind(1.d0)) :: hc, xmax, deltax, a1, x2, sum1
+    real(kind(1.d0)) :: hc, xmax, deltax, a1, x2, Amax
     integer :: i
     hc=4.135667696e-15_8*299792458.0_8
     xmax=(energy/hc)**2
     deltax=xmax/n
 
-    sum1=0.5_8*deltax*(F1((n*deltax)**0.5, coherent_factor, n)+&
+    Amax=0.5_8*deltax*(F1((n*deltax)**0.5, coherent_factor, n)+&
          F1(deltax**0.5, coherent_factor, n))
 
     do i=2, n
-       sum1=sum1+deltax*F1((i*deltax)**0.5, coherent_factor, n)
+       Amax=Amax+deltax*F1((i*deltax)**0.5, coherent_factor, n)
     end do
 
-    print *, "energy", energy, "xmax", xmax, "Sum", sum1, "deltax", deltax, F1(xmax**0.5, coherent_factor, n)
-  end subroutine coherent_scattering_reaction
+    print *, "energy", energy, "xmax", xmax, "Sum", Amax, F1(xmax**0.5, coherent_factor, n)!, linear_interpolation(A, xmax, n)
+  end function coherent_scattering_reaction
 
   subroutine sum1(limits, records, energy, n, total, i)
     real(kind(1.d0)), intent(in) :: energy
@@ -82,11 +82,10 @@ contains
     type(tape), intent(inout) :: endf
     real(kind(1.d0)), intent(in) :: energy
     integer :: reaction_id
-    real(kind(1.d0)) :: deltae
+    real(kind(1.d0)) :: Amax
     reaction_id=select_reaction(endf, energy)
-    deltae=20.0_8
-    call coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
-         endf%mf27%coherent_factor%n, energy, deltae, endf%coherent_A)
+    Amax=coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
+         endf%mf27%coherent_factor%n, energy, endf%coherent_A)
 
 
 

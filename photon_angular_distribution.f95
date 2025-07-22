@@ -33,26 +33,29 @@ contains
     r=r*r
   end function F1
 
-  subroutine create_coherent(coherent_factor, n, elim, deltae, A)
-    real(kind(1.d0)), intent(inout), allocatable :: A(:)
+  subroutine create_coherent(coherent_factor, n, elim, A)
+    real(kind(1.d0)), intent(inout), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     integer, intent(in) :: n
-    real(kind(1.d0)), intent(in) :: elim, deltae
-    real(kind(1.d0)) :: hc, deltax, x2, xmax, s1
+    real(kind(1.d0)), intent(in) :: elim
+    real(kind(1.d0)) :: hc, deltax, xmax
     integer :: i, j
     hc=4.135667696e-15_8*299792458.0_8
 
     xmax=(elim/hc)**2
     deltax=xmax/n
 
-    A(1)=0.5_8*deltax*(F1((n*deltax)**0.5, coherent_factor, n)+&
+    A(1, 1)=deltax
+    A(2, 1)=0.5_8*deltax*(F1((n*deltax)**0.5, coherent_factor, n)+&
          F1(deltax**0.5, coherent_factor, n))
 
     do i=2, n
-       A(i)=A(i-1)+deltax*F1((i*deltax)**0.5, coherent_factor, n)
+       A(1, i)=i*deltax
+       A(2, i)=A(2, i-1)+deltax*F1((A(1, i))**0.5, coherent_factor, n)
     end do
 
-    print *, A(1), A(2), A(n)
-    print *, deltae, deltax, n
+    print *, A(2, 1), A(2, 2), A(2, n)
+    print *, deltax, n
+
   end subroutine create_coherent
 end module photon_angular_distribution
