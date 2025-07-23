@@ -52,7 +52,7 @@ contains
     do i=2, n
        A(1, i)=i*deltay
        A(2, i)=A(2, i-1)+deltay*F1((A(1, i))**0.5, coherent_factor, n2)
-       ! if(i<5) print *, A(1, i), A(2, i)
+       if(i<5) print *, A(1, i), A(2, i)
        ! print *, i,n,A(1, i), A(2, i)
     end do
 
