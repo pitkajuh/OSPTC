@@ -34,7 +34,7 @@ contains
     emax=1E9_8
     emax=2.1E6_8
     ! If n1 is change, change it also from reaction_function
-    n1=500
+    n1=1000
 
     allocate(this%coherent_A(2, this%mf27%coherent_factor%n*n1))
     call create_coherent(this%mf27%coherent_factor%records, &

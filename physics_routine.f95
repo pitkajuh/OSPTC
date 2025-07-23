@@ -93,11 +93,12 @@ contains
   subroutine reaction_function(endf, energy)
     type(tape), intent(inout) :: endf
     real(kind(1.d0)), intent(in) :: energy
-    integer :: reaction_id
+    integer :: reaction_id, n1
     real(kind(1.d0)) :: Amax
+    n1=1000
     reaction_id=select_reaction(endf, energy)
     Amax=coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
-         endf%mf27%coherent_factor%n*500, energy, endf%coherent_A, &
+         endf%mf27%coherent_factor%n*n1, energy, endf%coherent_A, &
          endf%mf27%coherent_factor%n)
 
 
