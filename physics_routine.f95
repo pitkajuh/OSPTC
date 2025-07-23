@@ -11,32 +11,65 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n, n2
-    real(kind(1.d0)) :: hc, xmax, deltax, a1, x2, Amax, Ainverse, Avalue
+    real(kind(1.d0)) :: hc, xmax, deltax, a1, x2, Amax, Ainverse, Avalue, rand
     integer :: i
     hc=4.135667696e-15_8*299792458.0_8
     xmax=(energy/hc)**2
     deltax=xmax/n
-
-    Amax=0.5_8*deltax*(F1((n*deltax)**0.5, coherent_factor, n2)+&
-         F1(deltax**0.5, coherent_factor, n2))
+    rand=std_uniform_distribution()
+    Amax=0.5_8*deltax*(F1((n*deltax)**0.5_8, coherent_factor, n2)+&
+         F1(deltax**0.5_8, coherent_factor, n2))
 
     do i=2, n
-       Amax=Amax+deltax*F1((i*deltax)**0.5, coherent_factor, n2)
+       Amax=Amax+deltax*F1((i*deltax)**0.5_8, coherent_factor, n2)
     end do
 
-    ! print *, "energy", energy, "xmax", xmax, "Sum", Amax, F1(xmax**0.5, coherent_factor, n)!, linear_interpolation(A, xmax, n)
-
-    ! Amax=linear_interpolation(A, xmax, n)
-    Ainverse=0.0_8
-    Avalue=std_uniform_distribution()*Amax
+    Avalue=rand*Amax
 
     do i=1, n
        ! if(A(2, i)<=Avalue .and. Avalue<A(2, i+1)) exit
        if(A(2, i)>=Avalue) exit
     end do
-    print *, energy, i, A(1, i), A(2, i), Avalue
-    print *, energy, i, A(1, 1), A(2, 1), Avalue
-    print *, ""
+
+    print *, energy, i-1, A(1, i-1), A(2, i-1), Avalue
+    print *, energy, i-1, A(1, 1), A(2, 1), Avalue
+
+
+    do i=1, n
+       if(A(2, i)<=Avalue .and. Avalue<A(2, i+1)) exit
+       ! if(A(2, i)>=Avalue) exit
+    end do
+
+    print *, energy, i-1, A(1, i-1), A(2, i-1), Avalue
+    print *, energy, i-1, A(1, 1), A(2, 1), Avalue
+
+
+    ! print *, ""
+
+    ! print *, "energy", energy, "xmax", xmax, "Sum", Amax, F1(xmax**0.5, coherent_factor, n)!, linear_interpolation(A, xmax, n)
+
+    Amax=linear_interpolation(A, xmax, n)
+    Ainverse=0.0_8
+    Avalue=rand*Amax
+
+    do i=1, n
+       ! if(A(2, i)<=Avalue .and. Avalue<A(2, i+1)) exit
+       if(A(2, i)>=Avalue) exit
+    end do
+
+    print *, energy, i-1, A(1, i-1), A(2, i-1), Avalue
+    print *, energy, i-1, A(1, 1), A(2, 1), Avalue
+
+
+    do i=1, n
+       if(A(2, i)<=Avalue .and. Avalue<A(2, i+1)) exit
+       ! if(A(2, i)>=Avalue) exit
+    end do
+
+    print *, energy, i-1, A(1, i-1), A(2, i-1), Avalue
+    print *, energy, i-1, A(1, 1), A(2, 1), Avalue
+
+    print *, "---------------------------------------------------"
   end function coherent_scattering_reaction
 
   subroutine sum1(limits, records, energy, n, total, i)

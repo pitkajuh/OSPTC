@@ -33,7 +33,8 @@ contains
 
     emax=1E9_8
     emax=2.1E6_8
-    ! If n1 is change, change it also from reaction_function
+    ! emax=2.1E4_8
+    ! If n1 is changed, change it also from reaction_function
     n1=1000
 
     allocate(this%coherent_A(2, this%mf27%coherent_factor%n*n1))

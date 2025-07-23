@@ -44,15 +44,18 @@ contains
 
     ymax=(energymax/hc)**2
     deltay=ymax/n
+    i=1
+    A(1, i)=deltay
+    A(2, i)=0.0_8
+    i=2
+    A(1, i)=2.0_8*deltay
+    A(2, i)=0.5_8*deltay*(F1((n*deltay)**0.5_8, coherent_factor, n2)+&
+         F1(A(1, 2)**0.5_8, coherent_factor, n2))
 
-    A(1, 1)=deltay
-    A(2, 1)=0.5_8*deltay*(F1((n*deltay)**0.5, coherent_factor, n2)+&
-         F1(deltay**0.5, coherent_factor, n2))
-
-    do i=2, n
+    do i=3, n
        A(1, i)=i*deltay
-       A(2, i)=A(2, i-1)+deltay*F1((A(1, i))**0.5, coherent_factor, n2)
-       if(i<5) print *, A(1, i), A(2, i)
+       A(2, i)=A(2, i-1)+deltay*F1(A(1, i)**0.5_8, coherent_factor, n2)
+       ! if(i<5) print *, A(1, i), A(2, i)
        ! print *, i,n,A(1, i), A(2, i)
     end do
 
