@@ -21,7 +21,6 @@ contains
     character(*) :: tape_name
     integer :: ios, z
     real(kind(1.d0)) :: emax
-    integer, parameter :: d=selected_real_kind(p=15, r=50)
     z=1
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)

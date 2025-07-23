@@ -7,8 +7,8 @@ module physics_routine
 contains
 
   function coherent_scattering_reaction(coherent_factor, n, energy, A) result(Amax)
-    real(kind(1.d0)), allocatable :: coherent_factor(:, :)
-    real(kind(1.d0)), allocatable :: A(:, :)
+    real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
+    real(kind(1.d0)), intent(in), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n
     real(kind(1.d0)) :: hc, xmax, deltax, a1, x2, Amax
@@ -29,8 +29,8 @@ contains
 
   subroutine sum1(limits, records, energy, n, total, i)
     real(kind(1.d0)), intent(in) :: energy
-    real(kind(1.d0)), intent(out) :: total
-    real(kind(1.d0)), dimension(:) :: limits
+    real(kind(1.d0)), intent(inout) :: total
+    real(kind(1.d0)), intent(inout), dimension(:) :: limits
     integer, intent(in) :: n, i
     real(kind(1.d0)), allocatable :: records(:, :)
     real(kind(1.d0)) :: r
