@@ -19,7 +19,7 @@ contains
   subroutine read_tape(this, tape_name)
     type(tape) :: this
     character(*) :: tape_name
-    integer :: ios, z
+    integer :: ios, z, n1
     real(kind(1.d0)) :: emax
     z=1
 
@@ -33,10 +33,13 @@ contains
 
     emax=1E9_8
     emax=2.1E6_8
+    ! If n1 is change, change it also from reaction_function
+    n1=500
 
-    allocate(this%coherent_A(2, this%mf27%coherent_factor%n))
+    allocate(this%coherent_A(2, this%mf27%coherent_factor%n*n1))
     call create_coherent(this%mf27%coherent_factor%records, &
-         this%mf27%coherent_factor%n, emax, this%coherent_A)
+         this%mf27%coherent_factor%n*n1, emax, this%coherent_A, &
+         this%mf27%coherent_factor%n)
   end subroutine read_tape
 
   subroutine read_begin(this, z, ios)

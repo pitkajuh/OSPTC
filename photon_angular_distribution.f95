@@ -33,29 +33,31 @@ contains
     r=r*r
   end function F1
 
-  subroutine create_coherent(coherent_factor, n, elim, A)
+  subroutine create_coherent(coherent_factor, n, energymax, A, n2)
     real(kind(1.d0)), intent(inout), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
-    integer, intent(in) :: n
-    real(kind(1.d0)), intent(in) :: elim
-    real(kind(1.d0)) :: hc, deltax, xmax
+    real(kind(1.d0)), intent(in) :: energymax
+    integer, intent(in) :: n, n2
+    real(kind(1.d0)) :: hc, deltay, ymax
     integer :: i, j
     hc=4.135667696e-15_8*299792458.0_8
 
-    xmax=(elim/hc)**2
-    deltax=xmax/n
+    ymax=(energymax/hc)**2
+    deltay=ymax/n
 
-    A(1, 1)=deltax
-    A(2, 1)=0.5_8*deltax*(F1((n*deltax)**0.5, coherent_factor, n)+&
-         F1(deltax**0.5, coherent_factor, n))
+    A(1, 1)=deltay
+    A(2, 1)=0.5_8*deltay*(F1((n*deltay)**0.5, coherent_factor, n2)+&
+         F1(deltay**0.5, coherent_factor, n2))
 
     do i=2, n
-       A(1, i)=i*deltax
-       A(2, i)=A(2, i-1)+deltax*F1((A(1, i))**0.5, coherent_factor, n)
+       A(1, i)=i*deltay
+       A(2, i)=A(2, i-1)+deltay*F1((A(1, i))**0.5, coherent_factor, n2)
+       if(i<5) print *, A(1, i), A(2, i)
+       ! print *, i,n,A(1, i), A(2, i)
     end do
 
     print *, A(2, 1), A(2, 2), A(2, n)
-    print *, deltax, n
+    print *, deltay, n
 
   end subroutine create_coherent
 end module photon_angular_distribution
