@@ -33,7 +33,7 @@ contains
 
     emax=1E9_8
     emax=2.1E6_8
-    ! emax=2.1E4_8
+    emax=5.1E6_8
     ! If n1 is changed, change it also from reaction_function
     n1=1000
 

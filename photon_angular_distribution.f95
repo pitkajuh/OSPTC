@@ -39,7 +39,7 @@ contains
     real(kind(1.d0)), intent(in) :: energymax
     integer, intent(in) :: n, n2
     real(kind(1.d0)) :: hc, deltay, ymax
-    integer :: i, j
+    integer :: i, j, new1
     hc=4.135667696e-15_8*299792458.0_8
 
     ymax=(energymax/hc)**2
@@ -51,10 +51,13 @@ contains
     A(1, i)=2.0_8*deltay
     A(2, i)=0.5_8*deltay*(F1((n*deltay)**0.5_8, coherent_factor, n2)+&
          F1(A(1, 2)**0.5_8, coherent_factor, n2))
-
+    print *, i,n,A(1, i), A(2, i)
+    call system('rm t1.txt')
+    open(newunit=new1, file="t1.txt", status="new", action="write")
     do i=3, n
        A(1, i)=i*deltay
        A(2, i)=A(2, i-1)+deltay*F1(A(1, i)**0.5_8, coherent_factor, n2)
+       write(new1, *) A(1, i), ";", A(2, i)
        ! if(i<5) print *, A(1, i), A(2, i)
        ! print *, i,n,A(1, i), A(2, i)
     end do
