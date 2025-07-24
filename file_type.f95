@@ -105,8 +105,8 @@ contains
     real(kind(1.d0)) :: enext, hc, energylimit, deltax
     hc=4.135667696e-15_8*299792458.0_8
     energylimit=1E9_8
-    energylimit=2.1E6_8
-    energylimit=5.1E6_8
+    ! energylimit=2.1E6_8
+    ! energylimit=5.1E6_8
     n1=1000
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)

@@ -30,10 +30,10 @@ contains
        ! if(A(2, i)<=Avalue .and. Avalue<A(2, i+1)) exit
        if(A(2, i)>=Avalue) exit
     end do
-
+    ! interpolate to find position
     print *, energy, i-1, A(1, i-1), A(2, i-1), Avalue
-    print *, energy, i-1, A(1, 1), A(2, 1), Avalue
-
+    print *, energy, i, A(1, i), A(2, i), Avalue
+    print *, "result", (A(1, i)-A(1, i-1))/2, Avalue
 
     do i=1, n
        if(A(2, i)<=Avalue .and. Avalue<A(2, i+1)) exit
@@ -41,8 +41,8 @@ contains
     end do
 
     print *, energy, i-1, A(1, i-1), A(2, i-1), Avalue
-    print *, energy, i-1, A(1, 1), A(2, 1), Avalue
-
+    print *, energy, i, A(1, i), A(2, i), Avalue
+    print *, "result", (A(1, i)-A(1, i-1))/2, Avalue
 
     ! print *, ""
 
@@ -58,7 +58,8 @@ contains
     end do
 
     print *, energy, i-1, A(1, i-1), A(2, i-1), Avalue
-    print *, energy, i-1, A(1, 1), A(2, 1), Avalue
+    print *, energy, i, A(1, i), A(2, i), Avalue
+    print *, "result", (A(1, i)-A(1, i-1))/2, Avalue
 
 
     do i=1, n
@@ -67,9 +68,10 @@ contains
     end do
 
     print *, energy, i-1, A(1, i-1), A(2, i-1), Avalue
-    print *, energy, i-1, A(1, 1), A(2, 1), Avalue
+    print *, energy, i, A(1, i), A(2, i), Avalue
+    print *, "result", (A(1, i)-A(1, i-1))/2, Avalue
 
-    print *, "---------------------------------------------------"
+    print *, " "
   end function coherent_scattering_reaction
 
   subroutine sum1(limits, records, energy, n, total, i)
@@ -128,7 +130,7 @@ contains
     real(kind(1.d0)), intent(in) :: energy
     integer :: reaction_id, n1
     real(kind(1.d0)) :: Amax
-    n1=1000
+    n1=2000
     reaction_id=select_reaction(endf, energy)
     Amax=coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
          endf%mf27%coherent_factor%n*n1, energy, endf%coherent_A, &
