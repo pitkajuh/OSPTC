@@ -15,61 +15,21 @@ contains
     integer :: i
     hc=4.135667696e-15_8*299792458.0_8
     ymax=(energy/hc)**2
-    ! deltay=ymax/n
     energymin=1E3_8
     ymin=(energymin/hc)**2
     deltay=(ymax-ymin)/n3
     rand=std_uniform_distribution()
-    ! Avalue=rand*Amax
 
-    ! Amax=0.5_8*deltay*(F1((n*deltay)**0.5_8, coherent_factor, n2)+&
-    !      F1(deltay**0.5_8, coherent_factor, n2))
-
-    ! do i=2, n3
-    !    Amax=Amax+deltay*F1((i*deltay)**0.5_8, coherent_factor, n2)
-    ! end do
-
-
-
-    ! do i=1, n3
-    !    if(A(2, i)>=Amax) exit
-    ! end do
-
-    ! print *, energy, i-1, A(1, i-1), A(2, i-1), Amax
-    ! print *, energy, i, A(1, i), A(2, i), Amax
-    ! print *, "result", ((Amax-A(2, i-1))/(A(2, i)-A(2, i-1)))*(A(1, i)-A(1, i-1))+A(1, i-1), Amax
-
-    ! do i=1, n3
-    !    if(A(2, i)<=Amax .and. Amax<A(2, i+1)) exit
-    ! end do
-
-    ! print *, energy, i-1, A(1, i-1), A(2, i-1), Amax
-    ! print *, energy, i, A(1, i), A(2, i), Amax
-    ! print *, "result", ((Amax-A(2, i-1))/(A(2, i)-A(2, i-1)))*(A(1, i)-A(1, i-1))+A(1, i-1), Amax
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-    print *, energy, ymax, A(1, 1), A(1, n)
     Amax=linear_interpolation(A, ymax, n)
-
-
-    ! do i=1, n3
-    !    if(A(2, i)>=Amax) exit
-    ! end do
-
-    ! print *, energy, i-1, A(1, i-1), A(2, i-1), Amax
-    ! print *, energy, i, A(1, i), A(2, i), Amax
-    ! print *, "result", ((Amax-A(2, i-1))/(A(2, i)-A(2, i-1)))*(A(1, i)-A(1, i-1))+A(1, i-1), Amax
-
+    Avalue=rand*Amax
 
     do i=1, n3
-       if(A(2, i)<=Amax .and. Amax<A(2, i+1)) exit
+       if(A(2, i)<=Avalue .and. Avalue<A(2, i+1)) exit
     end do
 
-    print *, energy, i-1, A(1, i-1), A(2, i-1), Amax
-    print *, energy, i, A(1, i), A(2, i), Amax
-    print *, "result", ((Amax-A(2, i-1))/(A(2, i)-A(2, i-1)))*(A(1, i)-A(1, i-1))+A(1, i-1), Amax
+    print *, energy, i-1, A(1, i-1), A(2, i-1), Avalue
+    print *, energy, i, A(1, i), A(2, i), Avalue
+    print *, "result", ((Avalue-A(2, i-1))/(A(2, i)-A(2, i-1)))*(A(1, i)-A(1, i-1))+A(1, i-1), Avalue
 
     print *, " "
   end function coherent_scattering_reaction
