@@ -45,14 +45,13 @@ program main
   ! end do
 
   ! call reaction_function(steel1%endf, rng(1.0_8, 1e9_8))
-  print *, "testing"
+  ! print *, "testing"
   call reaction_function(steel1%endf, 2e6_8)
   call reaction_function(steel1%endf, 1e6_8)
   call reaction_function(steel1%endf, 1e5_8)
   call reaction_function(steel1%endf, 1e4_8)
-  call reaction_function(steel1%endf, 1e3_8)
-  call reaction_function(steel1%endf, 1e2_8)
-
+  call reaction_function(steel1%endf, 5e3_8)
+  ! call reaction_function(steel1%endf, 1e3_8)
 
   ! sum1=0.0_8
   ! c=5000.0_8

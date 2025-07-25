@@ -102,9 +102,10 @@ contains
     class(MF27), intent(inout) :: this
     integer :: z, ios, MF, MT, n, n1
     integer, allocatable :: sizes(:)
-    real(kind(1.d0)) :: enext, hc, energylimit, deltax
+    real(kind(1.d0)) :: enext, hc, energylimit, deltax, energymin
     hc=4.135667696e-15_8*299792458.0_8
-    energylimit=1E9_8
+    energylimit=2.5E6_8
+    energymin=1E3_8
     ! energylimit=2.1E6_8
     ! energylimit=5.1E6_8
     n1=1000

@@ -33,27 +33,33 @@ contains
     r=r*r
   end function F1
 
-  subroutine create_coherent(coherent_factor, n, energymax, A, n2)
+  subroutine create_coherent(coherent_factor, n, energymax, A, n2, energymin)
     real(kind(1.d0)), intent(inout), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
-    real(kind(1.d0)), intent(in) :: energymax
+    real(kind(1.d0)), intent(in) :: energymax, energymin
     integer, intent(in) :: n, n2
-    real(kind(1.d0)) :: hc, deltay, ymax
+    real(kind(1.d0)) :: hc, deltay, ymax, ymin
     integer :: i, j, new1
     hc=4.135667696e-15_8*299792458.0_8
-
+    call system('rm t1.txt')
+    open(newunit=new1, file="t1.txt", status="new", action="write")
     ymax=(energymax/hc)**2
-    deltay=ymax/n
+    ymin=(energymin/hc)**2
+    deltay=(ymax-ymin)/n
+    ! energymin=50E3_8
+
     i=1
     A(1, i)=deltay
     A(2, i)=0.0_8
+    ! print *, i,n,A(1, i), A(2, i)
+    write(new1, *) A(1, i), ";", A(2, i)
     i=2
     A(1, i)=2.0_8*deltay
     A(2, i)=0.5_8*deltay*(F1((n*deltay)**0.5_8, coherent_factor, n2)+&
          F1(A(1, 2)**0.5_8, coherent_factor, n2))
-    print *, i,n,A(1, i), A(2, i)
-    call system('rm t1.txt')
-    open(newunit=new1, file="t1.txt", status="new", action="write")
+    ! print *, i,n,A(1, i), A(2, i)
+    write(new1, *) A(1, i), ";", A(2, i)
+
     do i=3, n
        A(1, i)=i*deltay
        A(2, i)=A(2, i-1)+deltay*F1(A(1, i)**0.5_8, coherent_factor, n2)
