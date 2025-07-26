@@ -6,12 +6,12 @@ module physics_routine
 
 contains
 
-  function coherent_scattering_reaction(coherent_factor, n, energy, A, n2, n3) result(mu)
+  function coherent_scattering_reaction(coherent_factor, n, energy, A, n2, n3) result(angle)
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)), intent(in), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n, n2, n3
-    real(kind(1.d0)) :: hc, ymax, deltay, Amax, y, Avalue, rand, energymin, ymin, mu
+    real(kind(1.d0)) :: hc, ymax, deltay, Amax, y, Avalue, rand, energymin, ymin, mu, angle
     integer :: i
     hc=4.135667696e-15_8*299792458.0_8
     ymax=(energy/hc)**2
@@ -20,20 +20,7 @@ contains
     deltay=(ymax-ymin)/n3
     rand=std_uniform_distribution()
     mu=0.0_8
-    ! Amax=0.0_8
-
-    ! Amax=Amax+0.5_8*deltay*(F1((n*deltay)**0.5_8, coherent_factor, n2)+&
-    !      F1(A(1, 2)**0.5_8, coherent_factor, n2))
-
-    ! do i=3, n
-    !    Amax=Amax+deltay*F1(A(1, i)**0.5_8, coherent_factor, n2)
-    !    ! write(new1, *) A(1, i), ";", A(2, i)
-    !    ! if(i<5) print *, A(1, i), A(2, i)
-    !    ! print *, i,n,A(1, i), A(2, i)
-    ! end do
-
     Amax=linear_interpolation(A, ymax, n)
-    ! Avalue=Amax
 
     do
        Avalue=rand*Amax
@@ -49,8 +36,58 @@ contains
        rand=std_uniform_distribution()
     end do
 
-    print *, energy,  mu
+    angle=acos(mu)
+    print *, energy,  mu, acos(mu)*(360/3.14)
   end function coherent_scattering_reaction
+
+  function incoherent_scattering_reaction(energy) result(angle)
+    real(kind(1.d0)), intent(in) :: energy
+    real(kind(1.d0)) :: epsilon0, electron_mass, c, alpha1, alpha2, &
+         rand, epsilon, epsilonprime, rand2, rand3, rand4, rand5, k0prime, t, g, anglef, angle
+    electron_mass=510998.9500001474_8
+    c=299792458_8
+    epsilon=0.0_8
+    k0prime=energy/electron_mass
+    epsilon0=1+2*k0prime
+    alpha1=log(1/epsilon0)
+    alpha2=(1-epsilon0)/2
+
+    rand=std_uniform_distribution()
+    rand2=std_uniform_distribution()
+
+    do
+
+       if(alpha1>=(alpha1+alpha2)*rand) then
+          epsilon=epsilon0*exp(alpha1*rand2)
+       else
+          rand3=std_uniform_distribution()
+          rand4=std_uniform_distribution()
+          epsilonprime=rand3
+
+          if(k0prime>=(k0prime+1)*rand2) then
+             epsilonprime=rand4
+
+             if(rand3>rand4) epsilonprime=rand3
+          end if
+
+          epsilon=epsilon0+(1-epsilon0)*epsilonprime
+       end if
+
+       t=electron_mass*(1-epsilon)/(epsilon*energy/electron_mass)
+       anglef=t*(2-t)
+       g=1-(epsilon*anglef/(1+epsilon*epsilon))
+       rand5=std_uniform_distribution()
+
+       if(rand5>g) exit
+
+       rand=std_uniform_distribution()
+       rand2=std_uniform_distribution()
+    end do
+
+
+    angle=asin(anglef**0.5)
+    print *, "angle", angle
+  end function incoherent_scattering_reaction
 
   subroutine sum1(limits, records, energy, n, total, i)
     real(kind(1.d0)), intent(in) :: energy
@@ -71,9 +108,9 @@ contains
     real(kind(1.d0)), dimension(4+endf%mf23%n_ionization+1) :: limits
     integer :: i, reaction_id
 
-    r=0
+    r=0.0_8
     limits(1)=0.0
-    total=0
+    total=0.0_8
 
     call sum1(limits, endf%mf23%coherent_scattering%records, &
          energy, endf%mf23%coherent_scattering%n, total, 2)
@@ -106,22 +143,21 @@ contains
   subroutine reaction_function(endf, energy)
     type(tape), intent(inout) :: endf
     real(kind(1.d0)), intent(in) :: energy
-    integer :: reaction_id, n1
-    real(kind(1.d0)) :: Amax
-    n1=500
-    reaction_id=select_reaction(endf, energy)
-    Amax=coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
-         endf%Ax, energy, endf%coherent_A, &
-         endf%mf27%coherent_factor%n, endf%Ax)
+    integer :: reaction_id
+    real(kind(1.d0)) :: angle
 
 
+    angle=incoherent_scattering_reaction(energy)
 
+
+    ! reaction_id=select_reaction(endf, energy)
 
     ! select case (reaction_id)
     ! case(1)
     !    print *, "coherent scattering"
-    !    ! call coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
-    !    !      endf%mf27%coherent_factor%n, energy, 100.0_8, endf%coherent_A)
+    !    angle=coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
+    !         endf%Ax, energy, endf%coherent_A, &
+    !         endf%mf27%coherent_factor%n, endf%Ax)
     ! case(2)
     !    print *, "incoherent scattering"
     ! case(3)
