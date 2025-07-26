@@ -6,12 +6,12 @@ module physics_routine
 
 contains
 
-  function coherent_scattering_reaction(coherent_factor, n, energy, A, n2, n3) result(Amax)
+  function coherent_scattering_reaction(coherent_factor, n, energy, A, n2, n3) result(mu)
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)), intent(in), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n, n2, n3
-    real(kind(1.d0)) :: hc, ymax, deltay, a1, x2, Amax, Ainverse, Avalue, rand, energymin, ymin, sum1, mu
+    real(kind(1.d0)) :: hc, ymax, deltay, Amax, y, Avalue, rand, energymin, ymin, mu
     integer :: i
     hc=4.135667696e-15_8*299792458.0_8
     ymax=(energy/hc)**2
@@ -42,30 +42,14 @@ contains
           if(A(2, i)<=Avalue .and. Avalue<A(2, i+1)) exit
        end do
 
-       Ainverse=A(1, i)+(Avalue-A(2, i))*((A(1, i+1)-A(1, i))/(A(2, i+1)-A(2, i)))
-       mu=1-2*Ainverse/ymax
+       y=A(1, i)+(Avalue-A(2, i))*((A(1, i+1)-A(1, i))/(A(2, i+1)-A(2, i)))
+       mu=1-2*y/ymax
 
        if(rand<(1+mu)/2) exit
        rand=std_uniform_distribution()
     end do
 
-    ! Avalue=rand*Amax
-
-    ! do i=1, n3
-    !    if(A(2, i)<=Avalue .and. Avalue<A(2, i+1)) exit
-    ! end do
-
-    ! Ainverse=A(1, i)+(Avalue-A(2, i))*((A(1, i+1)-A(1, i))/(A(2, i+1)-A(2, i)))
-
-    print *, energy, i-1, A(1, i-1), A(2, i-1), Avalue
-    print *, energy, i, A(1, i), A(2, i), Avalue
-    ! print *, "result", ((Avalue-A(2, i-1))/(A(2, i)-A(2, i-1)))*(A(1, i)-A(1, i-1))+A(1, i-1), Avalue, "inverse", Ainverse, "angle", mu
-    print *, "angle", mu
-
-    print *, " "
-
-    ! rand=std_uniform_distribution()
-    ! if(rand>(1+(1-2*Ainverse/ymax))) print *, "not accepted"
+    print *, energy,  mu
   end function coherent_scattering_reaction
 
   subroutine sum1(limits, records, energy, n, total, i)
