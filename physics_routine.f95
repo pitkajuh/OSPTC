@@ -56,7 +56,7 @@ contains
     epsilon0=1+2*energy1/(electron_mass*c*c)
     alpha1=log(1/epsilon0)
     alpha2=(1-epsilon0*epsilon0)/2
-    print *, energy1
+    ! print *, energy1
     rand=std_uniform_distribution()
     rand2=std_uniform_distribution()
 
