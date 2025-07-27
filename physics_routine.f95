@@ -42,46 +42,54 @@ contains
 
   function incoherent_scattering_reaction(energy) result(angle)
     real(kind(1.d0)), intent(in) :: energy
-    real(kind(1.d0)) :: epsilon0, electron_mass, c, alpha1, alpha2, &
-         rand, epsilon, epsilonprime, rand2, rand3, rand4, rand5, k0prime, t, g, anglef, angle
-    electron_mass=510998.9500001474_8
-    c=299792458_8
+    ! real(kind(1.d0)) :: energy
+    real(kind(1.d0)) :: epsilon0, electron_mass, alpha1, alpha2, &
+         rand, epsilon, epsilonprime, rand2, rand3, rand4, rand5, k0prime, t, g, anglef, angle, c, energy1
+    c=299792458.0_8
+    energy1=energy*1.602176634E-19
+    ! electron_mass=510998.9500001474_8
+    electron_mass=9.1093837139E-31
+    ! electron_mass=electron_mass*c*c
     epsilon=0.0_8
-    k0prime=energy/electron_mass
-    epsilon0=1+2*k0prime
+    epsilonprime=0.0_8
+    k0prime=energy1/(electron_mass*c*c)
+    epsilon0=1+2*energy1/(electron_mass*c*c)
     alpha1=log(1/epsilon0)
-    alpha2=(1-epsilon0)/2
-
+    alpha2=(1-epsilon0*epsilon0)/2
+    print *, energy1
     rand=std_uniform_distribution()
     rand2=std_uniform_distribution()
 
     do
+       epsilon=0.0_8
 
        if(alpha1>=(alpha1+alpha2)*rand) then
-          epsilon=epsilon0*exp(alpha1*rand2)
+          epsilon=epsilon0*dexp(alpha1*rand2)
        else
           rand3=std_uniform_distribution()
           rand4=std_uniform_distribution()
           epsilonprime=rand3
 
           if(k0prime>=(k0prime+1)*rand2) then
-             epsilonprime=rand4
-
-             if(rand3>rand4) epsilonprime=rand3
+             epsilonprime=max(rand3, rand4)
           end if
 
           epsilon=epsilon0+(1-epsilon0)*epsilonprime
        end if
 
-       t=electron_mass*(1-epsilon)/(epsilon*energy/electron_mass)
+       ! t=electron_mass*(1-epsilon)/(epsilon*energy1/electron_mass)
+       t=electron_mass*c*c*(1-epsilon)/(energy1*epsilon)
+       ! t=electron_mass*c*c*(1-epsilon)/(energy1*epsilon/(electron_mass*c*c))
        anglef=t*(2-t)
-       g=1-(epsilon*anglef/(1+epsilon*epsilon))
+       g=1-((epsilon*anglef)/(1+epsilon*epsilon))
        rand5=std_uniform_distribution()
-
-       if(rand5>g) exit
+       print *, rand5, g, epsilon
+       ! if(g<1.0_8) print *, rand5, g
+       if(rand5>g .or. rand4>g) exit
 
        rand=std_uniform_distribution()
        rand2=std_uniform_distribution()
+       ! exit
     end do
 
 
