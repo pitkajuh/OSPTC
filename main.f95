@@ -31,9 +31,13 @@ program main
   call steel1%create()
 
   ! c=steel1%density*100*linear_interpolation(steel1%mu, 11.0_8, 37)
+  print *, "etste"
+  c=linear_interpolation(steel1%mu, 12.0_8, 37)
+  print *, c
 
-  ! c=linear_interpolation(steel1%mu, 12.0, 37)
-  ! print *, c
+
+
+
   ! print *, steel1%endf%mf23%incoherent_scattering%records
 
   ! do i=1, int(steel1%endf%mf23%incoherent_scattering%header(1, 3))
@@ -46,12 +50,17 @@ program main
 
   ! call reaction_function(steel1%endf, rng(1.0_8, 1e9_8))
   ! print *, "testing"
-  call reaction_function(steel1%endf, 2e6_8)
-  call reaction_function(steel1%endf, 1e6_8)
-  call reaction_function(steel1%endf, 1e5_8)
-  call reaction_function(steel1%endf, 1e4_8)
-  call reaction_function(steel1%endf, 5e3_8)
-  call reaction_function(steel1%endf, 1e3_8)
+
+
+  ! call reaction_function(steel1%endf, 2e6_8)
+  ! call reaction_function(steel1%endf, 1e6_8)
+  ! call reaction_function(steel1%endf, 1e5_8)
+  ! call reaction_function(steel1%endf, 1e4_8)
+  ! call reaction_function(steel1%endf, 5e3_8)
+  ! call reaction_function(steel1%endf, 1e3_8)
+
+
+
 
   ! sum1=0.0_8
   ! c=5000.0_8
@@ -82,10 +91,19 @@ program main
   ! t=std_uniform_distribution()
   ! t1=std_uniform_distribution()
   ! point=coordinate(t, t, t)
-  point1=coordinate(t1, t1, t1)
-  a1=cylinder(10.0_8, 2.0_8, point1)
 
-  print *, a1%surface_equation(point1)
+
+
+
+
+  ! point1=coordinate(t1, t1, t1)
+  ! a1=cylinder(10.0_8, 2.0_8, point1)
+
+  ! print *, a1%surface_equation(point1)
+
+
+
+
   ! call show(point)
   ! call show(point1)
   ! ! print *, point-point1

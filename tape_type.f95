@@ -37,6 +37,8 @@ contains
     ! emax=5.1E6_8
     ! If n1 is changed, change it also from reaction_function
     ! n1=500
+
+
     n2=(emax/emin)**2
     print *, n2, emax, emin, int((emax/emin)**2)
     this%Ax=n2

@@ -29,6 +29,7 @@ contains
     integer, intent(in) :: n
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)) :: r
+    ! print *, "F1"
     r=linear_interpolation(coherent_factor, x1, n)
     r=r*r
   end function F1
