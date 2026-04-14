@@ -37,36 +37,34 @@ contains
     end do
 
 
-    ! create coherent angular distribution
-    emax=2.5E6_8
-    emin=1E3_8
-    ! emax=2.1E6_8
-    ! emax=5.1E6_8
-    ! If n1 is changed, change it also from reaction_function
-    ! n1=500
+    ! ! create coherent angular distribution
+    ! emax=2.5E6_8
+    ! emin=1E3_8
+    ! ! emax=2.1E6_8
+    ! ! emax=5.1E6_8
+    ! ! If n1 is changed, change it also from reaction_function
+    ! ! n1=500
 
 
-    n2=(emax/emin)**2
-    print *, n2, emax, emin, int((emax/emin)**2)
-    this%Ax=n2
-    allocate(this%coherent_A(2, n2))
-    call create_coherent(this%mf27%coherent_factor%records, &
-         n2, emax, this%coherent_A, &
-         this%mf27%coherent_factor%n, emin)
+    ! n2=(emax/emin)**2
+    ! print *, n2, emax, emin, int((emax/emin)**2)
+    ! this%Ax=n2
+    ! allocate(this%coherent_A(2, n2))
+    ! call create_coherent(this%mf27%coherent_factor%records, &
+    !      n2, emax, this%coherent_A, &
+    !      this%mf27%coherent_factor%n, emin)
   end subroutine read_tape
 
-
-  ! subroutine slice_tape(this, max_energy)
-  !   implicit none
-  !   integer :: slice_to, i
-  !   real(kind(1.d0)), intent(in) :: max_energy
-  !   ! mf23%coherent_scattering%records
-  !   slice_to=binary_search(this%mf23%coherent_scattering%records, max_energy, this%sizes(1))
-  !   ! do i=1, this%n
-  !   !    slice_to=binary_search()
-  !   ! end do
-  ! end subroutine slice_tape
-
+  subroutine slice_tape(this, max_energy)
+    type(tape) :: this
+    integer :: slice_to, i
+    real(kind(1.d0)), intent(in) :: max_energy
+    slice_to=1+binary_search(this%mf23%coherent_scattering%records, max_energy, 3*this%sizes(1))
+    print *, "ohcreco", slice_to, 3*this%sizes(1)
+    do i=1, 3*this%sizes(1)
+       print *, this%mf23%coherent_scattering%records(1, i)
+    end do
+  end subroutine slice_tape
 
   subroutine read_begin(this, z, ios)
     type(tape) :: this
