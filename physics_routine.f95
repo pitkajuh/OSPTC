@@ -155,7 +155,7 @@ contains
     real(kind(1.d0)) :: angle
 
 
-    angle=incoherent_scattering_reaction(energy)
+    ! angle=incoherent_scattering_reaction(energy)
 
 
     ! reaction_id=select_reaction(endf, energy)
@@ -163,9 +163,9 @@ contains
     ! select case (reaction_id)
     ! case(1)
     !    print *, "coherent scattering"
-    !    angle=coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
-    !         endf%Ax, energy, endf%coherent_A, &
-    !         endf%mf27%coherent_factor%n, endf%Ax)
+       angle=coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
+            endf%Ax, energy, endf%coherent_A, &
+            endf%mf27%coherent_factor%n, endf%Ax)
     ! case(2)
     !    print *, "incoherent scattering"
     ! case(3)
@@ -175,6 +175,7 @@ contains
     ! case default
     !    print *, "ionization", reaction_id
     ! end select
+       print *, "angle", angle
   end subroutine reaction_function
 
 end module physics_routine

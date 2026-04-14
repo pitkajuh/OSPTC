@@ -37,22 +37,22 @@ contains
     end do
 
 
-    ! ! create coherent angular distribution
-    ! emax=2.5E6_8
-    ! emin=1E3_8
-    ! ! emax=2.1E6_8
-    ! ! emax=5.1E6_8
-    ! ! If n1 is changed, change it also from reaction_function
-    ! ! n1=500
+    ! create coherent angular distribution
+    emax=2.5E3_8
+    emin=1E3_8
+    ! emax=2.1E6_8
+    ! emax=5.1E6_8
+    ! If n1 is changed, change it also from reaction_function
+    ! n1=500
 
 
-    ! n2=(emax/emin)**2
-    ! print *, n2, emax, emin, int((emax/emin)**2)
-    ! this%Ax=n2
-    ! allocate(this%coherent_A(2, n2))
-    ! call create_coherent(this%mf27%coherent_factor%records, &
-    !      n2, emax, this%coherent_A, &
-    !      this%mf27%coherent_factor%n, emin)
+    n2=(emax/emin)**2
+    print *, n2, emax, emin, int((emax/emin)**2)
+    this%Ax=n2
+    allocate(this%coherent_A(2, n2))
+    call create_coherent(this%mf27%coherent_factor%records, &
+         n2, emax, this%coherent_A, &
+         this%mf27%coherent_factor%n, emin)
   end subroutine read_tape
 
   subroutine slice_tape(this, max_energy)
