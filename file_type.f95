@@ -76,17 +76,14 @@ contains
     i=5
     ! i=4
 
-    ! sizes(0)=2*int(this%coherent_scattering%header(1, 3))
-    ! sizes(1)=2*int(this%incoherent_scattering%header(1, 3))
-    ! sizes(2)=2*int(this%pair_formation_elec%header(1, 3))
-    ! sizes(3)=2*int(this%pair_formation_nuc%header(1, 3))
+
 
     do
        call this%photo_ionization(i-4)%read_section_header(z, ios, MF, MT)
        if(MT==0 .and. MF==0) exit
        allocate(this%photo_ionization(i-4)%records(2, 2*int(this%photo_ionization(i-4)%header(1, 3))))
 
-       ! sizes(i)=2*int(this%photo_ionization(i-4)%header(1, 3))
+
 
        call this%photo_ionization(i-4)%read_section(z, ios, MF, MT, &
             int(this%photo_ionization(i-4)%header(1, 3)), this%photo_ionization(i-4)%records)
@@ -94,7 +91,6 @@ contains
     end do
     print *, i
     this%n_ionization=i-5
-    ! this%n_ionization=i-4
 
   end subroutine create_mf23
 
@@ -156,11 +152,5 @@ contains
     call this%real_factor%read_section(z, ios, MF, MT, &
          int(this%real_factor%header(1, 3)), this%real_factor%records)
 
-    print *, "start", index_from
-    ! size_index=this%n_ionization+5+1
-    ! sizes(index_from)=2*int(this%coherent_factor%header(1, 3))+n1
-    ! sizes(index_from+1)=2*int(this%incoherent_function%header(1, 3))
-    ! sizes(index_from+2)=2*int(this%imaginary_factor%header(1, 3))
-    ! sizes(index_from+3)=2*int(this%real_factor%header(1, 3))
   end subroutine create_mf27
 end module file_type
