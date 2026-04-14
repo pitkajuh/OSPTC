@@ -58,17 +58,8 @@ contains
 
   subroutine create_steel(this)
     class(steel), intent(inout) :: this
-    real(kind(1.d0)) :: max_energy
     this%density=7.874
     call read_tape(this%endf, 'cross-sections/photoat-026_Fe_000.endf')
-
-
-
-    max_energy=1332.3
-
-    call slice_tape(this%endf, max_energy)
-
-
     this%n=37
     allocate(this%mu(3, 37))
     ! Taken from https://physics.nist.gov/PhysRefData/XrayMassCoef/ElemTab/z26.html

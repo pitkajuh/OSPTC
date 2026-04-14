@@ -35,7 +35,7 @@ program main
   c=linear_interpolation(steel1%mu, 12.0_8, 37)
   print *, c
 
-  ! call steel1%endf%slice_tape(max_energy)
+  call slice_tape(steel1%endf, max_energy)
 
 
   ! print *, steel1%endf%mf23%incoherent_scattering%records

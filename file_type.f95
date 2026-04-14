@@ -10,10 +10,10 @@ module file_type
   end type file
 
   abstract interface
-     subroutine create_file(this, z, ios, sizes, n, index_from)
+     subroutine create_file(this, z, ios, sizes, n)
        import file
        class(file), intent(inout) :: this
-       integer :: z, ios, n, index_from
+       integer :: z, ios, n
        integer, allocatable :: sizes(:)
      end subroutine create_file
   end interface
@@ -39,9 +39,9 @@ module file_type
 
 contains
 
-  subroutine create_mf23(this, z, ios, sizes, n, index_from)
+  subroutine create_mf23(this, z, ios, sizes, n)
     class(MF23), intent(inout) :: this
-    integer :: z, ios, MF, MT, n, i, index_from
+    integer :: z, ios, MF, MT, n, i
     integer, allocatable :: sizes(:)
 
     ! Skip 23501
@@ -106,9 +106,9 @@ contains
     end do
   end subroutine extend_scattering
 
-  subroutine create_mf27(this, z, ios, sizes, n, index_from)
+  subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
-    integer :: z, ios, MF, MT, n, n1, size_index, index_from
+    integer :: z, ios, MF, MT, n, n1, size_index
     integer, allocatable :: sizes(:)
     real(kind(1.d0)) :: enext, hc, energylimit, deltax, energymin
     hc=4.135667696e-15_8*299792458.0_8

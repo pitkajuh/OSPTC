@@ -26,9 +26,9 @@ contains
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin(this, z, ios)
-    call this%mf23%create(z, ios, this%sizes, this%n, 0)
+    call this%mf23%create(z, ios, this%sizes, this%n)
     ! print *, "aoeeoaeo", this%mf23%n_ionization+5+1
-    call this%mf27%create(z, ios, this%sizes, this%n, this%mf23%n_ionization+4+1)
+    call this%mf27%create(z, ios, this%sizes, this%n)
     close(z)
 
 
@@ -61,9 +61,9 @@ contains
     real(kind(1.d0)), intent(in) :: max_energy
     slice_to=1+binary_search(this%mf23%coherent_scattering%records, max_energy, 3*this%sizes(1))
     print *, "ohcreco", slice_to, 3*this%sizes(1)
-    do i=1, 3*this%sizes(1)
-       print *, this%mf23%coherent_scattering%records(1, i)
-    end do
+    ! do i=1, 3*this%sizes(1)
+    !    print *, this%mf23%coherent_scattering%records(1, i)
+    ! end do
   end subroutine slice_tape
 
   subroutine read_begin(this, z, ios)
