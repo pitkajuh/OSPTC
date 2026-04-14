@@ -19,12 +19,12 @@ program main
   type(cylinder) :: t12
   ! type(steel) :: steel1
   class(material), allocatable :: steel1
-  real(kind(1.d0)) :: c, ymax, Amax
+  real(kind(1.d0)) :: c, ymax, Amax, max_energy
   integer :: reac
   ! allocate(cylinder :: a1)
   ! call a1%create()
 
-
+  max_energy=1332.3
 
 
   allocate(steel :: steel1)

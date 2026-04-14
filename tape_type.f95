@@ -1,5 +1,6 @@
 module tape_type
   use random
+  use search
   use file_type
   use interpolate
   use photon_angular_distribution
@@ -7,7 +8,7 @@ module tape_type
 
   type :: tape
      real(kind(1.d0)), dimension(6, 4) :: header
-     real(kind(1.d0)), allocatable :: coherent_A(:, :)
+     ! real(kind(1.d0)), allocatable :: coherent_A(:, :)
      integer, allocatable :: sizes(:)
      integer :: n, Ax
      type(MF23) :: mf23
@@ -16,36 +17,47 @@ module tape_type
 
 contains
 
+  ! subroutine slice_tape(this, max_energy)
+  !   integer :: slice_to
+  !   slice_to=binary_search()
+  ! end subroutine slice_tape
+
   subroutine read_tape(this, tape_name)
     type(tape) :: this
     character(*) :: tape_name
-    integer :: ios, z, n1, n2
+    integer :: ios, z, n1, n2, i
     real(kind(1.d0)) :: emax, emin
     z=1
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin(this, z, ios)
-    call this%mf23%create(z, ios, this%sizes, this%n)
-    call this%mf27%create(z, ios, this%sizes, this%n)
+    call this%mf23%create(z, ios, this%sizes, this%n, 0)
+    ! print *, "aoeeoaeo", this%mf23%n_ionization+5+1
+    call this%mf27%create(z, ios, this%sizes, this%n, this%mf23%n_ionization+4+1)
     close(z)
 
-    ! create coherent angular distribution
 
-    emax=2.5E6_8
-    emin=1E3_8
-    ! emax=2.1E6_8
-    ! emax=5.1E6_8
-    ! If n1 is changed, change it also from reaction_function
-    ! n1=500
+    do i=0, this%n+1
+       print *, this%sizes(i)
+    end do
 
 
-    n2=(emax/emin)**2
-    print *, n2, emax, emin, int((emax/emin)**2)
-    this%Ax=n2
-    allocate(this%coherent_A(2, n2))
-    call create_coherent(this%mf27%coherent_factor%records, &
-         n2, emax, this%coherent_A, &
-         this%mf27%coherent_factor%n, emin)
+    ! ! create coherent angular distribution
+    ! emax=2.5E6_8
+    ! emin=1E3_8
+    ! ! emax=2.1E6_8
+    ! ! emax=5.1E6_8
+    ! ! If n1 is changed, change it also from reaction_function
+    ! ! n1=500
+
+
+    ! n2=(emax/emin)**2
+    ! print *, n2, emax, emin, int((emax/emin)**2)
+    ! this%Ax=n2
+    ! allocate(this%coherent_A(2, n2))
+    ! call create_coherent(this%mf27%coherent_factor%records, &
+    !      n2, emax, this%coherent_A, &
+    !      this%mf27%coherent_factor%n, emin)
   end subroutine read_tape
 
   subroutine read_begin(this, z, ios)
@@ -74,6 +86,7 @@ contains
 
     this%n=this%header(6, 4)-4
     i=1
+    print *, "allocate", this%n
     allocate(this%sizes(this%n))
 
     do

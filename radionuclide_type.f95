@@ -3,7 +3,7 @@ module radionuclide_type
   implicit none
 
   type, abstract :: radionuclide
-     real :: activity, half_life
+     real(kind(1.d0)) :: activity, half_life, max_energy
    contains
      procedure(create_pdf), deferred :: pdf
   end type radionuclide
@@ -12,7 +12,7 @@ module radionuclide_type
      function create_pdf(this) result(pdf1)
        import radionuclide
        class(radionuclide), intent(inout) :: this
-       real :: pdf1
+       real(kind(1.d0)) :: pdf1
      end function create_pdf
   end interface
 
@@ -25,7 +25,7 @@ contains
 
   function pdf_co_60(this) result(pdf1)
     class(co_60), intent(inout) :: this
-    real :: pdf1
+    real(kind(1.d0)) :: pdf1
     if(std_uniform_distribution()<=0.85) pdf1=1173.3
     pdf1=1332.3
   end function pdf_co_60
