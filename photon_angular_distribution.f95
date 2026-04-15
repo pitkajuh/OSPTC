@@ -24,15 +24,15 @@ contains
 
   end subroutine create_incoherent
 
-  function F1(x1, coherent_factor, n) result(r)
+  function F(x1, coherent_factor, n) result(r)
     real(kind(1.d0)), intent(in) :: x1
     integer, intent(in) :: n
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)) :: r
-    ! print *, "F1"
+    ! print *, "F"
     r=linear_interpolation(coherent_factor, x1, n)
     ! r=r*r
-  end function F1
+  end function F
 
   subroutine create_coherent(coherent_factor, n, energymax, A, n2, energymin)
     real(kind(1.d0)), intent(inout), allocatable :: A(:, :)
@@ -71,9 +71,9 @@ contains
 
 
     A(1, 2)=deltax2
-    ! H=F1(A(1, 1)**0.5_8, coherent_factor, n2)**2
+    ! H=F(A(1, 1)**0.5_8, coherent_factor, n2)**2
     H=coherent_factor(2, 1)
-    T=F1(A(1, 2)**0.5_8, coherent_factor, n2)**2
+    T=F(A(1, 2)**0.5_8, coherent_factor, n2)**2
     ! print *, "H, T", H, T
     A(2, 2)=A(2, 1)+0.5_8*deltax2*(H+T)
     ! A(2, 2)=0.5_8*deltax2*(H+T)
@@ -86,13 +86,13 @@ contains
     do i=3, n2
        ! print *, i, n
        ! A(1, i)=(i-1)*deltax2
-       ! A(2, i)=A(2, i-1)+0.5_8*deltax2*(F1(A(1, i-1)**0.5_8, coherent_factor, n2)**2+&
-       !      F1(A(1, i)**0.5_8, coherent_factor, n2)**2)
+       ! A(2, i)=A(2, i-1)+0.5_8*deltax2*(F(A(1, i-1)**0.5_8, coherent_factor, n2)**2+&
+       !      F(A(1, i)**0.5_8, coherent_factor, n2)**2)
 
 
        A(1, i)=(i-1)*deltax2
-       H=F1(A(1, i-1)**0.5_8, coherent_factor, n2)**2
-       T=F1(A(1, i)**0.5_8, coherent_factor, n2)**2
+       H=F(A(1, i-1)**0.5_8, coherent_factor, n2)**2
+       T=F(A(1, i)**0.5_8, coherent_factor, n2)**2
        A(2, i)=A(2, i-1)+0.5_8*deltax2*(H+T)
        ! A(2, i)=0.5_8*deltax2*(H+T)
        ! print *, A(2, i-1), H, T
@@ -120,14 +120,14 @@ contains
     ! write(new1, *) A(1, i), ";", A(2, i)
     ! i=2
     ! A(1, i)=2.0_8*deltay
-    ! A(2, i)=0.5_8*deltay*(F1((n*deltay)**0.5_8, coherent_factor, n2)+&
-    !      F1(A(1, 2)**0.5_8, coherent_factor, n2))
+    ! A(2, i)=0.5_8*deltay*(F((n*deltay)**0.5_8, coherent_factor, n2)+&
+    !      F(A(1, 2)**0.5_8, coherent_factor, n2))
     ! ! print *, i,n,A(1, i), A(2, i)
     ! write(new1, *) A(1, i), ";", A(2, i)
 
     ! do i=3, n
     !    A(1, i)=i*deltay
-    !    A(2, i)=A(2, i-1)+deltay*F1(A(1, i)**0.5_8, coherent_factor, n2)
+    !    A(2, i)=A(2, i-1)+deltay*F(A(1, i)**0.5_8, coherent_factor, n2)
     !    write(new1, *) A(1, i), ";", A(2, i)
     !    ! if(i<5) print *, A(1, i), A(2, i)
     !    ! print *, i,n,A(1, i), A(2, i)
