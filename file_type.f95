@@ -116,22 +116,23 @@ contains
     energymin=1E3_8
     ! energylimit=2.1E6_8
     ! energylimit=5.1E6_8
-    n1=1000
+    ! n1=1000
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int( &
-         this%coherent_factor%header(1, 3))+n1))
+         this%coherent_factor%header(1, 3))))
+         ! this%coherent_factor%header(1, 3))+n1))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          int(this%coherent_factor%header(1, 3)), &
          this%coherent_factor%records)
 
-    ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
-    ! so more values (1000) are added by extrapolating.
-    deltax=int((energylimit/hc-this%coherent_factor%records(1, &
-         this%coherent_factor%n))/n1)
-    call extend_scattering(this%coherent_factor%records, &
-         this%coherent_factor%n, deltax, n1)
-    this%coherent_factor%n=this%coherent_factor%n+n1
+    ! ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
+    ! ! so more values (1000) are added by extrapolating.
+    ! deltax=int((energylimit/hc-this%coherent_factor%records(1, &
+    !      this%coherent_factor%n))/n1)
+    ! call extend_scattering(this%coherent_factor%records, &
+    !      this%coherent_factor%n, deltax, n1)
+    ! this%coherent_factor%n=this%coherent_factor%n+n1
 
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
     allocate(this%incoherent_function%records(2, 2*int( &

@@ -32,10 +32,10 @@ program main
 
   ! c=steel1%density*100*linear_interpolation(steel1%mu, 11.0_8, 37)
   print *, "etste"
-  c=linear_interpolation(steel1%mu, 12.0_8, 37)
-  print *, c
+  ! c=linear_interpolation(steel1%mu, 12.0_8, 37)
+  ! print *, c
 
-  call slice_tape(steel1%endf, max_energy)
+  ! call slice_tape(steel1%endf, max_energy)
 
 
   ! print *, steel1%endf%mf23%incoherent_scattering%records
@@ -52,7 +52,7 @@ program main
   ! print *, "testing"
 
 
-  call reaction_function(steel1%endf, 2e3_8)
+  ! call reaction_function(steel1%endf, 2e3_8)
   ! call reaction_function(steel1%endf, 1e6_8)
   ! call reaction_function(steel1%endf, 1e5_8)
   ! call reaction_function(steel1%endf, 1e4_8)

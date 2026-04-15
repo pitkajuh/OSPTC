@@ -7,7 +7,7 @@ contains
   function x(energy, mu, hc) result(r)
     real(kind(1.d0)), intent(in) :: energy, mu, hc
     real(kind(1.d0)) :: r
-    r=(energy/hc)*((1-mu)/2)**0.5
+    r=(energy/hc)*((1_8-mu)/2_8)**0.5_8
   end function x
 
   subroutine create_incoherent(incoherent, incoherent_function, n1, n2)
@@ -31,7 +31,7 @@ contains
     real(kind(1.d0)) :: r
     ! print *, "F1"
     r=linear_interpolation(coherent_factor, x1, n)
-    r=r*r
+    ! r=r*r
   end function F1
 
   subroutine create_coherent(coherent_factor, n, energymax, A, n2, energymin)
@@ -39,38 +39,102 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)), intent(in) :: energymax, energymin
     integer, intent(in) :: n, n2
-    real(kind(1.d0)) :: hc, deltay, ymax, ymin
+    real(kind(1.d0)) :: hc, xmax, xmin, deltax, deltax2, H, T
     integer :: i, j, new1
-    hc=4.135667696e-15_8*299792458.0_8
+    hc=4.135667696E-15_8*299792458.0_8
+    xmax=energymax/hc
+    xmax=x(energymax, -1.0_8, hc)
+    xmin=0.0_8
+    deltax=(xmax-xmin)/n2
+    deltax2=deltax*deltax
+    ! deltax2=deltax
+
+
+    ! do i=1, n2
+    !    print *, i, coherent_factor(1, i), coherent_factor(2, i)
+    ! end do
+
+
     call system('rm t1.txt')
     open(newunit=new1, file="t1.txt", status="new", action="write")
-    ymax=(energymax/hc)**2
-    ymin=(energymin/hc)**2
-    deltay=(ymax-ymin)/n
-    ! energymin=50E3_8
 
-    i=1
-    A(1, i)=deltay
-    A(2, i)=0.0_8
-    ! print *, i,n,A(1, i), A(2, i)
-    write(new1, *) A(1, i), ";", A(2, i)
-    i=2
-    A(1, i)=2.0_8*deltay
-    A(2, i)=0.5_8*deltay*(F1((n*deltay)**0.5_8, coherent_factor, n2)+&
-         F1(A(1, 2)**0.5_8, coherent_factor, n2))
-    ! print *, i,n,A(1, i), A(2, i)
-    write(new1, *) A(1, i), ";", A(2, i)
+    ! print *, "xmax", xmax, energymax, hc
+    A(1, 1)=0.0_8
+    A(2, 1)=0.5_8*deltax2*(coherent_factor(2, 1)**2)
+    H=0
+    T=coherent_factor(2, 1)**2
+    ! print *, "chorent", coherent_factor(2, 1)
+    write(new1, *) A(1, 1), ";", A(2, 1)
+    ! print *, A(1, 1), A(2, 1)
+    print *, 1, 0.5_8*deltax2, H, T, A(2, 1)
 
-    do i=3, n
-       A(1, i)=i*deltay
-       A(2, i)=A(2, i-1)+deltay*F1(A(1, i)**0.5_8, coherent_factor, n2)
+
+
+    A(1, 2)=deltax2
+    ! H=F1(A(1, 1)**0.5_8, coherent_factor, n2)**2
+    H=coherent_factor(2, 1)
+    T=F1(A(1, 2)**0.5_8, coherent_factor, n2)**2
+    ! print *, "H, T", H, T
+    A(2, 2)=A(2, 1)+0.5_8*deltax2*(H+T)
+    ! A(2, 2)=0.5_8*deltax2*(H+T)
+    write(new1, *) A(1, 2), ";", A(2, 2)
+    ! print *, A(1, 2), A(2, 2)
+    print *, 2, A(2, 1), 0.5_8*deltax2, H, T, A(2, 2)
+
+
+    ! do i=3, n2
+    do i=3, n2
+       ! print *, i, n
+       ! A(1, i)=(i-1)*deltax2
+       ! A(2, i)=A(2, i-1)+0.5_8*deltax2*(F1(A(1, i-1)**0.5_8, coherent_factor, n2)**2+&
+       !      F1(A(1, i)**0.5_8, coherent_factor, n2)**2)
+
+
+       A(1, i)=(i-1)*deltax2
+       H=F1(A(1, i-1)**0.5_8, coherent_factor, n2)**2
+       T=F1(A(1, i)**0.5_8, coherent_factor, n2)**2
+       A(2, i)=A(2, i-1)+0.5_8*deltax2*(H+T)
+       ! A(2, i)=0.5_8*deltax2*(H+T)
+       ! print *, A(2, i-1), H, T
+       ! print *, A(1, i), ";", A(2, i)
        write(new1, *) A(1, i), ";", A(2, i)
-       ! if(i<5) print *, A(1, i), A(2, i)
-       ! print *, i,n,A(1, i), A(2, i)
+       ! print *, A(1, i), ";", A(2, i)
+       print *, i, A(2, i-1), 0.5_8*deltax2, H, T, A(2, i)
     end do
 
-    print *, A(2, 1), A(2, 2), A(2, n)
-    print *, deltay, n
+
+
+
+    close(new1)
+    print *, "generated"
+
+    ! ymax=(energymax/hc)**2
+    ! ymin=(energymin/hc)**2
+    ! deltay=(ymax-ymin)/n
+    ! energymin=50E3_8
+
+    ! i=1
+    ! A(1, i)=deltay
+    ! A(2, i)=0.0_8
+    ! ! print *, i,n,A(1, i), A(2, i)
+    ! write(new1, *) A(1, i), ";", A(2, i)
+    ! i=2
+    ! A(1, i)=2.0_8*deltay
+    ! A(2, i)=0.5_8*deltay*(F1((n*deltay)**0.5_8, coherent_factor, n2)+&
+    !      F1(A(1, 2)**0.5_8, coherent_factor, n2))
+    ! ! print *, i,n,A(1, i), A(2, i)
+    ! write(new1, *) A(1, i), ";", A(2, i)
+
+    ! do i=3, n
+    !    A(1, i)=i*deltay
+    !    A(2, i)=A(2, i-1)+deltay*F1(A(1, i)**0.5_8, coherent_factor, n2)
+    !    write(new1, *) A(1, i), ";", A(2, i)
+    !    ! if(i<5) print *, A(1, i), A(2, i)
+    !    ! print *, i,n,A(1, i), A(2, i)
+    ! end do
+
+    ! print *, A(2, 1), A(2, 2), A(2, n)
+    ! print *, deltay, n
 
   end subroutine create_coherent
 end module photon_angular_distribution
