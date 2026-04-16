@@ -45,11 +45,28 @@ contains
     xmax=energymax/hc
     xmax=x(energymax, -1.0_8, hc)
     xmin=0.0_8
-    deltax=(xmax-xmin)/n2
+    deltax=(xmax-xmin)/n
     deltax2=deltax*deltax
+
+    deltax=(xmax-xmin)
+    deltax2=deltax*deltax/n
+
+
+    deltax=(xmax**2-xmin**2)
+    deltax2=deltax/n
+
+    deltax2=xmax**2/n
+
+
+    ! do i=1, n2
+    !    print *, coherent_factor(1, i), coherent_factor(2, i)
+    ! end do
+
+
+
     ! deltax2=deltax
 
-
+    print *, deltax2, xmax/1E5_8, xmax
     ! do i=1, n2
     !    print *, i, coherent_factor(1, i), coherent_factor(2, i)
     ! end do
@@ -58,49 +75,54 @@ contains
     call system('rm t1.txt')
     open(newunit=new1, file="t1.txt", status="new", action="write")
 
-    ! print *, "xmax", xmax, energymax, hc
     A(1, 1)=0.0_8
     A(2, 1)=0.5_8*deltax2*(coherent_factor(2, 1)**2)
     H=0
     T=coherent_factor(2, 1)**2
-    ! print *, "chorent", coherent_factor(2, 1)
+
     write(new1, *) A(1, 1), ";", A(2, 1)
-    ! print *, A(1, 1), A(2, 1)
     print *, 1, 0.5_8*deltax2, H, T, A(2, 1)
 
 
 
     A(1, 2)=deltax2
-    ! H=F(A(1, 1)**0.5_8, coherent_factor, n2)**2
     H=coherent_factor(2, 1)
     T=F(A(1, 2)**0.5_8, coherent_factor, n2)**2
-    ! print *, "H, T", H, T
     A(2, 2)=A(2, 1)+0.5_8*deltax2*(H+T)
     ! A(2, 2)=0.5_8*deltax2*(H+T)
     write(new1, *) A(1, 2), ";", A(2, 2)
-    ! print *, A(1, 2), A(2, 2)
     print *, 2, A(2, 1), 0.5_8*deltax2, H, T, A(2, 2)
 
 
-    ! do i=3, n2
-    do i=3, n2
-       ! print *, i, n
-       ! A(1, i)=(i-1)*deltax2
-       ! A(2, i)=A(2, i-1)+0.5_8*deltax2*(F(A(1, i-1)**0.5_8, coherent_factor, n2)**2+&
-       !      F(A(1, i)**0.5_8, coherent_factor, n2)**2)
+    ! ! do i=3, n2
+    ! do i=3, n
+    !    ! print *, i, n
+    !    ! A(1, i)=(i-1)*deltax2
+    !    ! A(2, i)=A(2, i-1)+0.5_8*deltax2*(F(A(1, i-1)**0.5_8, coherent_factor, n2)**2+&
+    !    !      F(A(1, i)**0.5_8, coherent_factor, n2)**2)
 
 
-       A(1, i)=(i-1)*deltax2
-       H=F(A(1, i-1)**0.5_8, coherent_factor, n2)**2
-       T=F(A(1, i)**0.5_8, coherent_factor, n2)**2
-       A(2, i)=A(2, i-1)+0.5_8*deltax2*(H+T)
-       ! A(2, i)=0.5_8*deltax2*(H+T)
-       ! print *, A(2, i-1), H, T
-       ! print *, A(1, i), ";", A(2, i)
-       write(new1, *) A(1, i), ";", A(2, i)
-       ! print *, A(1, i), ";", A(2, i)
-       print *, i, A(2, i-1), 0.5_8*deltax2, H, T, A(2, i)
-    end do
+    !    A(1, i)=(i-1)*deltax2
+
+    !    if(A(1, i)**0.5_8>=1E9_8) then
+    !       print *, i, (A(1, i)**0.5_8)*1E-9
+    !       exit
+    !    end if
+
+
+    !    H=F(A(1, i-1)**0.5_8, coherent_factor, n2)**2
+    !    T=F(A(1, i)**0.5_8, coherent_factor, n2)**2
+    !    A(2, i)=A(2, i-1)+0.5_8*deltax2*(H+T)
+    !    ! A(2, i)=0.5_8*deltax2*(H+T)
+    !    ! print *, A(2, i-1), H, T
+    !    ! print *, A(1, i), ";", A(2, i)
+    !    write(new1, *) A(1, i), ";", A(2, i)
+    !    ! print *, A(1, i), ";", A(2, i)
+    !    ! print *, i, A(2, i-1), 0.5_8*deltax2, H, T, A(2, i)
+
+
+
+    ! end do
 
 
 

@@ -89,26 +89,59 @@ contains
             int(this%photo_ionization(i-4)%header(1, 3)), this%photo_ionization(i-4)%records)
        i=i+1
     end do
-    print *, i
+    ! print *, i
     this%n_ionization=i-5
 
   end subroutine create_mf23
 
-  subroutine extend_scattering(array, n, deltax, n1)
+  subroutine extend_scattering(array, index_from, deltax, index_to)
     real(kind(1.d0)), intent(inout), allocatable :: array(:, :)
     real(kind(1.d0)), intent(in) :: deltax
-    integer, intent(in) :: n, n1
-    integer :: i
+    integer, intent(in) :: index_from, index_to
+    real(kind(1.d0)) y_km1, y_k, x_km1, x_k, x_star
+    integer :: i, j
+    ! print *, deltax, array(1, index_from), array(2, index_from)
+    j=1
 
-    do i=n, n+n1-1
+    do i=index_from, index_from+index_to-1
+       y_km1=array(2, i-1)
+       y_k=array(2, i)
+       x_km1=array(1, i-1)
+       x_k=array(1, i)
+
+
+
+
        array(1, i+1)=array(1, i)+deltax
-       array(2, i+1)=array(2, i-1)+(array(2, i)-array(2, i-1))*((array(1, i+1)-array(1, i-1))/(array(1, i)-array(1, i-1)))
+       x_star=array(1, i+1)
+
+       if(j==1E5_8) then
+          array(2, i+1)=y_km1+((x_star-x_km1)/(x_k-x_km1))*(y_k-y_km1)
+          j=1
+       else
+          j=j+1
+       end if
+
+
+
+
+       ! if(array(2, i+1)<0) then
+       !    print *, "i", i
+       !    exit
+       ! end if
+
+       ! print *, y_km1, y_k,x_km1,x_k, array(2, i+1)
+
+
+
+       ! array(1, i+1)=array(1, i-1)+deltax
+       ! array(2, i+1)=array(2, i-1)+(array(2, i)-array(2, i-1))*((array(1, i+1)-array(1, i-1))/(array(1, i)-array(1, i-1)))
     end do
   end subroutine extend_scattering
 
   subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
-    integer :: z, ios, MF, MT, n, n1, size_index
+    integer :: z, ios, MF, MT, n, n1, size_index, i
     integer, allocatable :: sizes(:)
     real(kind(1.d0)) :: enext, hc, energylimit, deltax, energymin
     hc=4.135667696e-15_8*299792458.0_8
@@ -116,23 +149,39 @@ contains
     energymin=1E3_8
     ! energylimit=2.1E6_8
     ! energylimit=5.1E6_8
-    ! n1=1000
+    n1=1E8
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int( &
-         this%coherent_factor%header(1, 3))))
-         ! this%coherent_factor%header(1, 3))+n1))
+         this%coherent_factor%header(1, 3))+n1/1E5_8))
+         ! this%coherent_factor%header(1, 3))+n1/1E5_8))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          int(this%coherent_factor%header(1, 3)), &
          this%coherent_factor%records)
 
-    ! ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
-    ! ! so more values (1000) are added by extrapolating.
+    ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
+    ! so more values (n1) are added by extrapolating.
     ! deltax=int((energylimit/hc-this%coherent_factor%records(1, &
     !      this%coherent_factor%n))/n1)
-    ! call extend_scattering(this%coherent_factor%records, &
-    !      this%coherent_factor%n, deltax, n1)
+
+    deltax=int((energylimit/hc)/(n1+this%coherent_factor%n))
+
+
+    call extend_scattering(this%coherent_factor%records, &
+         this%coherent_factor%n+int(n1/1E5), deltax, n1)
     ! this%coherent_factor%n=this%coherent_factor%n+n1
+    this%coherent_factor%n=this%coherent_factor%n+n1/1E5_8
+
+
+    do i=1, this%coherent_factor%n
+       ! print *, this%coherent_factor%records(1, i), this%coherent_factor%records(2, i)
+       if(this%coherent_factor%records(2, i)<0) then
+          print *, "i", i
+          exit
+       end if
+
+    end do
+
 
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
     allocate(this%incoherent_function%records(2, 2*int( &
