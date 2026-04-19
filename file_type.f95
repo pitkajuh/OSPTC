@@ -109,9 +109,6 @@ contains
        x_km1=array(1, i-1)
        x_k=array(1, i)
 
-
-
-
        array(1, i+1)=array(1, i)+deltax
        x_star=array(1, i+1)
 
