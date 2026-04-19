@@ -115,7 +115,7 @@ contains
        array(1, i+1)=array(1, i)+deltax
        x_star=array(1, i+1)
 
-       if(j==1E5_8) then
+       if(j==100) then
           array(2, i+1)=y_km1+((x_star-x_km1)/(x_k-x_km1))*(y_k-y_km1)
           j=1
        else
@@ -149,11 +149,11 @@ contains
     energymin=1E3_8
     ! energylimit=2.1E6_8
     ! energylimit=5.1E6_8
-    n1=1E8
-
+    n1=1E9
+    print *, energylimit/hc
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int( &
-         this%coherent_factor%header(1, 3))+n1/1E5_8))
+         this%coherent_factor%header(1, 3))+int(n1)))
          ! this%coherent_factor%header(1, 3))+n1/1E5_8))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          int(this%coherent_factor%header(1, 3)), &
@@ -164,13 +164,16 @@ contains
     ! deltax=int((energylimit/hc-this%coherent_factor%records(1, &
     !      this%coherent_factor%n))/n1)
 
-    deltax=int((energylimit/hc)/(n1+this%coherent_factor%n))
 
+    print *, this%coherent_factor%n
+    deltax=int((energylimit/hc)/(n1+this%coherent_factor%n))
+    this%coherent_factor%n=this%coherent_factor%n+int(n1)
+    print *, this%coherent_factor%n
 
     call extend_scattering(this%coherent_factor%records, &
-         this%coherent_factor%n+int(n1/1E5), deltax, n1)
+         this%coherent_factor%n, deltax, n1)
     ! this%coherent_factor%n=this%coherent_factor%n+n1
-    this%coherent_factor%n=this%coherent_factor%n+n1/1E5_8
+    ! this%coherent_factor%n=this%coherent_factor%n+int(n1/1E5_8)
 
 
     do i=1, this%coherent_factor%n
