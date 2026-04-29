@@ -59,7 +59,7 @@ contains
 
 
     ! do i=1, n2
-    !    print *, coherent_factor(1, i), coherent_factor(2, i)
+    !    print *, i, coherent_factor(1, i), coherent_factor(2, i)
     ! end do
 
 

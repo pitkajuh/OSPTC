@@ -112,12 +112,12 @@ contains
        array(1, i+1)=array(1, i)+deltax
        x_star=array(1, i+1)
 
-       if(j==100) then
+       ! if(j==100) then
           array(2, i+1)=y_km1+((x_star-x_km1)/(x_k-x_km1))*(y_k-y_km1)
-          j=1
-       else
-          j=j+1
-       end if
+       !    j=1
+       ! else
+       !    j=j+1
+       ! end if
 
 
 
@@ -138,16 +138,25 @@ contains
 
   subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
-    integer :: z, ios, MF, MT, n, n1, size_index, i
+    integer :: z, ios, MF, MT, n, n1, size_index, i, extend_from, extend_to, j
     integer, allocatable :: sizes(:)
     real(kind(1.d0)) :: enext, hc, energylimit, deltax, energymin
-    hc=4.135667696e-15_8*299792458.0_8
+    hc=4.135667696e-15_8*299792458.0_8 ! eV
     energylimit=2.5E6_8
     energymin=1E3_8
     ! energylimit=2.1E6_8
     ! energylimit=5.1E6_8
-    n1=1E9
-    print *, energylimit/hc
+    n1=2E4
+    n1=0
+
+
+    print *, energylimit/hc, "exp", int(log10(energylimit/hc))
+    print *, (energylimit/hc)**2, "exp", int(log10((energylimit/hc)**2))
+
+    ! do i=9, int(log10(energylimit/hc))
+    !    print *, i
+    ! end do
+
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int( &
          this%coherent_factor%header(1, 3))+int(n1)))
@@ -166,6 +175,17 @@ contains
     deltax=int((energylimit/hc)/(n1+this%coherent_factor%n))
     this%coherent_factor%n=this%coherent_factor%n+int(n1)
     print *, this%coherent_factor%n
+
+    extend_from=int(log10(this%coherent_factor%records(1, this%coherent_factor%n)))
+    extend_to=int(log10(energylimit/hc))
+    print *, "from", extend_from, "to", extend_to
+
+    do i=extend_from, extend_to+1
+       do j=1, 10
+          print *, 10**i+
+       end do
+       ! print *, i
+    end do
 
     call extend_scattering(this%coherent_factor%records, &
          this%coherent_factor%n, deltax, n1)
