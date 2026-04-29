@@ -94,53 +94,53 @@ contains
 
   end subroutine create_mf23
 
-  subroutine extend_scattering(array, index_from, deltax, index_to)
+  subroutine extend_scattering(array, index_from, index_to)
     real(kind(1.d0)), intent(inout), allocatable :: array(:, :)
-    real(kind(1.d0)), intent(in) :: deltax
+    ! real(kind(1.d0)), intent(in) :: deltax
     integer, intent(in) :: index_from, index_to
     real(kind(1.d0)) y_km1, y_k, x_km1, x_k, x_star
     integer :: i, j
     ! print *, deltax, array(1, index_from), array(2, index_from)
     j=1
 
-    do i=index_from, index_from+index_to-1
-       y_km1=array(2, i-1)
-       y_k=array(2, i)
-       x_km1=array(1, i-1)
-       x_k=array(1, i)
+    ! do i=index_from, index_from+index_to-1
+    !    y_km1=array(2, i-1)
+    !    y_k=array(2, i)
+    !    x_km1=array(1, i-1)
+    !    x_k=array(1, i)
 
-       array(1, i+1)=array(1, i)+deltax
-       x_star=array(1, i+1)
+    !    array(1, i+1)=array(1, i)+deltax
+    !    x_star=array(1, i+1)
 
-       ! if(j==100) then
-          array(2, i+1)=y_km1+((x_star-x_km1)/(x_k-x_km1))*(y_k-y_km1)
-       !    j=1
-       ! else
-       !    j=j+1
-       ! end if
-
-
-
-
-       ! if(array(2, i+1)<0) then
-       !    print *, "i", i
-       !    exit
-       ! end if
-
-       ! print *, y_km1, y_k,x_km1,x_k, array(2, i+1)
+    !    ! if(j==100) then
+    !       array(2, i+1)=y_km1+((x_star-x_km1)/(x_k-x_km1))*(y_k-y_km1)
+    !    !    j=1
+    !    ! else
+    !    !    j=j+1
+    !    ! end if
 
 
 
-       ! array(1, i+1)=array(1, i-1)+deltax
-       ! array(2, i+1)=array(2, i-1)+(array(2, i)-array(2, i-1))*((array(1, i+1)-array(1, i-1))/(array(1, i)-array(1, i-1)))
-    end do
+
+    !    ! if(array(2, i+1)<0) then
+    !    !    print *, "i", i
+    !    !    exit
+    !    ! end if
+
+    !    ! print *, y_km1, y_k,x_km1,x_k, array(2, i+1)
+
+
+
+    !    ! array(1, i+1)=array(1, i-1)+deltax
+    !    ! array(2, i+1)=array(2, i-1)+(array(2, i)-array(2, i-1))*((array(1, i+1)-array(1, i-1))/(array(1, i)-array(1, i-1)))
+    ! end do
   end subroutine extend_scattering
 
   subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
     integer :: z, ios, MF, MT, n, n1, size_index, i, extend_from, extend_to, j, a, extend_size
     integer, allocatable :: sizes(:)
-    real(kind(1.d0)) :: enext, hc, energylimit, deltax, energymin, xx
+    real(kind(1.d0)) :: enext, hc, energylimit, energymin, xx
     hc=4.135667696e-15_8*299792458.0_8 ! eV
     energylimit=2.5E6_8
     energymin=1E3_8
@@ -153,27 +153,21 @@ contains
     print *, energylimit/hc, "exp", int(log10(energylimit/hc))
     print *, (energylimit/hc)**2, "exp", int(log10((energylimit/hc)**2))
 
-    ! do i=9, int(log10(energylimit/hc))
-    !    print *, i
-    ! end do
+
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int( &
-         this%coherent_factor%header(1, 3))+int(n1)))
+         this%coherent_factor%header(1, 3))))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          int(this%coherent_factor%header(1, 3)), &
          this%coherent_factor%records)
+    print *, this%coherent_factor%n
 
     ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
-    ! so more values (n1) are added by extrapolating.
-    ! deltax=int((energylimit/hc-this%coherent_factor%records(1, &
-    !      this%coherent_factor%n))/n1)
+    ! so more values are added by extrapolating.
 
-
-    ! print *, this%coherent_factor%n
-    ! deltax=int((energylimit/hc)/(n1+this%coherent_factor%n))
     ! this%coherent_factor%n=this%coherent_factor%n+int(n1)
-    ! print *, this%coherent_factor%n
+    print *, this%coherent_factor%n
 
     extend_from=int(log10(this%coherent_factor%records(1, this%coherent_factor%n)))
     extend_to=int(log10(energylimit/hc))
@@ -195,13 +189,12 @@ contains
 
 
     print *, this%coherent_factor%n
-    deltax=int((energylimit/hc)/(n1+this%coherent_factor%n))
     this%coherent_factor%n=this%coherent_factor%n+extend_size
     print *, this%coherent_factor%n
 
 
     call extend_scattering(this%coherent_factor%records, &
-         this%coherent_factor%n, deltax, n1)
+         this%coherent_factor%n, n1)
     ! this%coherent_factor%n=this%coherent_factor%n+n1
     ! this%coherent_factor%n=this%coherent_factor%n+int(n1/1E5_8)
 
