@@ -138,9 +138,9 @@ contains
 
   subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
-    integer :: z, ios, MF, MT, n, n1, size_index, i, extend_from, extend_to, j
+    integer :: z, ios, MF, MT, n, n1, size_index, i, extend_from, extend_to, j, a
     integer, allocatable :: sizes(:)
-    real(kind(1.d0)) :: enext, hc, energylimit, deltax, energymin
+    real(kind(1.d0)) :: enext, hc, energylimit, deltax, energymin, xx
     hc=4.135667696e-15_8*299792458.0_8 ! eV
     energylimit=2.5E6_8
     energymin=1E3_8
@@ -179,14 +179,17 @@ contains
     extend_from=int(log10(this%coherent_factor%records(1, this%coherent_factor%n)))
     extend_to=int(log10(energylimit/hc))
     print *, "from", extend_from, "to", extend_to
-
-    do i=extend_from, extend_to+1
-       do j=1, 10
-          print *, 10**i+
+    a=0
+    do i=extend_from+1, extend_to+1
+       xx=10**real(i, kind(1.d0))
+       ! print *, "i", i, xx
+       do j=1, 9
+          print *, real(xx*(1+j), kind(1.d0))
+          a=a+1
        end do
-       ! print *, i
-    end do
 
+    end do
+    print *, a
     call extend_scattering(this%coherent_factor%records, &
          this%coherent_factor%n, deltax, n1)
     ! this%coherent_factor%n=this%coherent_factor%n+n1
