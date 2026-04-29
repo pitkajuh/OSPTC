@@ -138,7 +138,7 @@ contains
 
   subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
-    integer :: z, ios, MF, MT, n, n1, size_index, i, extend_from, extend_to, j, a
+    integer :: z, ios, MF, MT, n, n1, size_index, i, extend_from, extend_to, j, a, extend_size
     integer, allocatable :: sizes(:)
     real(kind(1.d0)) :: enext, hc, energylimit, deltax, energymin, xx
     hc=4.135667696e-15_8*299792458.0_8 ! eV
@@ -160,7 +160,6 @@ contains
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int( &
          this%coherent_factor%header(1, 3))+int(n1)))
-         ! this%coherent_factor%header(1, 3))+n1/1E5_8))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          int(this%coherent_factor%header(1, 3)), &
          this%coherent_factor%records)
@@ -171,15 +170,17 @@ contains
     !      this%coherent_factor%n))/n1)
 
 
-    print *, this%coherent_factor%n
-    deltax=int((energylimit/hc)/(n1+this%coherent_factor%n))
-    this%coherent_factor%n=this%coherent_factor%n+int(n1)
-    print *, this%coherent_factor%n
+    ! print *, this%coherent_factor%n
+    ! deltax=int((energylimit/hc)/(n1+this%coherent_factor%n))
+    ! this%coherent_factor%n=this%coherent_factor%n+int(n1)
+    ! print *, this%coherent_factor%n
 
     extend_from=int(log10(this%coherent_factor%records(1, this%coherent_factor%n)))
     extend_to=int(log10(energylimit/hc))
+    extend_size=(extend_to-extend_from+1)*9
     print *, "from", extend_from, "to", extend_to
     a=0
+    print *, "size", extend_size
     do i=extend_from+1, extend_to+1
        xx=10**real(i, kind(1.d0))
        ! print *, "i", i, xx
@@ -189,7 +190,16 @@ contains
        end do
 
     end do
-    print *, a
+
+
+
+
+    print *, this%coherent_factor%n
+    deltax=int((energylimit/hc)/(n1+this%coherent_factor%n))
+    this%coherent_factor%n=this%coherent_factor%n+extend_size
+    print *, this%coherent_factor%n
+
+
     call extend_scattering(this%coherent_factor%records, &
          this%coherent_factor%n, deltax, n1)
     ! this%coherent_factor%n=this%coherent_factor%n+n1
