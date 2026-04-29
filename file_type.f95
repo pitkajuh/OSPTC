@@ -140,6 +140,7 @@ contains
     class(MF27), intent(inout) :: this
     integer :: z, ios, MF, MT, n, n1, size_index, i, extend_from, extend_to, j, a, extend_size
     integer, allocatable :: sizes(:)
+    real(kind(1.d0)), allocatable :: coherent_factor_temporary(:, :)
     real(kind(1.d0)) :: enext, hc, energylimit, energymin, xx
     hc=4.135667696e-15_8*299792458.0_8 ! eV
     energylimit=2.5E6_8
@@ -156,11 +157,16 @@ contains
 
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
-    allocate(this%coherent_factor%records(2, 2*int( &
+    ! allocate(this%coherent_factor%records(2, 2*int( &
+    !      this%coherent_factor%header(1, 3))))
+    allocate(coherent_factor_temporary(2, 2*int( &
          this%coherent_factor%header(1, 3))))
+    ! call this%coherent_factor%read_section(z, ios, MF, MT, &
+    !      int(this%coherent_factor%header(1, 3)), &
+    !      this%coherent_factor%records)
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          int(this%coherent_factor%header(1, 3)), &
-         this%coherent_factor%records)
+         coherent_factor_temporary)
     print *, this%coherent_factor%n
 
     ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
@@ -169,7 +175,8 @@ contains
     ! this%coherent_factor%n=this%coherent_factor%n+int(n1)
     print *, this%coherent_factor%n
 
-    extend_from=int(log10(this%coherent_factor%records(1, this%coherent_factor%n)))
+    ! extend_from=int(log10(this%coherent_factor%records(1, this%coherent_factor%n)))
+    extend_from=int(log10(coherent_factor_temporary(1, this%coherent_factor%n)))
     extend_to=int(log10(energylimit/hc))
     extend_size=(extend_to-extend_from+1)*9
     print *, "from", extend_from, "to", extend_to
@@ -185,11 +192,12 @@ contains
 
     end do
 
-
-
-
-    print *, this%coherent_factor%n
     this%coherent_factor%n=this%coherent_factor%n+extend_size
+    allocate(this%coherent_factor%records(2, this%coherent_factor%n))
+    this%coherent_factor%records=coherent_factor_temporary
+    deallocate(coherent_factor_temporary)
+    print *, this%coherent_factor%n
+
     print *, this%coherent_factor%n
 
 
