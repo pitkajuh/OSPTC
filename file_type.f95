@@ -102,43 +102,46 @@ contains
     integer :: i, j
     ! print *, deltax, array(1, index_from), array(2, index_from)
     j=1
-
+    print *, "from", index_from
     ! do i=index_from, index_from+index_to-1
-    !    y_km1=array(2, i-1)
-    !    y_k=array(2, i)
-    !    x_km1=array(1, i-1)
-    !    x_k=array(1, i)
+    do i=index_from-1, index_to
+       y_km1=array(2, i-1)
+       x_km1=array(1, i-1)
 
-    !    array(1, i+1)=array(1, i)+deltax
-    !    x_star=array(1, i+1)
+       x_k=array(1, i)
+       y_k=array(2, i)
 
-    !    ! if(j==100) then
-    !       array(2, i+1)=y_km1+((x_star-x_km1)/(x_k-x_km1))*(y_k-y_km1)
-    !    !    j=1
-    !    ! else
-    !    !    j=j+1
-    !    ! end if
+       ! array(1, i+1)=array(1, i)!+deltax
+       x_star=array(1, i+1)
 
-
-
-
-    !    ! if(array(2, i+1)<0) then
-    !    !    print *, "i", i
-    !    !    exit
-    !    ! end if
-
-    !    ! print *, y_km1, y_k,x_km1,x_k, array(2, i+1)
+       ! if(j==100) then
+       array(2, i+1)=y_km1+((x_star-x_km1)/(x_k-x_km1))*(y_k-y_km1)
+       print *, array(2, i+1), (x_star-x_km1), (x_k-x_km1), y_k, y_km1, (y_k-y_km1)
+       !    j=1
+       ! else
+       !    j=j+1
+       ! end if
 
 
 
-    !    ! array(1, i+1)=array(1, i-1)+deltax
-    !    ! array(2, i+1)=array(2, i-1)+(array(2, i)-array(2, i-1))*((array(1, i+1)-array(1, i-1))/(array(1, i)-array(1, i-1)))
-    ! end do
+
+       ! if(array(2, i+1)<0) then
+       !    print *, "i", i
+       !    exit
+       ! end if
+
+       ! print *, y_km1, y_k,x_km1,x_k, array(2, i+1)
+
+
+
+       ! array(1, i+1)=array(1, i-1)+deltax
+       ! array(2, i+1)=array(2, i-1)+(array(2, i)-array(2, i-1))*((array(1, i+1)-array(1, i-1))/(array(1, i)-array(1, i-1)))
+    end do
   end subroutine extend_scattering
 
   subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
-    integer :: z, ios, MF, MT, n, n1, size_index, i, extend_from, extend_to, j, a, extend_size
+    integer :: z, ios, MF, MT, n, n1, size_index, i, extend_from, extend_to, j, a, extend_size, add_from, step
     integer, allocatable :: sizes(:)
     real(kind(1.d0)), allocatable :: coherent_factor_temporary(:, :)
     real(kind(1.d0)) :: enext, hc, energylimit, energymin, xx
@@ -168,7 +171,7 @@ contains
          int(this%coherent_factor%header(1, 3)), &
          coherent_factor_temporary)
     print *, this%coherent_factor%n
-
+    add_from=this%coherent_factor%n+1
     ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
     ! so more values are added by extrapolating.
 
@@ -176,20 +179,26 @@ contains
     print *, this%coherent_factor%n
 
     ! extend_from=int(log10(this%coherent_factor%records(1, this%coherent_factor%n)))
+    step=9
     extend_from=int(log10(coherent_factor_temporary(1, this%coherent_factor%n)))
     extend_to=int(log10(energylimit/hc))
-    extend_size=(extend_to-extend_from+1)*9
+    extend_size=(extend_to-extend_from+1)*step
     print *, "from", extend_from, "to", extend_to
     a=0
     print *, "size", extend_size
     do i=extend_from+1, extend_to+1
        xx=10**real(i, kind(1.d0))
        ! print *, "i", i, xx
-       do j=1, 9
-          print *, real(xx*(1+j), kind(1.d0))
+       do j=1, step
+          ! print *, real(xx*(1+j), kind(1.d0))
+          coherent_factor_temporary(1, add_from+a)=real(xx*(1+j), kind(1.d0))
           a=a+1
        end do
 
+    end do
+
+    do i=1, this%coherent_factor%n+extend_size
+       print *, i, coherent_factor_temporary(1, i), coherent_factor_temporary(2, i)
     end do
 
     this%coherent_factor%n=this%coherent_factor%n+extend_size
@@ -202,19 +211,25 @@ contains
 
 
     call extend_scattering(this%coherent_factor%records, &
-         this%coherent_factor%n, n1)
+         add_from, this%coherent_factor%n)
     ! this%coherent_factor%n=this%coherent_factor%n+n1
     ! this%coherent_factor%n=this%coherent_factor%n+int(n1/1E5_8)
 
 
-    do i=1, this%coherent_factor%n
-       ! print *, this%coherent_factor%records(1, i), this%coherent_factor%records(2, i)
-       if(this%coherent_factor%records(2, i)<0) then
-          print *, "i", i
-          exit
-       end if
+    ! do i=1, this%coherent_factor%n
+    !    print *, this%coherent_factor%records(1, i), this%coherent_factor%records(2, i)
+    ! end do
 
-    end do
+
+
+    ! do i=1, this%coherent_factor%n
+    !    ! print *, this%coherent_factor%records(1, i), this%coherent_factor%records(2, i)
+    !    if(this%coherent_factor%records(2, i)<0) then
+    !       print *, "i", i
+    !       exit
+    !    end if
+
+    ! end do
 
 
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
