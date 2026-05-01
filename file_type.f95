@@ -179,14 +179,14 @@ contains
     print *, this%coherent_factor%n
 
     ! extend_from=int(log10(this%coherent_factor%records(1, this%coherent_factor%n)))
-    step=9
+    step=100
     extend_from=int(log10(coherent_factor_temporary(1, this%coherent_factor%n)))
     extend_to=int(log10(energylimit/hc))
     extend_size=(extend_to-extend_from+1)*step
     print *, "from", extend_from, "to", extend_to
     a=0
     print *, "size", extend_size
-    do i=extend_from+1, extend_to+1
+    do i=extend_from, extend_to+1
        xx=10**real(i, kind(1.d0))
        ! print *, "i", i, xx
        do j=1, step
