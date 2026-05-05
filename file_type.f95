@@ -193,6 +193,7 @@ contains
     print *, "from", extend_from, "to", extend_to
     a=0
     print *, "size", extend_size, step
+
     do i=extend_from, extend_to+1
     ! do i=extend_from, extend_from
        xx=10**real(i, kind(1.d0))
