@@ -161,71 +161,96 @@ contains
     n1=0
 
 
-    print *, energylimit/hc, "exp", int(log10(energylimit/hc))
-    print *, (energylimit/hc)**2, "exp", int(log10((energylimit/hc)**2))
+    ! print *, energylimit/hc, "exp", int(log10(energylimit/hc))
+    ! print *, (energylimit/hc)**2, "exp", int(log10((energylimit/hc)**2))
 
 
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
-    ! allocate(this%coherent_factor%records(2, 2*int( &
-    !      this%coherent_factor%header(1, 3))))
-    allocate(coherent_factor_temporary(2, 2*int( &
+    allocate(this%coherent_factor%records(2, 2*int( &
          this%coherent_factor%header(1, 3))))
-    ! call this%coherent_factor%read_section(z, ios, MF, MT, &
-    !      int(this%coherent_factor%header(1, 3)), &
-    !      this%coherent_factor%records)
+
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          int(this%coherent_factor%header(1, 3)), &
-         coherent_factor_temporary)
-    print *, this%coherent_factor%n
-    add_from=this%coherent_factor%n+1
-    ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
-    ! so more values are added by extrapolating.
-
-    ! this%coherent_factor%n=this%coherent_factor%n+int(n1)
-    print *, this%coherent_factor%n
-
-    ! extend_from=int(log10(this%coherent_factor%records(1, this%coherent_factor%n)))
-    step=1000
-    extend_from=int(log10(coherent_factor_temporary(1, this%coherent_factor%n)))
-    extend_to=int(log10(energylimit/hc))
-    extend_size=(extend_to-extend_from+1)*step
-    print *, "from", extend_from, "to", extend_to
-    a=0
-    print *, "size", extend_size, step
-
-    do i=extend_from, extend_to+1
-    ! do i=extend_from, extend_from
-       xx=10**real(i, kind(1.d0))
-       delta=xx/step
-       print *, i, xx, delta
-       ! print *, "i", i, xx
-       do j=1, step
-
-          ! coherent_factor_temporary(1, add_from+a)=real(xx*(0.001+j), kind(1.d0))
-          coherent_factor_temporary(1, add_from+a)=real(xx+delta*j, kind(1.d0))
-          ! print *, coherent_factor_temporary(1, add_from+a)
-          a=a+1
-       end do
-
-    end do
-
-    do i=1, this%coherent_factor%n+extend_size
-       ! print *, i, coherent_factor_temporary(1, i), coherent_factor_temporary(2, i)
-       print *, coherent_factor_temporary(1, i), coherent_factor_temporary(2, i)
-    end do
-
-    this%coherent_factor%n=this%coherent_factor%n+extend_size
-    allocate(this%coherent_factor%records(2, this%coherent_factor%n))
-    this%coherent_factor%records=coherent_factor_temporary
-    deallocate(coherent_factor_temporary)
-    print *, this%coherent_factor%n
-
-    print *, this%coherent_factor%n
+         this%coherent_factor%records)
 
 
-    call extend_scattering(this%coherent_factor%records, &
-         add_from, this%coherent_factor%n)
+
+
+
+
+
+
+
+
+    !! EXTEND COHERENT SCATTERING
+
+    ! allocate(coherent_factor_temporary(2, 2*int( &
+    !      this%coherent_factor%header(1, 3))))
+    ! call this%coherent_factor%read_section(z, ios, MF, MT, &
+    !      int(this%coherent_factor%header(1, 3)), &
+    !      coherent_factor_temporary)
+
+
+
+    ! print *, this%coherent_factor%n
+    ! add_from=this%coherent_factor%n+1
+
+
+
+    ! ! Coherent factor has values up to x=1E9. This limit gets exceeded easily,
+    ! ! so more values are added by extrapolating.
+
+    ! ! this%coherent_factor%n=this%coherent_factor%n+int(n1)
+    ! print *, this%coherent_factor%n
+
+    ! ! extend_from=int(log10(this%coherent_factor%records(1, this%coherent_factor%n)))
+    ! step=1000
+    ! extend_from=int(log10(coherent_factor_temporary(1, this%coherent_factor%n)))
+    ! extend_to=int(log10(energylimit/hc))
+    ! extend_size=(extend_to-extend_from+1)*step
+    ! print *, "from", extend_from, "to", extend_to
+    ! a=0
+    ! print *, "size", extend_size, step
+
+    ! do i=extend_from, extend_to+1
+    ! ! do i=extend_from, extend_from
+    !    xx=10**real(i, kind(1.d0))
+    !    delta=xx/step
+    !    print *, i, xx, delta
+    !    ! print *, "i", i, xx
+    !    do j=1, step
+
+    !       ! coherent_factor_temporary(1, add_from+a)=real(xx*(0.001+j), kind(1.d0))
+    !       coherent_factor_temporary(1, add_from+a)=real(xx+delta*j, kind(1.d0))
+    !       ! print *, coherent_factor_temporary(1, add_from+a)
+    !       a=a+1
+    !    end do
+
+    ! end do
+
+    ! do i=1, this%coherent_factor%n+extend_size
+    !    ! print *, i, coherent_factor_temporary(1, i), coherent_factor_temporary(2, i)
+    !    print *, coherent_factor_temporary(1, i), coherent_factor_temporary(2, i)
+    ! end do
+
+    ! this%coherent_factor%n=this%coherent_factor%n+extend_size
+    ! allocate(this%coherent_factor%records(2, this%coherent_factor%n))
+    ! this%coherent_factor%records=coherent_factor_temporary
+    ! deallocate(coherent_factor_temporary)
+    ! print *, this%coherent_factor%n
+
+    ! print *, this%coherent_factor%n
+
+
+    ! call extend_scattering(this%coherent_factor%records, &
+    !      add_from, this%coherent_factor%n)
+
+
+
+
+
+
 
 
     ! this%coherent_factor%n=this%coherent_factor%n+n1

@@ -5,6 +5,7 @@ module photon_angular_distribution
 contains
 
   function x(energy, mu, hc) result(r)
+    ! return value in inverse Angstrom unit.
     real(kind(1.d0)), intent(in) :: energy, mu, hc
     real(kind(1.d0)) :: r
     r=(energy/hc)*((1_8-mu)/2_8)**0.5_8
@@ -25,6 +26,7 @@ contains
   end subroutine create_incoherent
 
   function F(x1, coherent_factor, n) result(r)
+    ! return coherent factor value corresponding to x1
     real(kind(1.d0)), intent(in) :: x1
     integer, intent(in) :: n
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
@@ -39,23 +41,23 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)), intent(in) :: energymax, energymin
     integer, intent(in) :: n, n2
-    real(kind(1.d0)) :: hc, xmax, xmin, deltax, deltax2, H, T
+    real(kind(1.d0)) :: hc, xmax, xmin, deltax, deltax2, H, T, x2_i, x2_im1
     integer :: i, j, new1
     hc=4.135667696E-15_8*299792458.0_8
-    xmax=energymax/hc
-    xmax=x(energymax, -1.0_8, hc)
-    xmin=0.0_8
-    deltax=(xmax-xmin)/n
-    deltax2=deltax*deltax
+    ! xmax=energymax/hc
+    ! xmax=x(energymax, -1.0_8, hc)
+    ! xmin=0.0_8
+    ! deltax=(xmax-xmin)/n
+    ! deltax2=deltax*deltax
 
-    deltax=(xmax-xmin)
-    deltax2=deltax*deltax/n
+    ! deltax=(xmax-xmin)
+    ! deltax2=deltax*deltax/n
 
 
-    deltax=(xmax**2-xmin**2)
-    deltax2=deltax/n
+    ! deltax=(xmax**2-xmin**2)
+    ! deltax2=deltax/n
 
-    deltax2=xmax**2/n
+    ! deltax2=xmax**2/n
 
 
     ! do i=1, n2
@@ -66,7 +68,6 @@ contains
 
     ! deltax2=deltax
 
-    print *, deltax2, xmax/1E5_8, xmax
     ! do i=1, n2
     !    print *, i, coherent_factor(1, i), coherent_factor(2, i)
     ! end do
@@ -75,54 +76,49 @@ contains
     call system('rm t1.txt')
     open(newunit=new1, file="t1.txt", status="new", action="write")
 
-    A(1, 1)=0.0_8
-    A(2, 1)=0.5_8*deltax2*(coherent_factor(2, 1)**2)
-    H=0
-    T=coherent_factor(2, 1)**2
 
+
+    ! A(1, 2)=A(1, 1)+coherent_factor(1, 2)**2
+    ! A(1, 2)=coherent_factor(1, 2)**2
+    ! deltax2=A(1, 2)-A(1, 1)
+    !A(2, 1)=0.5_8*deltax2*(coherent_factor(2, 1)**2)
+
+    ! H=0
+    ! T=coherent_factor(2, 1)**2
+
+
+
+
+
+
+
+    A(1, 1)=coherent_factor(1, 1)**2
+    deltax2=A(1, 1)
+    A(2, 1)=0.5_8*(coherent_factor(2, 1)**2)*deltax2
     write(new1, *) A(1, 1), ";", A(2, 1)
-    print *, 1, 0.5_8*deltax2, H, T, A(2, 1)
+    print *, A(1, 1), ";", A(2, 1)
+
+    ! do i=2, n
+    do i=2, 2
+       A(1, i)=coherent_factor(1, i)**2
+       x2_i=A(1, i)
+       x2_im1=A(1, i-1)
+
+
+       deltax2=x2_i-x2_im1
+
+       ! print *, i, n
+       H=F(x2_im1**0.5_8, coherent_factor, n2)
+       T=F(x2_i**0.5_8, coherent_factor, n2)
+
+       A(2, i)=A(2, i-1)+0.5_8*(H**2+T**2)*deltax2
+       print *, x2_im1, x2_i, H, T, deltax2
 
 
 
-    A(1, 2)=deltax2
-    H=coherent_factor(2, 1)
-    T=F(A(1, 2)**0.5_8, coherent_factor, n2)**2
-    A(2, 2)=A(2, 1)+0.5_8*deltax2*(H+T)
-    ! A(2, 2)=0.5_8*deltax2*(H+T)
-    write(new1, *) A(1, 2), ";", A(2, 2)
-    print *, 2, A(2, 1), 0.5_8*deltax2, H, T, A(2, 2)
 
-
-    ! ! do i=3, n2
-    ! do i=3, n
-    !    ! print *, i, n
-    !    ! A(1, i)=(i-1)*deltax2
-    !    ! A(2, i)=A(2, i-1)+0.5_8*deltax2*(F(A(1, i-1)**0.5_8, coherent_factor, n2)**2+&
-    !    !      F(A(1, i)**0.5_8, coherent_factor, n2)**2)
-
-
-    !    A(1, i)=(i-1)*deltax2
-
-    !    if(A(1, i)**0.5_8>=1E9_8) then
-    !       print *, i, (A(1, i)**0.5_8)*1E-9
-    !       exit
-    !    end if
-
-
-    !    H=F(A(1, i-1)**0.5_8, coherent_factor, n2)**2
-    !    T=F(A(1, i)**0.5_8, coherent_factor, n2)**2
-    !    A(2, i)=A(2, i-1)+0.5_8*deltax2*(H+T)
-    !    ! A(2, i)=0.5_8*deltax2*(H+T)
-    !    ! print *, A(2, i-1), H, T
-    !    ! print *, A(1, i), ";", A(2, i)
-    !    write(new1, *) A(1, i), ";", A(2, i)
-    !    ! print *, A(1, i), ";", A(2, i)
-    !    ! print *, i, A(2, i-1), 0.5_8*deltax2, H, T, A(2, i)
-
-
-
-    ! end do
+       write(new1, *) A(1, i), ";", A(2, i)
+    end do
 
 
 
