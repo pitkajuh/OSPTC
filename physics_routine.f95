@@ -2,6 +2,7 @@ module physics_routine
   use random
   use tape_type
   use interpolate
+  use photon_angular_distribution
   implicit none
 
 contains
@@ -11,13 +12,10 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n, n2, n3
-    real(kind(1.d0)) :: hc, ymax, deltay, Amax, y, Avalue, rand, energymin, ymin, mu, angle
+    real(kind(1.d0)) :: hc, Amax, Avalue, rand, mu, angle, y, ymax
     integer :: i
-    hc=4.135667696e-15_8*299792458.0_8
-    ymax=(energy/hc)**2
-    energymin=1E3_8
-    ymin=(energymin/hc)**2
-    deltay=(ymax-ymin)/n3
+    hc=4.135667696e-15_8*299792458.0_8 ! eVs m/s
+    ymax=x(energy, -1.0_8, hc)
     rand=std_uniform_distribution()
     mu=0.0_8
     Amax=linear_interpolation(A, ymax, n)
@@ -37,7 +35,7 @@ contains
     end do
 
     angle=acos(mu)
-    print *, energy,  mu, acos(mu)*(360/3.14)
+    print *, energy,  mu, angle*(360/3.14)
   end function coherent_scattering_reaction
 
   function incoherent_scattering_reaction(energy) result(angle)
@@ -92,9 +90,9 @@ contains
     !    ! exit
     ! end do
 
-    anglef=0
-    angle=asin(anglef**0.5)
-    print *, "angle", angle
+    ! anglef=0
+    ! angle=asin(anglef**0.5)
+    ! print *, "angle", angle
   end function incoherent_scattering_reaction
 
   subroutine sum1(limits, records, energy, n, total, i)
@@ -175,7 +173,7 @@ contains
     ! case default
     !    print *, "ionization", reaction_id
     ! end select
-       print *, "angle", angle
+       print *, "angle", angle*(360/3.14)
   end subroutine reaction_function
 
 end module physics_routine

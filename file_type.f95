@@ -152,7 +152,7 @@ contains
     integer, allocatable :: sizes(:)
     real(kind(1.d0)), allocatable :: coherent_factor_temporary(:, :)
     real(kind(1.d0)) :: enext, hc, energylimit, energymin, xx, delta
-    hc=4.135667696e-15_8*299792458.0_8 ! eV
+    hc=4.135667696e-15_8*299792458.0_8 ! eVs m/s
     energylimit=2.5E6_8
     energymin=1E3_8
     ! energylimit=2.1E6_8

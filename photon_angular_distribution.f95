@@ -32,9 +32,7 @@ contains
     integer, intent(in) :: n
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)) :: r
-    ! print *, "F"
     r=linear_interpolation(coherent_factor, x1, n)
-    ! r=r*r
   end function F
 
   subroutine create_coherent(coherent_factor, n, energymax, A, n2, energymin)
@@ -46,8 +44,8 @@ contains
     integer :: i, j, new1
     hc=4.135667696E-15_8*299792458.0_8 ! eVs m/s
     ! xmax=energymax/hc
-    xmax=x(2.5E6_8, -1.0_8, hc)
-    print *, xmax
+    ! xmax=x(2.5E6_8, -1.0_8, hc)
+    ! print *, xmax
 
 
 

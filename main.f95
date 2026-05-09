@@ -52,12 +52,12 @@ program main
   ! print *, "testing"
 
 
-  ! call reaction_function(steel1%endf, 2e3_8)
-  ! call reaction_function(steel1%endf, 1e6_8)
-  ! call reaction_function(steel1%endf, 1e5_8)
-  ! call reaction_function(steel1%endf, 1e4_8)
-  ! call reaction_function(steel1%endf, 5e3_8)
-  ! call reaction_function(steel1%endf, 1e3_8)
+  call reaction_function(steel1%endf, 2e3_8)
+  call reaction_function(steel1%endf, 1e6_8)
+  call reaction_function(steel1%endf, 1e5_8)
+  call reaction_function(steel1%endf, 1e4_8)
+  call reaction_function(steel1%endf, 5e3_8)
+  call reaction_function(steel1%endf, 1e3_8)
 
 
 
