@@ -8,7 +8,8 @@ contains
     ! return value in inverse Angstrom unit.
     real(kind(1.d0)), intent(in) :: energy, mu, hc
     real(kind(1.d0)) :: r
-    r=(energy/hc)*((1_8-mu)/2_8)**0.5_8
+    r=(energy/hc)*((1_8-mu)/2_8)**0.5_8 ! in 1/m
+    r=r/10_8**10_8 ! in 1/A
   end function x
 
   subroutine create_incoherent(incoherent, incoherent_function, n1, n2)
@@ -41,23 +42,13 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)), intent(in) :: energymax, energymin
     integer, intent(in) :: n, n2
-    real(kind(1.d0)) :: hc, xmax, xmin, deltax, deltax2, H, T, x2_i, x2_im1
+    real(kind(1.d0)) :: hc, xmax, deltax2, H, T, x2_i, x2_im1
     integer :: i, j, new1
     hc=4.135667696E-15_8*299792458.0_8 ! eVs m/s
     ! xmax=energymax/hc
-    ! xmax=x(energymax, -1.0_8, hc)
-    ! xmin=0.0_8
-    ! deltax=(xmax-xmin)/n
-    ! deltax2=deltax*deltax
+    xmax=x(2.5E6_8, -1.0_8, hc)
+    print *, xmax
 
-    ! deltax=(xmax-xmin)
-    ! deltax2=deltax*deltax/n
-
-
-    ! deltax=(xmax**2-xmin**2)
-    ! deltax2=deltax/n
-
-    ! deltax2=xmax**2/n
 
 
     ! do i=1, n2
