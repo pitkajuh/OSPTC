@@ -12,13 +12,13 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n, n2, n3
-    real(kind(1.d0)) :: hc, Amax, Avalue, rand, mu, angle, y, ymax
+    real(kind(1.d0)) :: hc, Amax, Avalue, rand, mu, angle, x2, x2max
     integer :: i
     hc=4.135667696e-15_8*299792458.0_8 ! eVs m/s
-    ymax=x(energy, -1.0_8, hc)
+    x2max=x(energy, -1.0_8, hc)**2
     rand=std_uniform_distribution()
     mu=0.0_8
-    Amax=linear_interpolation(A, ymax, n)
+    Amax=linear_interpolation(A, x2max, n)
 
     do
        Avalue=rand*Amax
@@ -26,16 +26,18 @@ contains
        do i=1, n3
           if(A(2, i)<=Avalue .and. Avalue<A(2, i+1)) exit
        end do
+       ! i=binary_search(A, A)
 
-       y=A(1, i)+(Avalue-A(2, i))*((A(1, i+1)-A(1, i))/(A(2, i+1)-A(2, i)))
-       mu=1-2*y/ymax
+       ! print *, i
+       x2=A(1, i)+(Avalue-A(2, i))*((A(1, i+1)-A(1, i))/(A(2, i+1)-A(2, i)))
+       mu=1-2*x2/x2max
 
        if(rand<(1+mu)/2) exit
        rand=std_uniform_distribution()
     end do
 
     angle=acos(mu)
-    print *, energy,  mu, angle*(360/3.14)
+    print *, energy,  mu, angle*(360/3.141592653589793)
   end function coherent_scattering_reaction
 
   function incoherent_scattering_reaction(energy) result(angle)
@@ -173,7 +175,7 @@ contains
     ! case default
     !    print *, "ionization", reaction_id
     ! end select
-       print *, "angle", angle*(360/3.14)
+       print *, "angle", angle*(360/3.141592653589793)
   end subroutine reaction_function
 
 end module physics_routine
