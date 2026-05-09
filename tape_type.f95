@@ -58,7 +58,7 @@ contains
     type(tape) :: this
     integer :: slice_to, i
     real(kind(1.d0)), intent(in) :: max_energy
-    slice_to=1+binary_search(this%mf23%coherent_scattering%records, max_energy, 3*this%sizes(1))
+    slice_to=1+binary_search(this%mf23%coherent_scattering%records, max_energy, 3*this%sizes(1), 1)
     ! print *, "ohcreco", slice_to, 3*this%sizes(1)
     ! do i=1, 3*this%sizes(1)
     !    print *, this%mf23%coherent_scattering%records(1, i)

@@ -18,17 +18,11 @@ contains
     x2max=x(energy, -1.0_8, hc)**2
     rand=std_uniform_distribution()
     mu=0.0_8
-    Amax=linear_interpolation(A, x2max, n)
+    Amax=linear_interpolation(A, x2max, n, 1, 2)
 
     do
        Avalue=rand*Amax
-
-       do i=1, n3
-          if(A(2, i)<=Avalue .and. Avalue<A(2, i+1)) exit
-       end do
-       ! i=binary_search(A, A)
-
-       ! print *, i
+       i=binary_search(A, Avalue, n3, 2)
        x2=A(1, i)+(Avalue-A(2, i))*((A(1, i+1)-A(1, i))/(A(2, i+1)-A(2, i)))
        mu=1-2*x2/x2max
 
@@ -104,7 +98,7 @@ contains
     integer, intent(in) :: n, i
     real(kind(1.d0)), allocatable :: records(:, :)
     real(kind(1.d0)) :: r
-    r=linear_interpolation(records, energy, n)
+    r=linear_interpolation(records, energy, n, 1, 2)
     limits(i)=r+limits(i-1)
     total=total+r
   end subroutine sum1

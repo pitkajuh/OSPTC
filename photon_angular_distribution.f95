@@ -32,7 +32,7 @@ contains
     integer, intent(in) :: n
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)) :: r
-    r=linear_interpolation(coherent_factor, x1, n)
+    r=linear_interpolation(coherent_factor, x1, n, 1, 2)
   end function F
 
   subroutine create_coherent(coherent_factor, n, energymax, A, n2, energymin)
