@@ -96,15 +96,12 @@ contains
     deltax2=A(1, 1)
     A(2, 1)=0.5_8*(coherent_factor(2, 1)**2)*deltax2
     write(new1, *) A(1, 1), ";", A(2, 1)
-    print *, A(1, 1), ";", A(2, 1)
 
-    ! do i=2, n
-    do i=2, 2
+    do i=2, n
+    ! do i=2, 2
        A(1, i)=coherent_factor(1, i)**2
        x2_i=A(1, i)
        x2_im1=A(1, i-1)
-
-
        deltax2=x2_i-x2_im1
 
        ! print *, i, n
@@ -112,7 +109,7 @@ contains
        T=F(x2_i**0.5_8, coherent_factor, n2)
 
        A(2, i)=A(2, i-1)+0.5_8*(H**2+T**2)*deltax2
-       print *, x2_im1, x2_i, H, T, deltax2
+       ! print *, x2_im1, x2_i, H, T, deltax2
 
 
 
