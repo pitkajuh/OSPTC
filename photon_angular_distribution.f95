@@ -43,7 +43,7 @@ contains
     integer, intent(in) :: n, n2
     real(kind(1.d0)) :: hc, xmax, xmin, deltax, deltax2, H, T, x2_i, x2_im1
     integer :: i, j, new1
-    hc=4.135667696E-15_8*299792458.0_8
+    hc=4.135667696E-15_8*299792458.0_8 ! eVs m/s
     ! xmax=energymax/hc
     ! xmax=x(energymax, -1.0_8, hc)
     ! xmin=0.0_8
@@ -77,28 +77,12 @@ contains
     open(newunit=new1, file="t1.txt", status="new", action="write")
 
 
-
-    ! A(1, 2)=A(1, 1)+coherent_factor(1, 2)**2
-    ! A(1, 2)=coherent_factor(1, 2)**2
-    ! deltax2=A(1, 2)-A(1, 1)
-    !A(2, 1)=0.5_8*deltax2*(coherent_factor(2, 1)**2)
-
-    ! H=0
-    ! T=coherent_factor(2, 1)**2
-
-
-
-
-
-
-
     A(1, 1)=coherent_factor(1, 1)**2
     deltax2=A(1, 1)
     A(2, 1)=0.5_8*(coherent_factor(2, 1)**2)*deltax2
     write(new1, *) A(1, 1), ";", A(2, 1)
 
     do i=2, n
-    ! do i=2, 2
        A(1, i)=coherent_factor(1, i)**2
        x2_i=A(1, i)
        x2_im1=A(1, i-1)
@@ -109,11 +93,8 @@ contains
        T=F(x2_i**0.5_8, coherent_factor, n2)
 
        A(2, i)=A(2, i-1)+0.5_8*(H**2+T**2)*deltax2
+       ! A(2, i)=0.5_8*(H**2+T**2)*deltax2
        ! print *, x2_im1, x2_i, H, T, deltax2
-
-
-
-
        write(new1, *) A(1, i), ";", A(2, i)
     end do
 

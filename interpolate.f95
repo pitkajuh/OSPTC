@@ -22,10 +22,8 @@ contains
     !         array(2, i-1))/(array(1, i)-array(1, i-1))
     else
        i=binary_search(array, x, nx)
-
        r=array(2, i-1)+(x-array(1, i-1))*(array(2, i)-&
             array(2, i-1))/(array(1, i)-array(1, i-1))
-       ! print *, "crh", i, r
     end if
   end function linear_interpolation
 end module interpolate

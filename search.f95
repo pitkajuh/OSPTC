@@ -4,10 +4,9 @@ contains
   function binary_search(array, x, nx) result(i)
     integer :: nx, i, left, right
     real(kind(1.d0)), intent(in) :: x
-    real(kind(1.d0)) :: r, A1
+    real(kind(1.d0)) :: A1
     real(kind(1.d0)), intent(in), dimension(:, :) :: array
 
-    r=0.0_8
     left=1
     right=nx-1
 
