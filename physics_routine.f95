@@ -12,10 +12,9 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n, n2, n3
-    real(kind(1.d0)) :: hc, Amax, Avalue, rand, mu, angle, x2, x2max
+    real(kind(1.d0)) :: Amax, Avalue, rand, mu, angle, x2, x2max
     integer :: i
-    hc=4.135667696e-15_8*299792458.0_8 ! eVs m/s
-    x2max=x(energy, -1.0_8, hc)**2
+    x2max=x(energy, -1.0_8)**2
     rand=std_uniform_distribution()
     mu=0.0_8
     Amax=linear_interpolation(A, x2max, n, 1, 2)

@@ -9,8 +9,9 @@ module tape_type
   type :: tape
      real(kind(1.d0)), dimension(6, 4) :: header
      real(kind(1.d0)), allocatable :: coherent_A(:, :)
+     real(kind(1.d0)), allocatable :: incoherent_A(:, :)
      integer, allocatable :: sizes(:)
-     integer :: n, Ax
+     integer :: n, Ax, Ax1
      type(MF23) :: mf23
      type(MF27) :: mf27
   end type tape
@@ -52,6 +53,12 @@ contains
     call create_coherent(this%mf27%coherent_factor%records, &
          this%Ax, emax, this%coherent_A, &
          this%mf27%coherent_factor%n, emin)
+
+    this%Ax1=this%mf27%incoherent_function%n!
+    allocate(this%incoherent_A(2, this%Ax1))
+    call create_incoherent(this%mf27%incoherent_function%records, &
+         this%incoherent_A, this%mf27%incoherent_function%n, this%Ax1)
+
   end subroutine read_tape
 
   subroutine slice_tape(this, max_energy)

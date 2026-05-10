@@ -1,15 +1,16 @@
 module photon_angular_distribution
   use interpolate
+  use constants, only: hc, meter_in_angstroms
   implicit none
 
 contains
 
-  function x(energy, mu, hc) result(r)
-    ! return value in inverse Angstrom unit.
-    real(kind(1.d0)), intent(in) :: energy, mu, hc
+  function x(energy, mu) result(r)
+    ! return value in inverse Angstroms (A). 1 A=10^-10 m
+    real(kind(1.d0)), intent(in) :: energy, mu
     real(kind(1.d0)) :: r
     r=(energy/hc)*((1_8-mu)/2_8)**0.5_8 ! in 1/m
-    r=r/10_8**10_8 ! in 1/A
+    r=r/meter_in_angstroms ! in 1/A
   end function x
 
   subroutine create_incoherent(incoherent, incoherent_function, n1, n2)
@@ -40,31 +41,11 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
     real(kind(1.d0)), intent(in) :: energymax, energymin
     integer, intent(in) :: n, n2
-    real(kind(1.d0)) :: hc, xmax, deltax2, H, T, x2_i, x2_im1
+    real(kind(1.d0)) :: xmax, deltax2, H, T, x2_i, x2_im1
     integer :: i, j, new1
-    hc=4.135667696E-15_8*299792458.0_8 ! eVs m/s
-    ! xmax=energymax/hc
-    ! xmax=x(2.5E6_8, -1.0_8, hc)
-    ! print *, xmax
-
-
-
-    ! do i=1, n2
-    !    print *, i, coherent_factor(1, i), coherent_factor(2, i)
-    ! end do
-
-
-
-    ! deltax2=deltax
-
-    ! do i=1, n2
-    !    print *, i, coherent_factor(1, i), coherent_factor(2, i)
-    ! end do
-
 
     call system('rm t1.txt')
     open(newunit=new1, file="t1.txt", status="new", action="write")
-
 
     A(1, 1)=coherent_factor(1, 1)**2
     deltax2=A(1, 1)
@@ -87,39 +68,8 @@ contains
        write(new1, *) A(1, i), ";", A(2, i)
     end do
 
-
-
-
     close(new1)
-    print *, "generated"
-
-    ! ymax=(energymax/hc)**2
-    ! ymin=(energymin/hc)**2
-    ! deltay=(ymax-ymin)/n
-    ! energymin=50E3_8
-
-    ! i=1
-    ! A(1, i)=deltay
-    ! A(2, i)=0.0_8
-    ! ! print *, i,n,A(1, i), A(2, i)
-    ! write(new1, *) A(1, i), ";", A(2, i)
-    ! i=2
-    ! A(1, i)=2.0_8*deltay
-    ! A(2, i)=0.5_8*deltay*(F((n*deltay)**0.5_8, coherent_factor, n2)+&
-    !      F(A(1, 2)**0.5_8, coherent_factor, n2))
-    ! ! print *, i,n,A(1, i), A(2, i)
-    ! write(new1, *) A(1, i), ";", A(2, i)
-
-    ! do i=3, n
-    !    A(1, i)=i*deltay
-    !    A(2, i)=A(2, i-1)+deltay*F(A(1, i)**0.5_8, coherent_factor, n2)
-    !    write(new1, *) A(1, i), ";", A(2, i)
-    !    ! if(i<5) print *, A(1, i), A(2, i)
-    !    ! print *, i,n,A(1, i), A(2, i)
-    ! end do
-
-    ! print *, A(2, 1), A(2, 2), A(2, n)
-    ! print *, deltay, n
+    print *, "coherent generated"
 
   end subroutine create_coherent
 end module photon_angular_distribution
