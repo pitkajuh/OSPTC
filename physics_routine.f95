@@ -15,43 +15,35 @@ contains
     real(kind(1.d0)) :: Amax, Avalue, rand, mu, angle, x2, x2max
     integer :: i
     x2max=x(energy, -1.0_8)**2
-    rand=std_uniform_distribution()
     mu=0.0_8
     Amax=linear_interpolation(A, x2max, n, 1, 2)
 
     do
+       rand=std_uniform_distribution()
        Avalue=rand*Amax
        i=binary_search(A, Avalue, n3, 2)
        x2=A(1, i)+(Avalue-A(2, i))*((A(1, i+1)-A(1, i))/(A(2, i+1)-A(2, i)))
        mu=1-2*x2/x2max
 
-       if(rand<(1+mu)/2) exit
-       rand=std_uniform_distribution()
+       if(rand<0.5*(1+mu)) exit
     end do
 
     angle=acos(mu)
     print *, energy,  mu, angle*(360/3.141592653589793)
   end function coherent_scattering_reaction
 
+  function get_xmin(rnd, energy) result(xmin)
+    real(kind(1.d0)), intent(in) :: rnd, energy
+    real(kind(1.d0)) :: xmin
+  end function get_xmin
+
   function incoherent_scattering_reaction(energy) result(angle)
     real(kind(1.d0)), intent(in) :: energy
-    ! real(kind(1.d0)) :: energy
-    real(kind(1.d0)) :: epsilon0, electron_mass, alpha1, alpha2, &
-         rand, epsilon, epsilonprime, rand2, rand3, rand4, rand5, k0prime, t, g, anglef, angle, c, energy1
-    ! c=299792458.0_8
-    ! energy1=energy*1.602176634E-19
-    ! ! electron_mass=510998.9500001474_8
-    ! electron_mass=9.1093837139E-31
-    ! ! electron_mass=electron_mass*c*c
-    ! epsilon=0.0_8
-    ! epsilonprime=0.0_8
-    ! k0prime=energy1/(electron_mass*c*c)
-    ! epsilon0=1+2*energy1/(electron_mass*c*c)
-    ! alpha1=log(1/epsilon0)
-    ! alpha2=(1-epsilon0*epsilon0)/2
-    ! ! print *, energy1
-    ! rand=std_uniform_distribution()
-    ! rand2=std_uniform_distribution()
+    real(kind(1.d0)) :: rnd1, rnd2, rnd3, angle
+
+    rnd1=std_uniform_distribution()
+    rnd2=std_uniform_distribution()
+    rnd3=std_uniform_distribution()
 
     ! do
     !    epsilon=0.0_8
