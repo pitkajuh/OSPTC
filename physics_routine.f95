@@ -3,6 +3,7 @@ module physics_routine
   use tape_type
   use interpolate
   use photon_angular_distribution
+  use constants, only: electron_mass
   implicit none
 
 contains
