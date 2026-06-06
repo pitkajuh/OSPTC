@@ -83,7 +83,7 @@ contains
     ! print *, "angle", angle
   end function incoherent_scattering_reaction
 
-  subroutine sum1(limits, records, energy, n, total, i)
+  subroutine sum_cross_sections(limits, records, energy, n, total, i)
     real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)), intent(inout) :: total
     real(kind(1.d0)), intent(inout), dimension(:) :: limits
@@ -93,7 +93,7 @@ contains
     r=linear_interpolation(records, energy, n, 1, 2)
     limits(i)=r+limits(i-1)
     total=total+r
-  end subroutine sum1
+  end subroutine sum_cross_sections
 
   function select_reaction(endf, energy) result(reaction_id)
     type(tape), intent(inout) :: endf
@@ -106,17 +106,17 @@ contains
     limits(1)=0.0
     total=0.0_8
 
-    call sum1(limits, endf%mf23%coherent_scattering%records, &
+    call sum_cross_sections(limits, endf%mf23%coherent_scattering%records, &
          energy, endf%mf23%coherent_scattering%n, total, 2)
-    call sum1(limits, endf%mf23%incoherent_scattering%records, &
+    call sum_cross_sections(limits, endf%mf23%incoherent_scattering%records, &
          energy, endf%mf23%incoherent_scattering%n, total, 3)
-    call sum1(limits, endf%mf23%pair_formation_elec%records, &
+    call sum_cross_sections(limits, endf%mf23%pair_formation_elec%records, &
          energy, endf%mf23%pair_formation_elec%n, total, 4)
-    call sum1(limits, endf%mf23%pair_formation_nuc%records, &
+    call sum_cross_sections(limits, endf%mf23%pair_formation_nuc%records, &
          energy, endf%mf23%pair_formation_nuc%n, total, 5)
 
     do i=1, endf%mf23%n_ionization
-       call sum1(limits, endf%mf23%photo_ionization(i)%records, &
+       call sum_cross_sections(limits, endf%mf23%photo_ionization(i)%records, &
             energy, endf%mf23%photo_ionization(i)%n, total, 5+i)
     end do
 
