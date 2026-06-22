@@ -15,7 +15,7 @@ contains
     integer, intent(in) :: n, n2, n3
     real(kind(1.d0)) :: Amax, Avalue, rand, mu, angle, x2, x2max
     integer :: i
-    x2max=x(energy, -1.0_8)**2
+    x2max=1/x(energy, -1.0_8)**2
     mu=0.0_8
     Amax=linear_interpolation(A, x2max, n, 1, 2)
 
@@ -24,7 +24,7 @@ contains
        Avalue=rand*Amax
        i=binary_search(A, Avalue, n3, 2)
        x2=A(1, i)+(Avalue-A(2, i))*((A(1, i+1)-A(1, i))/(A(2, i+1)-A(2, i)))
-       mu=1-2*x2/x2max
+       mu=1-2*x2*x2max
 
        if(rand<0.5*(1+mu)) exit
     end do

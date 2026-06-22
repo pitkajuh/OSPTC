@@ -1,6 +1,6 @@
 module photon_angular_distribution
   use interpolate
-  use constants, only: hc, meter_in_angstroms
+  use constants, only: hcA, meter_in_angstroms
   implicit none
 
 contains
@@ -9,9 +9,11 @@ contains
     ! return value in inverse Angstroms (A). 1 A=10^-10 m
     real(kind(1.d0)), intent(in) :: energy, mu
     real(kind(1.d0)) :: r
-    r=(energy/hc)*((1_8-mu)/2_8)**0.5_8 ! in 1/m
-    r=r/meter_in_angstroms ! in 1/A
+    r=(energy/hcA)*((1_8-mu)/2_8)**0.5_8 ! in 1/A
+    ! r=r/meter_in_angstroms ! in 1/A
   end function x
+
+  subroutine create_normalized_cdf()
 
   subroutine create_incoherent(incoherent, incoherent_function, n1, n2)
     real(kind(1.d0)), allocatable :: incoherent(:, :)
@@ -28,7 +30,7 @@ contains
   end subroutine create_incoherent
 
   function F(x1, coherent_factor, n) result(r)
-    ! return coherent factor value corresponding to x1
+    ! return coherent factor value corresponding to value x1
     real(kind(1.d0)), intent(in) :: x1
     integer, intent(in) :: n
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
@@ -66,9 +68,10 @@ contains
        H=F(x2_im1**0.5_8, coherent_factor, n2)
        T=F(x2_i**0.5_8, coherent_factor, n2)
 
-       ! A(2, i)=A(2, i-1)+0.5_8*(H**2+T**2)*deltax2
-       A(2, i)=0.5_8*(H**2+T**2)*deltax2
+       A(2, i)=A(2, i-1)+0.5_8*(H**2+T**2)*deltax2
+       ! A(2, i)=0.5_8*(H**2+T**2)*deltax2
        ! print *, x2_im1, x2_i, H, T, deltax2
+       print *, A(1, i), A(2, i)
        write(new1, *) A(1, i), ";", A(2, i)
     end do
 
