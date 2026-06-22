@@ -57,7 +57,7 @@ contains
     this%Ax1=this%mf27%incoherent_function%n!
     allocate(this%incoherent_A(2, this%Ax1))
     call create_incoherent(this%mf27%incoherent_function%records, &
-         this%incoherent_A, this%mf27%incoherent_function%n, this%Ax1)
+         this%incoherent_A, this%mf27%incoherent_function%n, this%Ax1, this%incoherent_A)
 
   end subroutine read_tape
 

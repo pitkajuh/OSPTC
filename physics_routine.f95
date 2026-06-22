@@ -8,14 +8,14 @@ module physics_routine
 
 contains
 
-  function coherent_scattering_reaction(coherent_factor, n, energy, A, n2, n3) result(angle)
-    real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
+  function sample_coherent_scattering_angle(n, energy, A, n2, n3) result(angle)
     real(kind(1.d0)), intent(in), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n, n2, n3
     real(kind(1.d0)) :: Amax, Avalue, rand, mu, angle, x2, x2max
     integer :: i
-    x2max=1/x(energy, -1.0_8)**2
+    x2max=(1/x(energy, -1.0_8)**2)
+    ! x2max=x(energy, -1.0_8)**2
     mu=0.0_8
     Amax=linear_interpolation(A, x2max, n, 1, 2)
 
@@ -30,8 +30,30 @@ contains
     end do
 
     angle=acos(mu)
-    print *, energy,  mu, angle*(360/3.141592653589793)
-  end function coherent_scattering_reaction
+    print *, "Coherent", energy,  mu, angle*(360/3.141592653589793)
+  end function sample_coherent_scattering_angle
+
+  function sample_incoherent_scattering_angle(n, energy, A, n2, n3) result(angle)
+    real(kind(1.d0)), intent(in), allocatable :: A(:, :)
+    real(kind(1.d0)), intent(in) :: energy
+    integer, intent(in) :: n, n2, n3
+    real(kind(1.d0)) :: Amax, Avalue, rand, mu, angle, x_value, xmax
+    integer :: i
+    xmax=(1/x(energy, -1.0_8))
+    mu=0.0_8
+    Amax=linear_interpolation(A, xmax, n, 1, 2)
+
+    do
+       rand=std_uniform_distribution()
+       mu=std_uniform_distribution()
+       x_value=1/x(energy, mu)
+       Avalue=linear_interpolation(A, x_value, n, 1, 2)
+       if(rand<Avalue/Amax) exit
+    end do
+
+    angle=acos(mu)
+    print *, "Incoherent", energy,  mu, angle*(360/3.141592653589793)
+  end function sample_incoherent_scattering_angle
 
   function get_xmin(rnd, energy) result(xmin)
     real(kind(1.d0)), intent(in) :: rnd, energy
@@ -149,11 +171,15 @@ contains
     ! select case (reaction_id)
     ! case(1)
     !    print *, "coherent scattering"
-       angle=coherent_scattering_reaction(endf%mf27%coherent_factor%records, &
-            endf%Ax, energy, endf%coherent_A, &
+       ! call create_normalized_cdf(endf%mf27%coherent_factor%records, endf%mf27%coherent_factor%n)
+       angle=sample_coherent_scattering_angle(endf%Ax, energy, endf%coherent_A, &
             endf%mf27%coherent_factor%n, endf%Ax)
     ! case(2)
-    !    print *, "incoherent scattering"
+
+       !    print *, "incoherent scattering"
+              angle=sample_incoherent_scattering_angle(endf%Ax, energy, endf%incoherent_A, &
+            endf%mf27%incoherent_function%n, endf%Ax)
+
     ! case(3)
     !    print *, "pair formation in electric field"
     ! case(4)
