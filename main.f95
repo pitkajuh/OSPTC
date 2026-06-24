@@ -8,14 +8,14 @@ program main
   use photon_type
   implicit none
 
-  integer :: i, second
+  ! integer :: i, second
   ! real :: t, t1, val
   ! type(coordinate) :: point, point1
   ! class(surface), allocatable :: a1
   ! type(tape) :: endf_tape
   ! type(cylinder) :: t12
   class(material), allocatable :: steel1
-  real(kind(1.d0)) :: E
+  ! real(kind(1.d0)) :: E
   ! integer :: reac
   ! type(photon) :: ph
   class(radionuclide), allocatable :: co_60_source

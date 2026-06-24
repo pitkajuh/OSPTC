@@ -11,11 +11,10 @@ module file_type
   end type file
 
   abstract interface
-     subroutine create_file(this, z, ios, sizes, n)
+     subroutine create_file(this, z, ios, n)
        import file
        class(file), intent(inout) :: this
        integer :: z, ios, n
-       integer, allocatable :: sizes(:)
      end subroutine create_file
 
      subroutine file_destructor(this)
@@ -70,10 +69,9 @@ contains
     deallocate(this%photo_ionization)
   end subroutine clear_mf23
 
-  subroutine create_mf23(this, z, ios, sizes, n)
+  subroutine create_mf23(this, z, ios, n)
     class(MF23), intent(inout) :: this
     integer :: z, ios, MF, MT, n, i
-    integer, allocatable :: sizes(:)
 
     ! Skip 23501
     call this%coherent_scattering%skip_section(z, ios)
@@ -178,11 +176,10 @@ contains
     end do
   end subroutine extend_scattering
 
-  subroutine create_mf27(this, z, ios, sizes, n)
+  subroutine create_mf27(this, z, ios, n)
     class(MF27), intent(inout) :: this
     integer :: z, ios, MF, MT, n
-    integer, allocatable :: sizes(:)
-
+    n=0
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int( &
          this%coherent_factor%header(1, 3))))

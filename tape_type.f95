@@ -10,7 +10,6 @@ module tape_type
      real(kind(1.d0)), dimension(6, 4) :: header
      real(kind(1.d0)), allocatable :: coherent_A(:, :)
      real(kind(1.d0)), allocatable :: incoherent_A(:, :)
-     integer, allocatable :: sizes(:)
      integer :: n, Ax, Ax1
      type(MF23) :: mf23
      type(MF27) :: mf27
@@ -32,9 +31,9 @@ contains
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin(this, z, ios)
-    call this%mf23%create(z, ios, this%sizes, this%n)
+    call this%mf23%create(z, ios, this%n)
     ! print *, "aoeeoaeo", this%mf23%n_ionization+5+1
-    call this%mf27%create(z, ios, this%sizes, this%n)
+    call this%mf27%create(z, ios, this%n)
     close(z)
 
     this%Ax=this%mf27%coherent_factor%n
@@ -77,7 +76,6 @@ contains
     this%n=int(this%header(6, 4))-4
     i=1
     ! print *, "allocate", this%n
-    allocate(this%sizes(this%n))
 
     do
        read(z, '(I36,I10,I10,I10)', iostat=ios) N1, MAT, MF, MT
@@ -86,9 +84,6 @@ contains
        else if(MAT==501 .or. MAT==516 .or. MAT==522) then
           cycle
        end if
-       this%sizes(i)=MF-2
-       ! print *, this%sizes(i)
-       ! print *, N1, MAT, MF, MT, this%sizes(i), i
        i=i+1
     end do
 
