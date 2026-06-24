@@ -46,4 +46,5 @@ program main
   ! call reaction_function(steel1%endf, 1e3_8)
 
   deallocate(co_60_source)
+  deallocate(steel1)
 end program main

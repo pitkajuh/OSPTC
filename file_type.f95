@@ -7,6 +7,7 @@ module file_type
      integer :: n_ionization
    contains
      procedure(create_file), deferred :: create
+     procedure(file_destructor), deferred :: file_clear
   end type file
 
   abstract interface
@@ -16,6 +17,12 @@ module file_type
        integer :: z, ios, n
        integer, allocatable :: sizes(:)
      end subroutine create_file
+
+     subroutine file_destructor(this)
+       import file
+       class(file), intent(inout):: this
+       integer :: i
+     end subroutine file_destructor
   end interface
 
   type, extends(file) :: MF23
@@ -26,6 +33,7 @@ module file_type
      type(section_photo_ionization), allocatable :: photo_ionization(:)
    contains
      procedure, pass :: create => create_mf23
+     procedure, pass :: file_clear => clear_mf23
   end type MF23
 
   type, extends(file) :: MF27
@@ -35,9 +43,32 @@ module file_type
      type(section_real_factor) :: real_factor
    contains
      procedure, pass :: create => create_mf27
+     procedure, pass :: file_clear => clear_mf27
   end type MF27
 
 contains
+
+  subroutine clear_mf27(this)
+    class(MF27), intent(inout) :: this
+    ! deallocate(this%records)
+    call section_destructor(this%coherent_factor)
+    call section_destructor(this%incoherent_function)
+    call section_destructor(this%imaginary_factor)
+    call section_destructor(this%real_factor)
+    ! call section_destructor(this%photo_ionization)
+    ! deallocate(this%photo_ionization)
+  end subroutine clear_mf27
+
+  subroutine clear_mf23(this)
+    class(MF23), intent(inout) :: this
+    ! deallocate(this%records)
+    call section_destructor(this%coherent_scattering)
+    call section_destructor(this%incoherent_scattering)
+    call section_destructor(this%pair_formation_elec)
+    call section_destructor(this%pair_formation_nuc)
+    ! call section_destructor(this%photo_ionization)
+    deallocate(this%photo_ionization)
+  end subroutine clear_mf23
 
   subroutine create_mf23(this, z, ios, sizes, n)
     class(MF23), intent(inout) :: this
