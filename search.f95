@@ -2,11 +2,12 @@ module search
   implicit none
 contains
   function binary_search(array, x, nx, axis) result(i)
-    integer :: i, left, right
-    integer, intent(in) :: nx, axis
-    real(kind(1.d0)), intent(in) :: x
-    real(kind(1.d0)) :: A1
     real(kind(1.d0)), intent(in), dimension(:, :) :: array
+    real(kind(1.d0)), intent(in) :: x
+    integer, intent(in) :: nx, axis
+    integer :: i, left, right
+    real(kind(1.d0)) :: A1
+    A1=0.0_8
     i=0
     left=1
     right=nx-1
