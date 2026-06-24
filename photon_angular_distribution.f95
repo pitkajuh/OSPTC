@@ -30,8 +30,9 @@ contains
     real(kind(1.d0)), allocatable :: incoherent_function(:, :)
     integer, intent(in) :: n1, n2
     integer :: i
-    real(kind(1.d0)) :: deltax, x_i, x_im1, H, T
-
+    real(kind(1.d0)) :: deltax, x_i, x_im1, H, T, x_value
+    H=0.0_8
+    T=0.0_8
     A(1, 1)=incoherent_function(1, 1)
     deltax=A(1, 1)
     A(2, 1)=0.5_8*(incoherent_function(2, 1))*deltax
@@ -41,9 +42,10 @@ contains
        x_i=A(1, i)
        x_im1=A(1, i-1)
        deltax=x_i-x_im1
+       x_value=x(incoherent(1, i), -1.0_8)
 
-       H=linear_interpolation(incoherent_function, x(incoherent(1, i), -1.0_8), n2, 1, 2)
-       T=linear_interpolation(incoherent_function, x(incoherent(1, i), -1.0_8), n2, 1, 2)
+       H=linear_interpolation(incoherent_function, x_value, n2, 1, 2)
+       T=linear_interpolation(incoherent_function, x_value, n2, 1, 2)
        A(2, i)=A(2, i-1)+0.5_8*(H+T)*deltax
     end do
     print *, "Incoherent generated"

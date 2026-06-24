@@ -19,14 +19,14 @@ module tape_type
 contains
 
   subroutine clear_tape(this)
-    type(tape) :: this
+    type(tape), intent(inout) :: this
     call clear_mf23(this%mf23)
     call clear_mf27(this%mf27)
   end subroutine clear_tape
 
   subroutine read_tape(this, tape_name)
-    type(tape) :: this
-    character(*) :: tape_name
+    type(tape), intent(inout) :: this
+    character(*), intent(in) :: tape_name
     integer :: ios, z
     z=1
 
@@ -51,7 +51,7 @@ contains
   end subroutine read_tape
 
   subroutine read_begin(this, z, ios)
-    type(tape) :: this
+    type(tape), intent(inout) :: this
     integer :: z, ios, i
     character(75) :: line
     real(kind(1.d0)) :: ZA, AWR

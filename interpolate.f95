@@ -3,11 +3,13 @@ module interpolate
   implicit none
 contains
   function linear_interpolation(array, x, nx, axis1, axis2) result(r)
-    integer :: i
     integer, intent(in) :: nx, axis1, axis2
     real(kind(1.d0)), intent(in) :: x
-    real(kind(1.d0)) :: r
     real(kind(1.d0)), intent(in), dimension(:, :) :: array
+    integer :: i
+    real(kind(1.d0)) :: r
+    r=0.0_8
+    i=1
 
     if(array(axis1, 1)==x) then
        i=1
