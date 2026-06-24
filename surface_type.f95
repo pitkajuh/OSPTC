@@ -187,13 +187,12 @@ contains
   function surface_distance_cylinder(this, from, to) result(result1)
     class(cylinder), intent(inout) :: this
     type(coordinate), intent(in) :: from, to
-    type(coordinate) :: centered_at
     real(kind(1.d0)) :: result1, in_sqrt, positive, negative, K, L, M
 
     ! Equation should be A*(x-x0)*(x-x0)+B*(y-y0)*(y-y0)+J, but A and B are omitted because they are 1.
 
-    K=(from%x-centered_at%x)**2+(from%y-centered_at%y)**2+this%J
-    L=2*(to%x*(from%x-centered_at%x)+to%y*(from%y-centered_at%y))
+    K=(from%x-this%centered_at%x)**2+(from%y-this%centered_at%y)**2+this%J
+    L=2*(to%x*(from%x-this%centered_at%x)+to%y*(from%y-this%centered_at%y))
     M=to%x*to%x+to%y*to%y
 
     in_sqrt=L*L-4*M*K

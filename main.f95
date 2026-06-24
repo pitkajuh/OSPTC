@@ -8,16 +8,16 @@ program main
   use photon_type
   implicit none
 
-  integer :: res, i, second
-  real :: t, t1, val
-  type(coordinate) :: point, point1
-  class(surface), allocatable :: a1
-  type(tape) :: endf_tape
-  type(cylinder) :: t12
+  integer :: i, second
+  ! real :: t, t1, val
+  ! type(coordinate) :: point, point1
+  ! class(surface), allocatable :: a1
+  ! type(tape) :: endf_tape
+  ! type(cylinder) :: t12
   class(material), allocatable :: steel1
-  real(kind(1.d0)) :: ymax, Amax, E
-  integer :: reac
-  type(photon) :: ph
+  real(kind(1.d0)) :: E
+  ! integer :: reac
+  ! type(photon) :: ph
   class(radionuclide), allocatable :: co_60_source
   ! call create_photon(ph, max_energy)
   ! allocate(cylinder :: a1)
