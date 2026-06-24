@@ -8,6 +8,6 @@ module constants
   real(kind(1.d0)) :: hcA=4.135667696E-15_8*299792458.0_8*10_8**10_8 ! eV/A
   real(kind(1.d0)) :: meter_in_angstroms=10_8**10_8 ! A/m
   real(kind(1.d0)) :: atomic_mass_unit=931.494013_8*10_8**(6_8) ! eV/c^2
-  real(kind(1.d0)) :: electron_mass=5.485799110_8*10_8**(-4_8)*931.494013_8*10_8**(6_8) ! eV/c^2
+  real(kind(1.d0)) :: electron_mass=5.11E5_8 ! eV/c^2
   real(kind(1.d0)) :: Emax=2.5E6_8 ! maximum problem energy in eV
 end module constants

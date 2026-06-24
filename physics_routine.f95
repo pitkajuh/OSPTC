@@ -18,41 +18,88 @@ contains
     ! x2max=x(energy, -1.0_8)**2
     mu=0.0_8
     Amax=linear_interpolation(A, x2max, n, 1, 2)
-
+    i=1
     do
        rand=std_uniform_distribution()
        Avalue=rand*Amax
        i=binary_search(A, Avalue, n3, 2)
        x2=A(1, i)+(Avalue-A(2, i))*((A(1, i+1)-A(1, i))/(A(2, i+1)-A(2, i)))
        mu=1-2*x2*x2max
-
+       i=i+1
        if(rand<0.5*(1+mu)) exit
     end do
 
     angle=acos(mu)
-    print *, "Coherent", energy,  mu, angle*(360/3.141592653589793)
+    print *, "Coherent", energy,  mu, angle*(360/3.141592653589793), i
   end function sample_coherent_scattering_angle
+
+  function x_new(E, mu) result(x)
+    real(kind(1.d0)), intent(in) :: E, mu
+    real(kind(1.d0)) :: Eprime, x, E1, E2
+    E2=E/electron_mass
+    Eprime=E/(1+E2*(1-mu))
+    E1=Eprime/E
+    x=E2*(1+E1*E1-2*mu*E1)**0.5
+    ! print *, E, mu, E2, Eprime, E1, electron_mass
+  end function x_new
+
+  function kahns_method(a) result(mu)
+    real(kind(1.d0)), intent(in) :: a
+    real(kind(1.d0)) :: p1, p2, p3, y, mu
+
+
+    do
+       p1=std_uniform_distribution()
+       p2=std_uniform_distribution()
+       p3=std_uniform_distribution()
+
+       if(p1<(2*a+1)/(2*a+9)) then
+          y=1+2*a*p2
+
+          if(p3<4*(1/y-y**(-1))) then
+             mu=1-2*p2
+             exit
+          end if
+       else
+          y=(2*a+1)/(1+2*a*p2)
+          mu=1-(y-1)/a
+
+          if(p3<(0.5*(mu*mu+1/y))) then
+             exit
+          end if
+       end if
+
+    end do
+  end function kahns_method
 
   function sample_incoherent_scattering_angle(n, energy, A, n2, n3) result(angle)
     real(kind(1.d0)), intent(in), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n, n2, n3
-    real(kind(1.d0)) :: Amax, Avalue, rand, mu, angle, x_value, xmax
+    real(kind(1.d0)) :: Amax, Avalue, rand, mu, angle, x_value, xmax, a1
     integer :: i
-    xmax=(1/x(energy, -1.0_8))
+    xmax=x(energy, -1.0_8)
     mu=0.0_8
     Amax=linear_interpolation(A, xmax, n, 1, 2)
+    i=1
+    a1=energy/electron_mass
 
     do
+       ! do
+          mu=kahns_method(a1)
+       ! end do
+
        rand=std_uniform_distribution()
-       mu=std_uniform_distribution()
-       x_value=1/x(energy, mu)
+
+       x_value=x(energy, mu)
+       ! print *, x_value
        Avalue=linear_interpolation(A, x_value, n, 1, 2)
-       if(rand<Avalue/Amax) exit
+       i=i+1
+       if(Avalue/Amax<=1) exit
     end do
 
     angle=acos(mu)
-    print *, "Incoherent", energy,  mu, angle*(360/3.141592653589793)
+    print *, "Incoherent", energy,  mu, angle*(360/3.141592653589793), i, Avalue/Amax
   end function sample_incoherent_scattering_angle
 
   function get_xmin(rnd, energy) result(xmin)
@@ -172,8 +219,8 @@ contains
     ! case(1)
     !    print *, "coherent scattering"
        ! call create_normalized_cdf(endf%mf27%coherent_factor%records, endf%mf27%coherent_factor%n)
-       angle=sample_coherent_scattering_angle(endf%Ax, energy, endf%coherent_A, &
-            endf%mf27%coherent_factor%n, endf%Ax)
+       ! angle=sample_coherent_scattering_angle(endf%Ax, energy, endf%coherent_A, &
+       !      endf%mf27%coherent_factor%n, endf%Ax)
     ! case(2)
 
        !    print *, "incoherent scattering"
