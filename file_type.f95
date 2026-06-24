@@ -148,22 +148,8 @@ contains
 
   subroutine create_mf27(this, z, ios, sizes, n)
     class(MF27), intent(inout) :: this
-    integer :: z, ios, MF, MT, n, n1, size_index, i, extend_from, extend_to, j, a, extend_size, add_from, step
+    integer :: z, ios, MF, MT, n
     integer, allocatable :: sizes(:)
-    real(kind(1.d0)), allocatable :: coherent_factor_temporary(:, :)
-    real(kind(1.d0)) :: enext, energylimit, energymin, xx, delta
-    energylimit=2.5E6_8
-    energymin=1E3_8
-    ! energylimit=2.1E6_8
-    ! energylimit=5.1E6_8
-    n1=2E4
-    n1=0
-
-
-    ! print *, energylimit/hc, "exp", int(log10(energylimit/hc))
-    ! print *, (energylimit/hc)**2, "exp", int(log10((energylimit/hc)**2))
-
-
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int( &

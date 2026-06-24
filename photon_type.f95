@@ -1,5 +1,4 @@
 module photon_type
-  ! use random
   use constants, only: pi, pi2
   use coordinate_type
   implicit none
@@ -13,17 +12,6 @@ module photon_type
   end type photon
 
 contains
-
-  subroutine calculate_to(this, mu)
-    type(photon) :: this
-    real(kind(1.d0)), intent(in) :: mu
-    this%to=(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
-  end subroutine calculate_to
-
-  subroutine calculate_mfp(this)
-    type(photon) :: this
-    this%mfp=this%origin+this%to
-  end subroutine calculate_mfp
 
   subroutine random_emission_direction(this)
     ! Create an unit vector pointing in random direction
@@ -42,13 +30,15 @@ contains
     this%direction=random_emission_direction1
   end subroutine random_emission_direction
 
-  subroutine create_photon(this, energy)
-    real(kind(1.d0)), intent(in) :: energy
+  subroutine create_photon(this, energy, origin, mu)
+    real(kind(1.d0)), intent(in) :: energy, mu
+    type(coordinate), intent(in) :: origin
     type(photon) :: this
+    this%origin=origin
     this%energy=energy
     call random_emission_direction(this)
+    this%to=(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
+    this%mfp=this%origin+this%to
   end subroutine create_photon
-
-
 
 end module photon_type

@@ -84,8 +84,6 @@ contains
     real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)) :: angle
     angle=sample_incoherent_scattering_angle(endf%Ax, energy, endf%incoherent_A)
-
-
   end function incoherent_scattering_reaction
 
   function coherent_scattering_reaction(energy, endf) result(angle)
@@ -93,8 +91,6 @@ contains
     real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)) :: angle
     angle=sample_coherent_scattering_angle(endf%Ax, energy, endf%coherent_A)
-
-
   end function coherent_scattering_reaction
 
   subroutine sum_cross_sections(limits, records, energy, n, total, i)
@@ -165,7 +161,6 @@ contains
     case(2)
        print *, "incoherent scattering"
        angle=incoherent_scattering_reaction(energy, endf)
-
     case(3)
        print *, "pair formation in electric field"
     case(4)

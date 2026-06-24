@@ -9,7 +9,6 @@ module section_type
      procedure, public :: read_section_header
      procedure, public :: read_section
      procedure, public :: skip_section
-     procedure, public :: get_cross_section1
   end type section
 
   ! MF23
@@ -42,16 +41,10 @@ module section_type
 
 contains
 
-  subroutine get_cross_section1(this, energy)
-    class(section), intent(inout) :: this
-    real(kind(1.d0)), intent(in) :: energy
-    real(kind(1.d0)) :: r
-  end subroutine get_cross_section1
-
   subroutine skip_section(this, z, ios)
     class(section), intent(inout) :: this
-    real(kind(1.d0)) :: v1, v2, v3, v4, v5, v6, ZA
-    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios
+    real(kind(1.d0)) :: v1, v2, v3, v4, v5, v6
+    integer :: MAT, MF, MT, z, ios
 
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) v1, v2, v3, v4, v5, v6, MAT, MF, MT
@@ -88,15 +81,11 @@ contains
     end do
   end subroutine read_section_header
 
-  subroutine create_section(records)
-    real(kind(1.d0)), allocatable :: records(:, :)
-  end subroutine create_section
-
   subroutine read_section(this, z, ios, MF,  MT, n, records)
     class(section), intent(inout) :: this
     real(kind(1.d0)), allocatable :: records(:, :)
     real(kind(1.d0)) :: e1, v2, e2, v4, e3, v6
-    integer :: L1, L2, N1, N2, MAT, MF, MT, z, ios, n, i, j
+    integer :: MAT, MF, MT, z, ios, n, i
     i=1
     this%n=n
 

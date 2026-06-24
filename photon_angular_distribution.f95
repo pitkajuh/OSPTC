@@ -30,7 +30,7 @@ contains
     real(kind(1.d0)), allocatable :: incoherent_function(:, :)
     integer, intent(in) :: n1, n2
     integer :: i
-    real(kind(1.d0)) :: incoherent_function_value, deltax, x_i, x_im1, H, T
+    real(kind(1.d0)) :: deltax, x_i, x_im1, H, T
 
     A(1, 1)=incoherent_function(1, 1)
     deltax=A(1, 1)
@@ -58,13 +58,12 @@ contains
     r=linear_interpolation(coherent_factor, x1, n, 1, 2)
   end function F
 
-  subroutine create_coherent(coherent_factor, n, energymax, A, n2, energymin)
+  subroutine create_coherent(coherent_factor, n, A, n2)
     real(kind(1.d0)), intent(inout), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in), allocatable :: coherent_factor(:, :)
-    real(kind(1.d0)), intent(in) :: energymax, energymin
     integer, intent(in) :: n, n2
-    real(kind(1.d0)) :: xmax, deltax2, H, T, x2_i, x2_im1
-    integer :: i, j, new1
+    real(kind(1.d0)) :: deltax2, H, T, x2_i, x2_im1
+    integer :: i
 
     ! call system('rm t1.txt')
     ! open(newunit=new1, file="t1.txt", status="new", action="write")

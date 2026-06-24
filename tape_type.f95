@@ -21,8 +21,7 @@ contains
   subroutine read_tape(this, tape_name)
     type(tape) :: this
     character(*) :: tape_name
-    integer :: ios, z, i
-    real(kind(1.d0)) :: emax, emin
+    integer :: ios, z
     z=1
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
@@ -32,27 +31,11 @@ contains
     call this%mf27%create(z, ios, this%sizes, this%n)
     close(z)
 
-    ! create coherent angular distribution
-    emax=1E3_8
-    emin=1E3_8
-
-    emax=1.3323E6_8
-    ! emin=1_8
-
-    ! emax=2.1E6_8
-    ! emax=5.1E6_8
-    ! If n1 is changed, change it also from reaction_function
-    ! n1=500
-
-
-    ! n2=(emax/emin)**2
-    ! print *, n2, emax, emin, int((emax/emin)**2)
-    this%Ax=this%mf27%coherent_factor%n!*10000
+    this%Ax=this%mf27%coherent_factor%n
 
     allocate(this%coherent_A(2, this%Ax))
     call create_coherent(this%mf27%coherent_factor%records, &
-         this%Ax, emax, this%coherent_A, &
-         this%mf27%coherent_factor%n, emin)
+         this%Ax, this%coherent_A, this%mf27%coherent_factor%n)
 
     this%Ax1=this%mf27%incoherent_function%n!
     allocate(this%incoherent_A(2, this%Ax1))
@@ -61,23 +44,12 @@ contains
 
   end subroutine read_tape
 
-  subroutine slice_tape(this, max_energy)
-    type(tape) :: this
-    integer :: slice_to, i
-    real(kind(1.d0)), intent(in) :: max_energy
-    slice_to=1+binary_search(this%mf23%coherent_scattering%records, max_energy, 3*this%sizes(1), 1)
-    ! print *, "ohcreco", slice_to, 3*this%sizes(1)
-    ! do i=1, 3*this%sizes(1)
-    !    print *, this%mf23%coherent_scattering%records(1, i)
-    ! end do
-  end subroutine slice_tape
-
   subroutine read_begin(this, z, ios)
     type(tape) :: this
     integer :: z, ios, i
     character(75) :: line
     real(kind(1.d0)) :: ZA, AWR
-    integer :: L1, L2, N1, N2, MAT, MF, MT, MT1, MF1, n
+    integer :: L1, L2, N1, N2, MAT, MF, MT
 
     read(z, *, iostat=ios) line
 
