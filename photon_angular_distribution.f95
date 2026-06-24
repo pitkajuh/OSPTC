@@ -1,6 +1,6 @@
 module photon_angular_distribution
   use interpolate
-  use constants, only: hcA, meter_in_angstroms
+  use constants, only: hcA
   implicit none
 
 contains
@@ -46,7 +46,7 @@ contains
        T=linear_interpolation(incoherent_function, x(incoherent(1, i), -1.0_8), n2, 1, 2)
        A(2, i)=A(2, i-1)+0.5_8*(H+T)*deltax
     end do
-
+    print *, "Incoherent generated"
   end subroutine create_incoherent
 
   function F(x1, coherent_factor, n) result(r)
@@ -96,7 +96,7 @@ contains
     end do
 
     ! close(new1)
-    print *, "coherent generated"
+    print *, "Coherent generated"
 
   end subroutine create_coherent
 end module photon_angular_distribution
