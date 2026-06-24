@@ -18,6 +18,12 @@ module tape_type
 
 contains
 
+  subroutine clear_tape(this)
+    type(tape) :: this
+    call clear_mf23(this%mf23)
+    call clear_mf27(this%mf27)
+  end subroutine clear_tape
+
   subroutine read_tape(this, tape_name)
     type(tape) :: this
     character(*) :: tape_name

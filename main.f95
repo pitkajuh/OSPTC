@@ -26,24 +26,24 @@ program main
   allocate(co_60 :: co_60_source)
   co_60_source%activity=1E3
 
-  do second=1, 10
-     do i=1, co_60_source%activity
-        E=co_60_source%pdf()
-        !  E=1E1_8
-        call reaction_function(steel1%endf, 1E1_8)
-        print *, second, i, E
-     end do
-  end do
+  ! do second=1, 10
+  !    do i=1, co_60_source%activity
+  !       E=co_60_source%pdf()
+  !       !  E=1E1_8
+  !       call reaction_function(steel1%endf, 1E1_8)
+  !       print *, second, i, E
+  !    end do
+  ! end do
 
   allocate(steel :: steel1)
   call steel1%create()
 
-  ! call reaction_function(steel1%endf, 2e3_8)
-  ! call reaction_function(steel1%endf, 1e6_8)
-  ! call reaction_function(steel1%endf, 1e5_8)
-  ! call reaction_function(steel1%endf, 1e4_8)
-  ! call reaction_function(steel1%endf, 5e3_8)
-  ! call reaction_function(steel1%endf, 1e3_8)
+  call reaction_function(steel1%endf, 2e3_8)
+  call reaction_function(steel1%endf, 1e6_8)
+  call reaction_function(steel1%endf, 1e5_8)
+  call reaction_function(steel1%endf, 1e4_8)
+  call reaction_function(steel1%endf, 5e3_8)
+  call reaction_function(steel1%endf, 1e3_8)
 
   deallocate(co_60_source)
   deallocate(steel1)

@@ -50,23 +50,23 @@ contains
 
   subroutine clear_mf27(this)
     class(MF27), intent(inout) :: this
-    ! deallocate(this%records)
     call section_destructor(this%coherent_factor)
     call section_destructor(this%incoherent_function)
     call section_destructor(this%imaginary_factor)
     call section_destructor(this%real_factor)
-    ! call section_destructor(this%photo_ionization)
-    ! deallocate(this%photo_ionization)
   end subroutine clear_mf27
 
   subroutine clear_mf23(this)
     class(MF23), intent(inout) :: this
-    ! deallocate(this%records)
+    integer :: i
     call section_destructor(this%coherent_scattering)
     call section_destructor(this%incoherent_scattering)
     call section_destructor(this%pair_formation_elec)
     call section_destructor(this%pair_formation_nuc)
-    ! call section_destructor(this%photo_ionization)
+
+    do i=1, this%n_ionization!this%photo_ionization(n-8)
+       call section_destructor(this%photo_ionization(i))
+    end do
     deallocate(this%photo_ionization)
   end subroutine clear_mf23
 
@@ -101,7 +101,8 @@ contains
          int(this%pair_formation_nuc%header(1, 3)), this%pair_formation_nuc%records)
 
     ! Skip 23522
-    allocate(this%photo_ionization(n-8))
+    ! allocate(this%photo_ionization(n-8))
+    allocate(this%photo_ionization(n-7))
     call this%photo_ionization(1)%skip_section(z, ios)
 
     i=5
