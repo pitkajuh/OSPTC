@@ -68,7 +68,7 @@ contains
        if(N1==3)  exit
     end do
 
-    this%n=this%header(6, 4)-4
+    this%n=int(this%header(6, 4))-4
     i=1
     ! print *, "allocate", this%n
     allocate(this%sizes(this%n))
