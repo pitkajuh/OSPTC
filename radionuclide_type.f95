@@ -26,8 +26,8 @@ contains
   function pdf_co_60(this) result(pdf1)
     class(co_60), intent(inout) :: this
     real(kind(1.d0)) :: pdf1
-    if(std_uniform_distribution()<=0.85) pdf1=1173.3
-    pdf1=1332.3
+    if(std_uniform_distribution()<=0.85) pdf1=1173E3
+    pdf1=1332E3
   end function pdf_co_60
 
 

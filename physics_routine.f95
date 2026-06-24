@@ -79,13 +79,23 @@ contains
     end do
   end function sample_incoherent_scattering_angle
 
-  function incoherent_scattering_reaction(energy) result(angle)
+  function incoherent_scattering_reaction(energy, endf) result(angle)
+    type(tape), intent(inout) :: endf
     real(kind(1.d0)), intent(in) :: energy
-    real(kind(1.d0)) :: rnd1, rnd2, rnd3, angle
-
+    real(kind(1.d0)) :: angle
+    angle=sample_incoherent_scattering_angle(endf%Ax, energy, endf%incoherent_A)
 
 
   end function incoherent_scattering_reaction
+
+  function coherent_scattering_reaction(energy, endf) result(angle)
+    type(tape), intent(inout) :: endf
+    real(kind(1.d0)), intent(in) :: energy
+    real(kind(1.d0)) :: angle
+    angle=sample_coherent_scattering_angle(endf%Ax, energy, endf%coherent_A)
+
+
+  end function coherent_scattering_reaction
 
   subroutine sum_cross_sections(limits, records, energy, n, total, i)
     real(kind(1.d0)), intent(in) :: energy
@@ -151,11 +161,11 @@ contains
     select case (reaction_id)
     case(1)
        print *, "coherent scattering"
-       ! call create_normalized_cdf(endf%mf27%coherent_factor%records, endf%mf27%coherent_factor%n)
-       angle=sample_coherent_scattering_angle(endf%Ax, energy, endf%coherent_A)
+       angle=incoherent_scattering_reaction(energy, endf)
     case(2)
        print *, "incoherent scattering"
-       angle=sample_incoherent_scattering_angle(endf%Ax, energy, endf%incoherent_A)
+       angle=incoherent_scattering_reaction(energy, endf)
+
     case(3)
        print *, "pair formation in electric field"
     case(4)
