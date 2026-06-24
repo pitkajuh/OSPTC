@@ -23,8 +23,8 @@ program main
   real(kind(1.d0)) :: ymax, Amax, max_energy
   integer :: reac
   type(photon) :: ph
-  max_energy=1332.3
-  call ph%create_photon(max_energy)
+  max_energy=1332.3E3_8
+  call create_photon(ph, max_energy)
   ! allocate(cylinder :: a1)
   ! call a1%create()
 
@@ -93,10 +93,11 @@ program main
 
   ! print *, reac
   ! t=std_uniform_distribution()
-  ! t1=std_uniform_distribution()
+  ! ! t1=std_uniform_distribution()
   ! point=coordinate(t, t, t)
-
-
+  ! call show(point)
+  ! point=point%generate_random(1.0_8, 1.0_8, 1.0_8, 1.0_8, 1.0_8, 1.0_8)
+  ! call point%show()
 
 
 
@@ -108,7 +109,7 @@ program main
 
 
 
-  ! call show(point)
+
   ! call show(point1)
   ! ! print *, point-point1
   ! point1=coordinate(t1, t1, t1)+100.0

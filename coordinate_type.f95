@@ -132,16 +132,4 @@ contains
     generate_random%z=rng(zmin, zmax)
   end function generate_random
 
-  ! function random_emission_direction()
-  !   ! Create an unit vector pointing in random direction using spherical coordinates. The radius of the sphere is not sampled because the sampling is done from the origin of the sphere.
-  !   type(coordinate) :: random_emission_direction
-  !   real(kind(1.d0)) :: azimuthal_angle, polar_angle
-
-  !   azimuthal_angle=2*3.14159265*std_uniform_distribution()
-  !   polar_angle=3.14159265*std_uniform_distribution()
-  !   random_emission_direction%x=sin(polar_angle)*cos(azimuthal_angle)
-  !   random_emission_direction%y=sin(polar_angle)*sin(azimuthal_angle)
-  !   random_emission_direction%z=cos(polar_angle)
-  ! end function random_emission_direction
-
 end module coordinate_type

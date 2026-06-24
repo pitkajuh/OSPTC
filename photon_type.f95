@@ -10,17 +10,20 @@ module photon_type
      type(coordinate) :: origin
      type(coordinate) :: to
      type(coordinate) :: mfp
-
-     ! real(kind(1.d0)), dimension(6, 4) :: header
-     ! real(kind(1.d0)), allocatable :: coherent_A(:, :)
-     ! real(kind(1.d0)), allocatable :: incoherent_A(:, :)
-     ! integer, allocatable :: sizes(:)
-     ! integer :: n, Ax, Ax1
-     ! type(MF23) :: mf23
-     ! type(MF27) :: mf27
   end type photon
 
 contains
+
+  subroutine calculate_to(this, mu)
+    type(photon) :: this
+    real(kind(1.d0)), intent(in) :: mu
+    this%to=(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
+  end subroutine calculate_to
+
+  subroutine calculate_mfp(this)
+    type(photon) :: this
+    this%mfp=this%origin+this%to
+  end subroutine calculate_mfp
 
   subroutine random_emission_direction(this)
     ! Create an unit vector pointing in random direction
@@ -45,13 +48,6 @@ contains
     this%energy=energy
     call random_emission_direction(this)
   end subroutine create_photon
-!   subroutine read_tape(tape_name)
-!     ! type(tape) :: this
-!     character(*) :: tape_name
-!     integer :: ios, z, i
-!     real(kind(1.d0)) :: emax, emin
-!     z=1
-!   end subroutine read_tape
 
 
 
