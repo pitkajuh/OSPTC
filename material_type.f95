@@ -10,6 +10,7 @@ module material_type
      type(tape) :: endf
    contains
      procedure(create_intf), deferred :: create
+     procedure, public :: clear_material
   end type material
 
   abstract interface
@@ -55,6 +56,12 @@ module material_type
   end type oxygen
 
 contains
+
+  subroutine clear_material(this)
+    class(material), intent(inout) :: this
+    deallocate(this%mu)
+    call clear_tape(this%endf)
+  end subroutine clear_material
 
   subroutine create_steel(this)
     class(steel), intent(inout) :: this
