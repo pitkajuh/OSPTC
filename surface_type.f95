@@ -169,7 +169,7 @@ contains
   end function surface_test_z
 
   subroutine create_cylinder(this, v, centered_at)
-    class(cylinder), intent(out) :: this
+    class(cylinder), intent(inout) :: this
     type(coordinate), intent(in) :: centered_at
     real(kind(1.d0)), intent(in) :: v
     this%v=v

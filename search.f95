@@ -7,7 +7,7 @@ contains
     real(kind(1.d0)), intent(in) :: x
     real(kind(1.d0)) :: A1
     real(kind(1.d0)), intent(in), dimension(:, :) :: array
-
+    i=0
     left=1
     right=nx-1
 
