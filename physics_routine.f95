@@ -14,8 +14,8 @@ contains
     integer, intent(in) :: n, n2, n3
     real(kind(1.d0)) :: Amax, Avalue, rand, mu, angle, x2, x2max
     integer :: i
-    x2max=(1/x(energy, -1.0_8)**2)
-    ! x2max=x(energy, -1.0_8)**2
+    !x2max=(1/x(energy, -1.0_8)**2)
+    x2max=x(energy, -1.0_8)**2
     mu=0.0_8
     Amax=linear_interpolation(A, x2max, n, 1, 2)
     i=1
@@ -33,20 +33,9 @@ contains
     print *, "Coherent", energy,  mu, angle*(360/3.141592653589793), i
   end function sample_coherent_scattering_angle
 
-  function x_new(E, mu) result(x)
-    real(kind(1.d0)), intent(in) :: E, mu
-    real(kind(1.d0)) :: Eprime, x, E1, E2
-    E2=E/electron_mass
-    Eprime=E/(1+E2*(1-mu))
-    E1=Eprime/E
-    x=E2*(1+E1*E1-2*mu*E1)**0.5
-    ! print *, E, mu, E2, Eprime, E1, electron_mass
-  end function x_new
-
   function kahns_method(a) result(mu)
     real(kind(1.d0)), intent(in) :: a
     real(kind(1.d0)) :: p1, p2, p3, y, mu
-
 
     do
        p1=std_uniform_distribution()
@@ -68,7 +57,6 @@ contains
              exit
           end if
        end if
-
     end do
   end function kahns_method
 
@@ -85,17 +73,14 @@ contains
     a1=energy/electron_mass
 
     do
-       ! do
-          mu=kahns_method(a1)
-       ! end do
-
+       mu=kahns_method(a1)
        rand=std_uniform_distribution()
-
        x_value=x(energy, mu)
-       ! print *, x_value
+
        Avalue=linear_interpolation(A, x_value, n, 1, 2)
+       print *, x_value, xmax, Avalue, Amax
        i=i+1
-       if(Avalue/Amax<=1) exit
+       if(rand<=Avalue/Amax) exit
     end do
 
     angle=acos(mu)

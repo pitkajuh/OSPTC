@@ -9,8 +9,7 @@ contains
     ! return value in inverse Angstroms (A). 1 A=10^-10 m
     real(kind(1.d0)), intent(in) :: energy, mu
     real(kind(1.d0)) :: r
-    r=(energy/hcA)*((1_8-mu)/2_8)**0.5_8 ! in 1/A
-    ! r=r/meter_in_angstroms ! in 1/A
+    r=(energy/hcA)*(0.5*(1_8-mu))**0.5_8 ! in 1/A
   end function x
 
   subroutine create_normalized_cdf(A, n)
