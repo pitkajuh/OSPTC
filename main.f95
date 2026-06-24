@@ -5,6 +5,7 @@ program main
   use radionuclide_type
   use material_type
   use physics_routine
+  use photon_type
   implicit none
 
   integer :: res, i
@@ -21,10 +22,13 @@ program main
   class(material), allocatable :: steel1
   real(kind(1.d0)) :: ymax, Amax, max_energy
   integer :: reac
+  type(photon) :: ph
+  max_energy=1332.3
+  call ph%create_photon(max_energy)
   ! allocate(cylinder :: a1)
   ! call a1%create()
 
-  max_energy=1332.3
+
 
 
   allocate(steel :: steel1)
