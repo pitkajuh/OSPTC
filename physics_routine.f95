@@ -65,18 +65,22 @@ contains
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n
     real(kind(1.d0)) :: Amax, Avalue, rand, mu, x_value, xmax, a1
+    integer :: i
     xmax=x(energy, -1.0_8)
     mu=0.0_8
     Amax=linear_interpolation(A, xmax, n, 1, 2)
     a1=energy/electron_mass
-
+    i=0
     do
        mu=kahns_method(a1)
        rand=std_uniform_distribution()
        x_value=x(energy, mu)
        Avalue=linear_interpolation(A, x_value, n, 1, 2)
+       i=i+1
+       print *, i, Avalue/Amax
        if(rand<=Avalue/Amax) exit
     end do
+    print *, i
   end function sample_incoherent_scattering_angle
 
   function incoherent_scattering_reaction(energy, endf) result(angle)
@@ -154,20 +158,20 @@ contains
     ! angle=incoherent_scattering_reaction(energy)
     reaction_id=select_reaction(endf, energy)
 
-    select case (reaction_id)
-    case(1)
-       print *, "coherent scattering"
-       angle=incoherent_scattering_reaction(energy, endf)
-    case(2)
+    ! select case (reaction_id)
+    ! case(1)
+    !    print *, "coherent scattering"
+    !    angle=incoherent_scattering_reaction(energy, endf)
+    ! case(2)
        print *, "incoherent scattering"
        angle=incoherent_scattering_reaction(energy, endf)
-    case(3)
-       print *, "pair formation in electric field"
-    case(4)
-       print *, "pair formation in nuclear field"
-    case default
-       print *, "ionization", reaction_id
-    end select
+    ! case(3)
+    !    print *, "pair formation in electric field"
+    ! case(4)
+    !    print *, "pair formation in nuclear field"
+    ! case default
+    !    print *, "ionization", reaction_id
+    ! end select
        ! print *, "angle", angle*(360/3.141592653589793)
   end subroutine reaction_function
 

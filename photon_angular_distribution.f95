@@ -44,8 +44,10 @@ contains
        deltax=x_i-x_im1
        x_value=x(incoherent(1, i), -1.0_8)
 
-       H=linear_interpolation(incoherent_function, x_value, n2, 1, 2)
-       T=linear_interpolation(incoherent_function, x_value, n2, 1, 2)
+       ! H=linear_interpolation(incoherent_function, x_value, n2, 1, 2)
+       ! T=linear_interpolation(incoherent_function, x_value, n2, 1, 2)
+       H=incoherent_function(2, i-1)
+       T=incoherent_function(2, i)
        A(2, i)=A(2, i-1)+0.5_8*(H+T)*deltax
     end do
     print *, "Incoherent generated"
