@@ -20,6 +20,7 @@ contains
     else if(x<array(1, 1)) then
        r=x*array(2, i)/array(1, i)
     else if(x>array(1, nx)) then
+       ! Needs extrapolation
        print *, "Oh No!"
     else
        i=binary_search(array, x, nx, axis1)
