@@ -17,12 +17,10 @@ contains
     else if(array(axis1, nx)==x) then
        i=nx
        r=array(axis2, i)
-    ! else if(x<array(1, 1))
-    !    r=array(2, i-1)+(x-array(1, i-1))*(array(2, i)-&
-    !         array(2, i-1))/(array(1, i)-array(1, i-1))
-    ! else if(x>array(1, nx))
-    !    r=array(2, i-1)+(x-array(1, i-1))*(array(2, i)-&
-    !         array(2, i-1))/(array(1, i)-array(1, i-1))
+    else if(x<array(1, 1)) then
+       r=x*array(2, i)/array(1, i)
+    else if(x>array(1, nx)) then
+       print *, "Oh No!"
     else
        i=binary_search(array, x, nx, axis1)
        r=array(axis2, i-1)+(x-array(axis1, i-1))*(array(axis2, i)-&

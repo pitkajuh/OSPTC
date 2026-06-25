@@ -77,10 +77,10 @@ contains
        x_value=x(energy, mu)
        Avalue=linear_interpolation(A, x_value, n, 1, 2)
        i=i+1
-       print *, i, Avalue/Amax
+       ! print *, i, Avalue/Amax
        if(rand<=Avalue/Amax) exit
     end do
-    print *, i
+    print *, i, mu
   end function sample_incoherent_scattering_angle
 
   function incoherent_scattering_reaction(energy, endf) result(angle)

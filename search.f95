@@ -9,6 +9,7 @@ contains
     real(kind(1.d0)) :: A1
     A1=0.0_8
     i=0
+    ! i=1
     left=1
     right=nx-1
 

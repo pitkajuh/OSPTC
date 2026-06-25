@@ -24,31 +24,49 @@ contains
     end do
   end subroutine create_normalized_cdf
 
-  subroutine create_incoherent(incoherent, incoherent_function, n1, n2, A)
+  function fn(A, i) result(aa)
+    real(kind(1.d0)), intent(in), allocatable :: A(:, :)
+    integer, intent(in) :: i
+    real(kind(1.d0)) :: aa
+    aa=A(2, i)
+  end function fn
+
+  subroutine create_incoherent(incoherent_function, A, n)
     real(kind(1.d0)), intent(inout), allocatable :: A(:, :)
-    real(kind(1.d0)), allocatable :: incoherent(:, :)
-    real(kind(1.d0)), allocatable :: incoherent_function(:, :)
-    integer, intent(in) :: n1, n2
+    ! real(kind(1.d0)), allocatable :: incoherent(:, :)
+    real(kind(1.d0)), intent(in), allocatable :: incoherent_function(:, :)
+    integer, intent(in) :: n
     integer :: i
-    real(kind(1.d0)) :: deltax, x_i, x_im1, H, T, x_value
-    H=0.0_8
-    T=0.0_8
+    real(kind(1.d0)) :: deltax
+
+
+    ! deltax=incoherent_function(1, n)/n
+    ! print *, deltax
+
     A(1, 1)=incoherent_function(1, 1)
     deltax=A(1, 1)
     A(2, 1)=0.5_8*(incoherent_function(2, 1))*deltax
+    ! A(1, 1)=0
+    ! A(2, 1)=0
 
-    do i=2, n1
+    ! print *, A(1, 1), A(2, 1)
+    ! do i=1, n
+    !    print *, incoherent_function(1, i), incoherent_function(2, i)
+    ! end do
+
+    do i=2, n
        A(1, i)=incoherent_function(1, i)
-       x_i=A(1, i)
-       x_im1=A(1, i-1)
-       deltax=x_i-x_im1
-       x_value=x(incoherent(1, i), -1.0_8)
+       deltax=A(1, i)-A(1, i-1)
 
-       ! H=linear_interpolation(incoherent_function, x_value, n2, 1, 2)
-       ! T=linear_interpolation(incoherent_function, x_value, n2, 1, 2)
-       H=incoherent_function(2, i-1)
-       T=incoherent_function(2, i)
-       A(2, i)=A(2, i-1)+0.5_8*(H+T)*deltax
+       ! H=linear_interpolation(incoherent_function, x_value, n, 1, 2)
+       ! T=linear_interpolation(incoherent_function, x_value, n, 1, 2)
+       ! H=incoherent_function(2, i-1)
+       ! T=incoherent_function(2, i)
+       ! A(2, i)=A(2, i-1)+0.5_8*(incoherent_function(2, i-1)+incoherent_function(2, i))*deltax
+       A(2, i)=A(2, i-1)+0.5_8*(fn(incoherent_function, i-1)+fn(incoherent_function, i))*deltax
+       ! print *, deltax, A(2, i), A(2, i-1)
+       ! print *, A(1, i), A(2, i)!, x_i, x_im1
+       ! print *, deltax
     end do
     print *, "Incoherent generated"
   end subroutine create_incoherent
