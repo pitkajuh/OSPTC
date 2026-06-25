@@ -36,6 +36,8 @@ contains
   function kahns_method(a) result(mu)
     real(kind(1.d0)), intent(in) :: a
     real(kind(1.d0)) :: p1, p2, p3, y, mu
+    y=0.0_8
+    mu=0.0_8
 
     do
        p1=std_uniform_distribution()
@@ -45,7 +47,7 @@ contains
        if(p1<(2*a+1)/(2*a+9)) then
           y=1+2*a*p2
 
-          if(p3<4*(1/y-y**(-1))) then
+          if(p3<4*(1/y-y**(-2))) then
              mu=1-2*p2
              exit
           end if
@@ -115,7 +117,8 @@ contains
     real(kind(1.d0)) :: r, total, random_value
     real(kind(1.d0)), dimension(4+endf%mf23%n_ionization+1) :: limits
     integer :: i, reaction_id
-
+    ! allocate(limits(4+endf%mf23%n_ionization+1))
+    i=2
     r=0.0_8
     limits(1)=0.0
     total=0.0_8
@@ -143,7 +146,7 @@ contains
     do i=2, 4+endf%mf23%n_ionization
        if(random_value<limits(i)/total) exit
     end do
-
+    ! deallocate(limits)
     ! print *, i-1, limits(i-1)/total, random_value, limits(i)/total
     reaction_id=i-1
   end function select_reaction
