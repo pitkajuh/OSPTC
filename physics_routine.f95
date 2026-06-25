@@ -87,14 +87,14 @@ contains
     type(tape), intent(inout) :: endf
     real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)) :: angle
-    angle=sample_incoherent_scattering_angle(endf%Ax1, energy, endf%incoherent_A)
+    angle=sample_incoherent_scattering_angle(endf%n_incoherent, energy, endf%incoherent_A)
   end function incoherent_scattering_reaction
 
   function coherent_scattering_reaction(energy, endf) result(angle)
     type(tape), intent(inout) :: endf
     real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)) :: angle
-    angle=sample_coherent_scattering_angle(endf%Ax, energy, endf%coherent_A)
+    angle=sample_coherent_scattering_angle(endf%n_coherent, energy, endf%coherent_A)
   end function coherent_scattering_reaction
 
   subroutine sum_cross_sections(limits, records, energy, n, total, i)
