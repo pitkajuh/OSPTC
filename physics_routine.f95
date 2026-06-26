@@ -2,6 +2,7 @@ module physics_routine
   use random
   use tape_type
   use interpolate
+  use photon_type
   use photon_angular_distribution
   use constants, only: electron_mass
   implicit none
@@ -30,7 +31,7 @@ contains
        j=j+1
        if(rand<0.5*(1+mu)) exit
     end do
-    print *, j, mu
+    ! print *, j, mu
   end function sample_coherent_scattering_angle
 
   function kahns_method(a) result(mu)
@@ -70,6 +71,8 @@ contains
     integer :: i
     xmax=x(energy, -1.0_8)
     mu=0.0_8
+    ! print *, "sample"
+    ! print *, xmax
     Amax=linear_interpolation(A, xmax, n, 1, 2)
     a1=energy/electron_mass
     i=0
@@ -82,21 +85,23 @@ contains
        ! print *, i, Avalue/Amax
        if(rand<=Avalue/Amax) exit
     end do
-    print *, i, mu
+    ! print *, i, mu
   end function sample_incoherent_scattering_angle
 
-  function incoherent_scattering_reaction(energy, endf) result(angle)
+  function incoherent_scattering_reaction(ph, endf) result(angle)
     type(tape), intent(inout) :: endf
-    real(kind(1.d0)), intent(in) :: energy
+    type(photon), intent(inout) :: ph
+    ! real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)) :: angle
-    angle=sample_incoherent_scattering_angle(endf%n_incoherent, energy, endf%incoherent_A)
+    angle=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
   end function incoherent_scattering_reaction
 
-  function coherent_scattering_reaction(energy, endf) result(angle)
+  function coherent_scattering_reaction(ph, endf) result(angle)
     type(tape), intent(inout) :: endf
-    real(kind(1.d0)), intent(in) :: energy
+    type(photon), intent(inout) :: ph
+    ! real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)) :: angle
-    angle=sample_coherent_scattering_angle(endf%n_coherent, energy, endf%coherent_A)
+    angle=sample_coherent_scattering_angle(endf%n_coherent, ph%energy, endf%coherent_A)
   end function coherent_scattering_reaction
 
   subroutine sum_cross_sections(limits, records, energy, n, total, i)
@@ -106,6 +111,7 @@ contains
     integer, intent(in) :: n, i
     real(kind(1.d0)), allocatable :: records(:, :)
     real(kind(1.d0)) :: r
+    ! print *, "sum"
     r=linear_interpolation(records, energy, n, 1, 2)
     limits(i)=r+limits(i-1)
     total=total+r
@@ -133,6 +139,7 @@ contains
          energy, endf%mf23%pair_formation_nuc%n, total, 5)
 
     do i=1, endf%mf23%n_ionization
+       ! print *, i, endf%mf23%n_ionization, total, limits(i)
        call sum_cross_sections(limits, endf%mf23%photo_ionization(i)%records, &
             energy, endf%mf23%photo_ionization(i)%n, total, 5+i)
     end do
@@ -151,30 +158,28 @@ contains
     reaction_id=i-1
   end function select_reaction
 
-  subroutine reaction_function(endf, energy)
+  subroutine reaction_function(endf, ph)
     type(tape), intent(inout) :: endf
-    real(kind(1.d0)), intent(in) :: energy
+    ! real(kind(1.d0)), intent(in) :: energy
+    type(photon), intent(inout) :: ph
     integer :: reaction_id
     real(kind(1.d0)) :: angle
+    reaction_id=select_reaction(endf, ph%energy)
 
-
-    ! angle=incoherent_scattering_reaction(energy)
-    reaction_id=select_reaction(endf, energy)
-
-    ! select case (reaction_id)
-    ! case(1)
-    !    print *, "coherent scattering"
-    !    angle=incoherent_scattering_reaction(energy, endf)
-    ! case(2)
+    select case (reaction_id)
+    case(1)
+       print *, "coherent scattering"
+       angle=incoherent_scattering_reaction(ph, endf)
+    case(2)
        print *, "incoherent scattering"
-       angle=incoherent_scattering_reaction(energy, endf)
-    ! case(3)
-    !    print *, "pair formation in electric field"
-    ! case(4)
-    !    print *, "pair formation in nuclear field"
-    ! case default
-    !    print *, "ionization", reaction_id
-    ! end select
+       angle=incoherent_scattering_reaction(ph, endf)
+    case(3)
+       print *, "pair formation in electric field"
+    case(4)
+       print *, "pair formation in nuclear field"
+    case default
+       print *, "ionization", reaction_id
+    end select
        ! print *, "angle", angle*(360/3.141592653589793)
   end subroutine reaction_function
 

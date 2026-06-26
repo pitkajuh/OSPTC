@@ -21,6 +21,10 @@ contains
        A1=(right-left)/2
        i=left+floor(A1)
 
+       if(i==1) then
+          print *, "Houston, we have a problem."
+       end if
+
        if(array(axis, i)<x) then
           left=i+1
        else if(array(axis, i)>x) then
@@ -29,5 +33,10 @@ contains
           exit
        end if
     end do
+
+    if(i==1) then
+       print *, "Houston1, we have a problem."
+    end if
+
   end function binary_search
 end module search

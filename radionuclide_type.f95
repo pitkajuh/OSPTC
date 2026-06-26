@@ -1,5 +1,7 @@
 module radionuclide_type
   use random
+  use photon_type
+  use coordinate_type
   implicit none
 
   type, abstract :: radionuclide
@@ -10,10 +12,11 @@ module radionuclide_type
   end type radionuclide
 
   abstract interface
-     function create_pdf(this) result(pdf1)
+     function create_pdf(this) result(ph)
        import radionuclide
+       import photon
        class(radionuclide), intent(inout) :: this
-       real(kind(1.d0)) :: pdf1
+       type(photon) :: ph
      end function create_pdf
   end interface
 
@@ -24,13 +27,19 @@ module radionuclide_type
 
 contains
 
-  function pdf_co_60(this) result(pdf1)
+  function pdf_co_60(this) result(ph)
     class(co_60), intent(inout) :: this
     real(kind(1.d0)) :: pdf1
+    type(photon) :: ph
+    type(coordinate) :: origin
+    origin=coordinate(1.0_8, 1.0_8, 1.0_8)
+
     if(std_uniform_distribution()<=0.85) then
-       pdf1=1173E3
+       call create_photon(ph, 1173E3_8, origin)
+       ! pdf1=1173E3
     else
-       pdf1=1332E3
+       call create_photon(ph, 1332E3_8, origin)
+       ! pdf1=1332E3
     end if
   end function pdf_co_60
 

@@ -30,15 +30,16 @@ contains
     this%direction=random_emission_direction1
   end subroutine random_emission_direction
 
-  subroutine create_photon(this, energy, origin, mu)
-    real(kind(1.d0)), intent(in) :: energy, mu
+  subroutine create_photon(this, energy, origin)
+    real(kind(1.d0)), intent(in) :: energy!, mu
     type(coordinate), intent(in) :: origin
     type(photon) :: this
     this%origin=origin
     this%energy=energy
     call random_emission_direction(this)
-    this%to=(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
-    this%mfp=this%origin+this%to
+    ! call show(origin)
+    ! this%to=(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
+    ! this%mfp=this%origin+this%to
   end subroutine create_photon
 
 end module photon_type
