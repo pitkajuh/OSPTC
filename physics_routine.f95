@@ -14,12 +14,12 @@ contains
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n
     real(kind(1.d0)) :: Amax, Avalue, rand, mu, x2, x2max
-    integer :: i, j
+    integer :: i!, j
     x2max=x(energy, -1.0_8)**2
     mu=0.0_8
     Amax=linear_interpolation(A, x2max, n, 1, 2)
     i=0
-    j=0
+    ! j=0
 
     do
        rand=std_uniform_distribution()
@@ -28,7 +28,7 @@ contains
        x2=A(1, i)+(Avalue-A(2, i))*((A(1, i+1)-A(1, i))/(A(2, i+1)-A(2, i)))
        mu=1-2*x2*x2max
 
-       j=j+1
+    !   j=j+1
        if(rand<0.5*(1+mu)) exit
     end do
     ! print *, j, mu
@@ -91,7 +91,6 @@ contains
   function incoherent_scattering_reaction(ph, endf) result(angle)
     type(tape), intent(inout) :: endf
     type(photon), intent(inout) :: ph
-    ! real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)) :: angle
     angle=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
   end function incoherent_scattering_reaction
@@ -99,7 +98,6 @@ contains
   function coherent_scattering_reaction(ph, endf) result(angle)
     type(tape), intent(inout) :: endf
     type(photon), intent(inout) :: ph
-    ! real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)) :: angle
     angle=sample_coherent_scattering_angle(endf%n_coherent, ph%energy, endf%coherent_A)
   end function coherent_scattering_reaction
@@ -160,7 +158,6 @@ contains
 
   subroutine reaction_function(endf, ph)
     type(tape), intent(inout) :: endf
-    ! real(kind(1.d0)), intent(in) :: energy
     type(photon), intent(inout) :: ph
     integer :: reaction_id
     real(kind(1.d0)) :: angle

@@ -1,4 +1,5 @@
 module cell_type
+  use random
   use surface_type
   use material_type
   implicit none

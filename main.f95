@@ -14,9 +14,10 @@ program main
   ! type(coordinate) :: point, point1
   ! class(surface), allocatable :: a1
   ! type(tape) :: endf_tape
-  ! type(cylinder) :: t12
+  type(cell_cylinder_truncated_z), allocatable :: t12
   class(material), allocatable :: steel1
   real(kind(1.d0)) :: E
+  type(coordinate) :: test
   ! integer :: reac
   type(photon) :: ph
   class(radionuclide), allocatable :: co_60_source
@@ -24,7 +25,7 @@ program main
   ! allocate(cylinder :: a1)
   ! call a1%create()
   ! call generate_seed(99)
-
+  test=create_initial_position(t12)
   allocate(co_60 :: co_60_source)
   co_60_source%activity=1E3
   allocate(steel :: steel1)
@@ -51,5 +52,6 @@ program main
   deallocate(co_60_source)
   ! call clear_material(steel1)
   deallocate(steel1)
+  deallocate(t12)
   ! call clear_seed()
 end program main
