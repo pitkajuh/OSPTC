@@ -11,7 +11,7 @@ module surface_type
 
   abstract interface
      function create_surface_equation(this, p) result(result1)
-       use coordinate_type
+       import coordinate
        import surface
        class(surface), intent(inout) :: this
        type(coordinate), intent(in) :: p
@@ -19,7 +19,7 @@ module surface_type
      end function create_surface_equation
 
      function create_surface_distance(this, from, to) result(result1)
-       use coordinate_type
+       import coordinate
        import surface
        class(surface), intent(inout) :: this
        type(coordinate), intent(in) :: from, to
@@ -27,7 +27,7 @@ module surface_type
      end function create_surface_distance
 
      function create_surface_test(this, p) result(result1)
-       use coordinate_type
+       import coordinate
        import surface
        class(surface), intent(inout) :: this
        type(coordinate), intent(in) :: p

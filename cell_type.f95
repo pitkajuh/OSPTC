@@ -16,6 +16,7 @@ module cell_type
   end type cell
 
   abstract interface
+
      function create_cell_test(this, p) result(result1)
        import coordinate
        import cell
