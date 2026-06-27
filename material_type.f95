@@ -62,7 +62,8 @@ contains
   function get_mu_value(this, energy) result(mu_value)
     class(material), intent(in) :: this
     real(kind(1.d0)) :: energy, mu_value
-    mu_value=linear_interpolation(this%mu, energy, this%n, 1, 2)
+    ! mu values are tabulated with respect to MeV.
+    mu_value=linear_interpolation(this%mu, energy*1E-6_8, this%n, 1, 2)
   end function get_mu_value
 
   subroutine clear_material(this)
