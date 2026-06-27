@@ -165,17 +165,17 @@ contains
 
     select case (reaction_id)
     case(1)
-       print *, "coherent scattering"
+       ! print *, "coherent scattering"
        angle=incoherent_scattering_reaction(ph, endf)
     case(2)
-       print *, "incoherent scattering"
+       ! print *, "incoherent scattering"
        angle=incoherent_scattering_reaction(ph, endf)
     case(3)
-       print *, "pair formation in electric field"
+       ! print *, "pair formation in electric field"
     case(4)
-       print *, "pair formation in nuclear field"
+       ! print *, "pair formation in nuclear field"
     case default
-       print *, "ionization", reaction_id
+       ! print *, "ionization", reaction_id
     end select
        ! print *, "angle", angle*(360/3.141592653589793)
   end subroutine reaction_function

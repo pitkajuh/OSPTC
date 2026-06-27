@@ -1,5 +1,6 @@
 module material_type
   use random
+  use interpolate
   use tape_type
   implicit none
 
@@ -11,6 +12,7 @@ module material_type
    contains
      procedure(create_intf), deferred :: create
      procedure, public :: clear_material
+     procedure, public :: get_mu_value
   end type material
 
   abstract interface
@@ -56,6 +58,12 @@ module material_type
   end type oxygen
 
 contains
+
+  function get_mu_value(this, energy) result(mu_value)
+    class(material), intent(in) :: this
+    real(kind(1.d0)) :: energy, mu_value
+    mu_value=linear_interpolation(this%mu, energy, this%n, 1, 2)
+  end function get_mu_value
 
   subroutine clear_material(this)
     class(material), intent(inout) :: this

@@ -37,6 +37,8 @@ program main
 
         ph=co_60_source%pdf()
         ph%origin=t12%random_initial_position()
+        test=calculate_mfp(ph, steel1%get_mu_value(ph%energy))
+        call show(test)
         !  E=1E1_8
         call reaction_function(steel1%endf, ph)
         ! print *, second, i, E
