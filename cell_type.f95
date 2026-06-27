@@ -5,6 +5,10 @@ module cell_type
   use material_type
   implicit none
 
+  type :: cells
+     class(cell), allocatable :: cell_array
+  end type cells
+
   type, abstract :: cell
      character :: name
      integer :: hits
@@ -13,9 +17,16 @@ module cell_type
      procedure(create_cell_test), deferred :: cell_test
      procedure(create_cell_distance), deferred :: cell_distance
      procedure(create_initial_position), deferred :: random_initial_position
+     procedure(create_create), deferred :: create
   end type cell
 
   abstract interface
+
+     subroutine create_create(this, x0, x1, y0, y1, z0, z1)
+       import cell
+       class(cell), intent(inout) :: this
+       real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
+     end subroutine create_create
 
      function create_cell_test(this, p) result(result1)
        import coordinate
@@ -52,6 +63,7 @@ module cell_type
      procedure, pass :: cell_test => cell_test_box
      procedure, pass :: cell_distance => cell_distance_box
      procedure, pass :: random_initial_position => cell_initial_position_box
+     procedure, pass :: create => create_cell_box_3d
   end type cell_box_3d
 
   type, extends(cell) :: cell_cylinder_truncated_z
@@ -62,9 +74,21 @@ module cell_type
      procedure, pass :: cell_test => cell_test_cylinder_z
      procedure, pass :: cell_distance => cell_distance_cylinder_z
      procedure, pass :: random_initial_position => cell_initial_position_cylinder_z
+     procedure, pass :: create => create_cell_cylinder_truncated_z
   end type cell_cylinder_truncated_z
 
 contains
+
+  subroutine create_cell_box_3d(this, x0, x1, y0, y1, z0, z1)
+    class(cell_box_3d), intent(inout) :: this
+    real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
+    call create_planex(this%wallx_negative, x0)
+    call create_planex(this%wallx_positive, x1)
+    call create_planey(this%wally_negative, y0)
+    call create_planey(this%wally_positive, y1)
+    call create_planez(this%wallz_negative, z0)
+    call create_planez(this%wallz_positive, z1)
+  end subroutine create_cell_box_3d
 
   function cell_test_box(this, p) result(result1)
     class(cell_box_3d), intent(inout) :: this
@@ -116,14 +140,25 @@ contains
     result1%z=rng(this%wallz_negative%v, this%wallz_positive%v)
   end function cell_initial_position_box
 
+  subroutine create_cell_cylinder_truncated_z(this, x0, x1, y0, y1, z0, z1)
+    class(cell_cylinder_truncated_z), intent(inout) :: this
+    real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
+    type(coordinate) :: centered_at
+    centered_at=coordinate(y1, z0, z1)
+    call create_cylinder(this%surface_cylinder, x0, centered_at)
+    call create_planez(this%wallz_negative, x1)
+    call create_planez(this%wallz_positive, y0)
+  end subroutine create_cell_cylinder_truncated_z
+
   function cell_test_cylinder_z(this, p) result(result1)
     class(cell_cylinder_truncated_z), intent(inout) :: this
     type(coordinate), intent(in) :: p
     logical :: result1, b1, b2, b3
-    b1=.not. this%surface_cylinder%surface_test(p)
+    b1=this%surface_cylinder%surface_test(p)
     b2=this%wallz_positive%surface_test(p)
     b3=.not. this%wallz_negative%surface_test(p)
     result1=.false.
+
     if(b1 .and. b2 .and. b3) then
        this%hits=this%hits+1
        result1=.true.

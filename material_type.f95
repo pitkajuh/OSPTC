@@ -78,6 +78,7 @@ contains
     call read_tape(this%endf, 'cross-sections/photoat-026_Fe_000.endf')
     this%n=37
     allocate(this%mu(3, 37))
+    print *, "Create steel"
     ! Taken from https://physics.nist.gov/PhysRefData/XrayMassCoef/ElemTab/z26.html
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,9.085E+03,9.052E+03,&
@@ -205,7 +206,7 @@ contains
     call read_tape(this%endf, 'cross-sections/photoat-007_N_000.endf')
     this%n=36
     allocate(this%mu(3, 36))
-
+    print *, "Create nitrogen"
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,3.311E+03,3.306E+03,&
          1.50000E-03,1.083E+03,1.080E+03,2.00000E-03,4.769E+02,4.755E+02,&
