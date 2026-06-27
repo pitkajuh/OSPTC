@@ -7,8 +7,8 @@ module photon_type
      real(kind(1.d0)) :: energy
      type(coordinate) :: direction
      type(coordinate) :: origin
-     type(coordinate) :: to
-     type(coordinate) :: mfp
+     ! type(coordinate) :: to
+     ! type(coordinate) :: mfp
   end type photon
 
 contains
@@ -30,6 +30,14 @@ contains
     this%direction=random_emission_direction1
   end subroutine random_emission_direction
 
+  function calculate_mfp(this, mu) result(mfp)
+    type(photon), intent(inout) :: this
+    real(kind(1.d0)), intent(in) :: mu
+    type(coordinate) :: mfp
+    ! this%to=(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
+    mfp=this%origin+(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
+  end function calculate_mfp
+
   subroutine create_photon(this, energy, origin)
     real(kind(1.d0)), intent(in) :: energy!, mu
     type(coordinate), intent(in) :: origin
@@ -38,8 +46,7 @@ contains
     this%energy=energy
     call random_emission_direction(this)
     ! call show(origin)
-    ! this%to=(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
-    ! this%mfp=this%origin+this%to
+
   end subroutine create_photon
 
 end module photon_type
