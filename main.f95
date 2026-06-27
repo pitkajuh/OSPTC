@@ -16,6 +16,7 @@ program main
   ! type(tape) :: endf_tape
   class(cell), allocatable :: source_cell
   class(material), allocatable :: steel1
+  class(material), allocatable :: nitrogen1
   real(kind(1.d0)) :: E
   type(coordinate) :: test
   ! integer :: reac
@@ -31,9 +32,15 @@ program main
   co_60_source%activity=1E3
   allocate(steel :: steel1)
   call steel1%create()
+  allocate(nitrogen :: nitrogen1)
+  call nitrogen1%create()
+  ! print *, steel1%mu(2, 1)
+  do i=1, nitrogen1%n
+     print *, nitrogen1%mu(1, i), nitrogen1%mu(2, i), nitrogen1%mu(3, i)
+  end do
 
-  do second=1, 1000
-     do i=1, co_60_source%activity
+  ! do second=1, 1000
+  !    do i=1, co_60_source%activity
 
         ph=co_60_source%pdf()
         ph%origin=source_cell%random_initial_position()
@@ -43,12 +50,13 @@ program main
         !  E=1E1_8
         call reaction_function(steel1%endf, ph)
         ! print *, second, i, E
-     end do
-  end do
+  !    end do
+  ! end do
 
   deallocate(co_60_source)
   ! call clear_material(steel1)
   deallocate(steel1)
+  deallocate(nitrogen1)
   deallocate(source_cell)
   ! call clear_seed()
 end program main
