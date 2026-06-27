@@ -14,7 +14,7 @@ program main
   ! type(coordinate) :: point, point1
   ! class(surface), allocatable :: a1
   ! type(tape) :: endf_tape
-  type(cell_cylinder_truncated_z), allocatable :: t12
+  class(cell), allocatable :: t12
   class(material), allocatable :: steel1
   real(kind(1.d0)) :: E
   type(coordinate) :: test
@@ -25,7 +25,8 @@ program main
   ! allocate(cylinder :: a1)
   ! call a1%create()
   ! call generate_seed(99)
-  test=create_initial_position(t12)
+  allocate(cell_cylinder_truncated_z :: t12)
+
   allocate(co_60 :: co_60_source)
   co_60_source%activity=1E3
   allocate(steel :: steel1)
@@ -33,21 +34,14 @@ program main
 
   do second=1, 1000
      do i=1, co_60_source%activity
+
         ph=co_60_source%pdf()
+        ph%origin=t12%random_initial_position()
         !  E=1E1_8
         call reaction_function(steel1%endf, ph)
         ! print *, second, i, E
      end do
   end do
-
-
-
-  ! call reaction_function(steel1%endf, 2e3_8)
-  ! call reaction_function(steel1%endf, 1e6_8)
-  ! call reaction_function(steel1%endf, 1e5_8)
-  ! call reaction_function(steel1%endf, 1e4_8)
-  ! call reaction_function(steel1%endf, 5e3_8)
-  ! call reaction_function(steel1%endf, 1e3_8)
 
   deallocate(co_60_source)
   ! call clear_material(steel1)

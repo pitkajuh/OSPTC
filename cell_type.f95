@@ -1,5 +1,6 @@
 module cell_type
   use random
+  use coordinate_type
   use surface_type
   use material_type
   implicit none
@@ -16,7 +17,7 @@ module cell_type
 
   abstract interface
      function create_cell_test(this, p) result(result1)
-       use coordinate_type
+       import coordinate
        import cell
        class(cell), intent(inout) :: this
        type(coordinate), intent(in) :: p
@@ -24,7 +25,7 @@ module cell_type
      end function create_cell_test
 
      function create_cell_distance(this, from, to) result(result1)
-       use coordinate_type
+       import coordinate
        import cell
        class(cell), intent(inout) :: this
        type(coordinate), intent(in) :: from, to
@@ -32,7 +33,7 @@ module cell_type
      end function create_cell_distance
 
      function create_initial_position(this) result(result1)
-       use coordinate_type
+       import coordinate
        import cell
        class(cell), intent(inout) :: this
        type(coordinate) :: result1
