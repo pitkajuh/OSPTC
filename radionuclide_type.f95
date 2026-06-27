@@ -29,17 +29,14 @@ contains
 
   function pdf_co_60(this) result(ph)
     class(co_60), intent(inout) :: this
-    real(kind(1.d0)) :: pdf1
     type(photon) :: ph
     type(coordinate) :: origin
     origin=coordinate(1.0_8, 1.0_8, 1.0_8)
 
     if(std_uniform_distribution()<=0.85) then
        call create_photon(ph, 1173E3_8, origin)
-       ! pdf1=1173E3
     else
        call create_photon(ph, 1332E3_8, origin)
-       ! pdf1=1332E3
     end if
   end function pdf_co_60
 
