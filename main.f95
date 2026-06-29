@@ -16,9 +16,10 @@ program main
   type(coordinate) :: new_location, centered_at
   type(photon) :: ph
   class(radionuclide), allocatable :: co_60_source
-  logical :: cell_hit
+  logical :: cell_hit, continue_loop
   class(cells), allocatable :: cell_all(:)
   cell_hit=.false.
+  continue_loop=.false.
   k=1
   allocate(steel :: steel1)
   call steel1%create()
@@ -115,23 +116,29 @@ program main
         ph=co_60_source%pdf()
         ph%origin=cell_all(1)%cell_array%random_initial_position()
 
-        do j=1, size(cell_all)
-           new_location=calculate_mfp(ph, cell_all(j)%cell_array%cell_material%get_mu_value(ph%energy))
-           ph%origin=new_location
-           cell_hit=cell_all(j)%cell_array%cell_test(new_location)
+        do
 
-           if(cell_hit .eqv. .true.) then
-              k=j
+           do j=1, size(cell_all)
+              new_location=calculate_mfp(ph, cell_all(j)%cell_array%cell_material%get_mu_value(ph%energy))
+              ph%origin=new_location
+              cell_hit=cell_all(j)%cell_array%cell_test(new_location)
+
+              if(cell_hit .eqv. .true.) then
+                 k=j
+                 exit
+              end if
+           end do
+
+           ! Photon did not hit any cell. It left the geometry.
+           if(cell_hit .eqv. .false.) then
               exit
+           else if(ph%energy>0) then
+              continue_loop=.true.
+              print *, "ph%energy>0"
            end if
+
+           call reaction_function(cell_all(k)%cell_array%cell_material%endf, ph)
         end do
-
-        ! Photon did not hit any cell. It left the geometry.
-        if(cell_hit .eqv. .false.) then
-           continue
-        end if
-
-        call reaction_function(cell_all(k)%cell_array%cell_material%endf, ph)
      end do
   end do
 

@@ -88,18 +88,19 @@ contains
     ! print *, i, mu
   end function sample_incoherent_scattering_angle
 
-  function incoherent_scattering_reaction(ph, endf) result(angle)
+  function incoherent_scattering_reaction(ph, endf) result(mu)
     type(tape), intent(inout) :: endf
     type(photon), intent(inout) :: ph
-    real(kind(1.d0)) :: angle
-    angle=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
+    real(kind(1.d0)) :: mu
+    mu=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
   end function incoherent_scattering_reaction
 
-  function coherent_scattering_reaction(ph, endf) result(angle)
+  function coherent_scattering_reaction(ph, endf) result(mu)
     type(tape), intent(inout) :: endf
     type(photon), intent(inout) :: ph
-    real(kind(1.d0)) :: angle
-    angle=sample_coherent_scattering_angle(endf%n_coherent, ph%energy, endf%coherent_A)
+    real(kind(1.d0)) :: mu
+    mu=sample_coherent_scattering_angle(endf%n_coherent, ph%energy, endf%coherent_A)
+    ph%direction=ph%direction*mu
   end function coherent_scattering_reaction
 
   subroutine sum_cross_sections(limits, records, energy, n, total, i)
