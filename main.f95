@@ -33,7 +33,7 @@ program main
   class is (cell_cylinder_truncated_z)
      cell_array%name="source"
      cell_array%cell_material=steel1
-     call cell_array%create(0.5_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
+     call cell_array%create(0.1_8, -0.1_8, 0.1_8, 0.0_8, 0.0_8, 0.0_8)
   end select
 
   allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
@@ -124,7 +124,8 @@ program main
            ! print *, ph%energy
            do j=1, size(cell_all)
 
-              new_location=calculate_mfp(ph, cell_all(j)%cell_array%cell_material%get_mu_value(ph%energy))
+              new_location=calculate_mfp(ph, &
+                   cell_all(j)%cell_array%cell_material%get_mu_value(ph%energy), cell_all(j)%cell_array%cell_material%density)
               ! print *, "new", new_location%x, new_location%y, new_location%z
               ! ph%origin=new_location
               cell_hit=cell_all(j)%cell_array%cell_test(new_location)
@@ -132,7 +133,7 @@ program main
               if(cell_hit .eqv. .true.) then
                  k=j
                  ph%origin=new_location
-                 ! print *, "now", new_location%x, new_location%y, new_location%z
+                 print *, "now", new_location%x, new_location%y, new_location%z
                  exit
               end if
            end do

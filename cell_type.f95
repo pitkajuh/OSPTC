@@ -174,7 +174,8 @@ contains
     distances=(/this%wallz_negative%surface_distance(from, to),  this%wallz_positive%surface_distance(from, to)/)
     distance=this%surface_cylinder%surface_distance(from, to)
 
-    ! Find the distance to the surface that is the closest one, i.e. find the smallest value. The distance must be >0.
+    ! Find the distance to the surface that is the closest one,
+    !i.e. find the smallest value. The distance must be >0.
     do i=1, 2
        if(distances(i)<distance .and. distances(i)>0) then
           distance=distances(i)

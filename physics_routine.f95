@@ -95,6 +95,7 @@ contains
     mu=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
     ph%energy=ph%energy/(1+(ph%energy/electron_mass)*(1-mu))
     ph%direction=create_unit_vector(ph%direction*mu)
+    ! print *, length(ph%direction)
   end subroutine incoherent_scattering_reaction
 
   subroutine coherent_scattering_reaction(ph, endf)
@@ -103,7 +104,7 @@ contains
     real(kind(1.d0)) :: mu
     mu=sample_coherent_scattering_angle(endf%n_coherent, ph%energy, endf%coherent_A)
     ph%direction=create_unit_vector(ph%direction*mu)
-    print *, length(ph%direction)
+    ! print *, length(ph%direction)
   end subroutine coherent_scattering_reaction
 
   subroutine sum_cross_sections(limits, records, energy, n, total, i)

@@ -30,12 +30,12 @@ contains
     this%direction=random_emission_direction1
   end subroutine random_emission_direction
 
-  function calculate_mfp(this, mu) result(mfp)
+  function calculate_mfp(this, mu, density) result(mfp)
     type(photon), intent(inout) :: this
-    real(kind(1.d0)), intent(in) :: mu
+    real(kind(1.d0)), intent(in) :: mu, density
     type(coordinate) :: mfp
     ! this%to=(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
-    mfp=this%origin+1E-4_8*(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
+    mfp=this%origin+0.01_8*(-1.0_8/(mu*density))*this%direction*log(rng(0.0_8, 1.0_8))
   end function calculate_mfp
 
   subroutine create_photon(this, energy, origin)
