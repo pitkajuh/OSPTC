@@ -109,16 +109,17 @@ program main
   ! ! allocate(cell_cylinder_truncated_z :: cells(1))
   ! ! allocate(cell_cylinder_truncated_z :: cells(2))
 
-  do second=1, 1000
-     print *, second, "s"
+  ! do second=1, 1000
+  !    print *, second, "s"
 
      do i=1, co_60_source%activity
         ph=co_60_source%pdf()
         ph%origin=cell_all(1)%cell_array%random_initial_position()
-
+        print *, "cc", ph%energy
         do
-
+           print *, ph%energy
            do j=1, size(cell_all)
+
               new_location=calculate_mfp(ph, cell_all(j)%cell_array%cell_material%get_mu_value(ph%energy))
               ph%origin=new_location
               cell_hit=cell_all(j)%cell_array%cell_test(new_location)
@@ -131,16 +132,19 @@ program main
 
            ! Photon did not hit any cell. It left the geometry.
            if(cell_hit .eqv. .false.) then
+              print *, "exit"
               exit
            else if(ph%energy>0) then
+              continue
               continue_loop=.true.
               ! print *, "ph%energy>0"
            end if
-
+           call show(new_location)
+           ! print *, cell_hit
            call reaction_function(cell_all(k)%cell_array%cell_material%endf, ph)
         end do
      end do
-  end do
+  ! end do
 
   deallocate(co_60_source)
   ! ! call clear_material(steel1)

@@ -88,15 +88,14 @@ contains
     ! print *, i, mu
   end function sample_incoherent_scattering_angle
 
-  function incoherent_scattering_reaction(ph, endf) result(mu)
+  subroutine incoherent_scattering_reaction(ph, endf)
     type(tape), intent(inout) :: endf
     type(photon), intent(inout) :: ph
-    type(photon) :: new_photon
     real(kind(1.d0)) :: mu
     mu=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
-    new_photon%energy=ph%energy/(1+(ph%energy/electron_mass)*(1-mu))
-    ! print *, ph%energy, new_photon%energy
-  end function incoherent_scattering_reaction
+    ph%energy=ph%energy/(1+(ph%energy/electron_mass)*(1-mu))
+    ph%direction=ph%direction*mu
+  end subroutine incoherent_scattering_reaction
 
   subroutine coherent_scattering_reaction(ph, endf)
     type(tape), intent(inout) :: endf
@@ -167,21 +166,28 @@ contains
     real(kind(1.d0)) :: angle
     reaction_id=select_reaction(endf, ph%energy)
 
-    select case (reaction_id)
+    select case(reaction_id)
     case(1)
-       ! print *, "coherent scattering"
        call coherent_scattering_reaction(ph, endf)
-    case(2)
-       ! print *, "incoherent scattering"
-       angle=incoherent_scattering_reaction(ph, endf)
-    case(3)
-       ! print *, "pair formation in electric field"
-    case(4)
-       ! print *, "pair formation in nuclear field"
     case default
-       ! print *, "ionization", reaction_id
+       call incoherent_scattering_reaction(ph, endf)
     end select
-       ! print *, "angle", angle*(360/3.141592653589793)
+
+    ! select case (reaction_id)
+    ! case(1)
+    !    ! print *, "coherent scattering"
+    !    call coherent_scattering_reaction(ph, endf)
+    ! case(2)
+    !    ! print *, "incoherent scattering"
+    !    call incoherent_scattering_reaction(ph, endf)
+    ! case(3)
+    !    ! print *, "pair formation in electric field"
+    ! case(4)
+    !    ! print *, "pair formation in nuclear field"
+    ! case default
+    !    ! print *, "ionization", reaction_id
+    ! end select
+    !    ! print *, "angle", angle*(360/3.141592653589793)
   end subroutine reaction_function
 
 end module physics_routine
