@@ -124,6 +124,12 @@ contains
     distance=((to%x-from%x)**2+(to%y-from%y)**2+(to%z-from%z)**2)**0.5
   end function distance
 
+  function length(to) result(distance)
+    type(coordinate), intent(in) :: to
+    real(kind(1.d0)) :: distance
+    distance=((to%x)**2+(to%y)**2+(to%z)**2)**0.5
+  end function length
+
   function generate_random(xmin, xmax, ymin, ymax, zmin, zmax)
     real(kind(1.d0)), intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax
     type(coordinate) :: generate_random

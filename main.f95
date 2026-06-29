@@ -112,38 +112,47 @@ program main
   ! do second=1, 1000
   !    print *, second, "s"
 
-     do i=1, co_60_source%activity
+     ! do i=1, co_60_source%activity
         ph=co_60_source%pdf()
         ph%origin=cell_all(1)%cell_array%random_initial_position()
-        print *, "cc", ph%energy
+        ! new_location=calculate_mfp(ph, cell_all(1)%cell_array%cell_material%get_mu_value(ph%energy))
+        ! print *, "new", new_location%x, new_location%y, new_location%z
+        ! ph%origin=new_location
+
+        ! print *, "cc", ph%energy
         do
-           print *, ph%energy
+           ! print *, ph%energy
            do j=1, size(cell_all)
 
               new_location=calculate_mfp(ph, cell_all(j)%cell_array%cell_material%get_mu_value(ph%energy))
-              ph%origin=new_location
+              ! print *, "new", new_location%x, new_location%y, new_location%z
+              ! ph%origin=new_location
               cell_hit=cell_all(j)%cell_array%cell_test(new_location)
 
               if(cell_hit .eqv. .true.) then
                  k=j
+                 ph%origin=new_location
+                 ! print *, "now", new_location%x, new_location%y, new_location%z
                  exit
               end if
            end do
 
            ! Photon did not hit any cell. It left the geometry.
-           if(cell_hit .eqv. .false.) then
+           ! Ignore photons with energy less than 1 keV
+           if(cell_hit .eqv. .false. .or. ph%energy<1000.0_8) then
               print *, "exit"
               exit
            else if(ph%energy>0) then
-              continue
+              ! continue
               continue_loop=.true.
               ! print *, "ph%energy>0"
            end if
-           call show(new_location)
+           ! call show(new_location)
+           ! print *, "now", new_location%x, new_location%y, new_location%z
            ! print *, cell_hit
            call reaction_function(cell_all(k)%cell_array%cell_material%endf, ph)
         end do
-     end do
+     ! end do
   ! end do
 
   deallocate(co_60_source)

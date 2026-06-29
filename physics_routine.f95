@@ -103,6 +103,7 @@ contains
     real(kind(1.d0)) :: mu
     mu=sample_coherent_scattering_angle(endf%n_coherent, ph%energy, endf%coherent_A)
     ph%direction=ph%direction*mu
+    print *, length(ph%direction)
   end subroutine coherent_scattering_reaction
 
   subroutine sum_cross_sections(limits, records, energy, n, total, i)

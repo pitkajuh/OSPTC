@@ -35,11 +35,11 @@ contains
     real(kind(1.d0)), intent(in) :: mu
     type(coordinate) :: mfp
     ! this%to=(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
-    mfp=this%origin+(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
+    mfp=this%origin+1E-4_8*(-1/mu)*this%direction*log(rng(0.0_8, 1.0_8))
   end function calculate_mfp
 
   subroutine create_photon(this, energy, origin)
-    real(kind(1.d0)), intent(in) :: energy!, mu
+    real(kind(1.d0)), intent(in) :: energy
     type(coordinate), intent(in) :: origin
     type(photon) :: this
     this%origin=origin
