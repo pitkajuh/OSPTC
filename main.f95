@@ -11,7 +11,6 @@ program main
 
   integer :: i, second
   class(cell), allocatable :: source_cell, cell2
-  ! class(cell_cylinder_truncated_z) :: tr1
   class(material), allocatable :: steel1
   class(material), allocatable :: nitrogen1
   type(coordinate) :: new_location, centered_at
@@ -34,9 +33,12 @@ program main
      ! cell_array%cell_material=nitrogen1
      call cell_array%create(20.0_8, -20.0_8, 20.0_8, 0.0_8, 0.0_8, 0.0_8)
   end select
+
   print *, size(cell_all)
+
   do i=1, size(cell_all)
      select type(cell_array => cell_all(i)%cell_array)
+        ! print *,cell_array
         ! cell_all%cell_array(i)!%surface_cylinder%v
      end select
   end do
