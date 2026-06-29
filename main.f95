@@ -134,7 +134,7 @@ program main
               exit
            else if(ph%energy>0) then
               continue_loop=.true.
-              print *, "ph%energy>0"
+              ! print *, "ph%energy>0"
            end if
 
            call reaction_function(cell_all(k)%cell_array%cell_material%endf, ph)

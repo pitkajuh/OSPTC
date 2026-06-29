@@ -91,17 +91,20 @@ contains
   function incoherent_scattering_reaction(ph, endf) result(mu)
     type(tape), intent(inout) :: endf
     type(photon), intent(inout) :: ph
+    type(photon) :: new_photon
     real(kind(1.d0)) :: mu
     mu=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
+    new_photon%energy=ph%energy/(1+(ph%energy/electron_mass)*(1-mu))
+    ! print *, ph%energy, new_photon%energy
   end function incoherent_scattering_reaction
 
-  function coherent_scattering_reaction(ph, endf) result(mu)
+  subroutine coherent_scattering_reaction(ph, endf)
     type(tape), intent(inout) :: endf
     type(photon), intent(inout) :: ph
     real(kind(1.d0)) :: mu
     mu=sample_coherent_scattering_angle(endf%n_coherent, ph%energy, endf%coherent_A)
     ph%direction=ph%direction*mu
-  end function coherent_scattering_reaction
+  end subroutine coherent_scattering_reaction
 
   subroutine sum_cross_sections(limits, records, energy, n, total, i)
     real(kind(1.d0)), intent(in) :: energy
@@ -167,7 +170,7 @@ contains
     select case (reaction_id)
     case(1)
        ! print *, "coherent scattering"
-       angle=incoherent_scattering_reaction(ph, endf)
+       call coherent_scattering_reaction(ph, endf)
     case(2)
        ! print *, "incoherent scattering"
        angle=incoherent_scattering_reaction(ph, endf)

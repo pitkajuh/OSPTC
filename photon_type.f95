@@ -45,8 +45,6 @@ contains
     this%origin=origin
     this%energy=energy
     call random_emission_direction(this)
-    ! call show(origin)
-
   end subroutine create_photon
 
 end module photon_type
