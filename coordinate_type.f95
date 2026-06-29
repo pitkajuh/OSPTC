@@ -124,11 +124,22 @@ contains
     distance=((to%x-from%x)**2+(to%y-from%y)**2+(to%z-from%z)**2)**0.5
   end function distance
 
-  function length(to) result(distance)
+  function length(to) result(ln)
     type(coordinate), intent(in) :: to
-    real(kind(1.d0)) :: distance
-    distance=((to%x)**2+(to%y)**2+(to%z)**2)**0.5
+    real(kind(1.d0)) :: ln
+    ln=((to%x)**2+(to%y)**2+(to%z)**2)**0.5
   end function length
+
+  function create_unit_vector(v) result(unit_vector)
+    type(coordinate), intent(in) ::v
+    type(coordinate) :: unit_vector
+    real(kind(1.d0)) :: ln
+    ln=length(v)
+    unit_vector=v
+    unit_vector%x=unit_vector%x/ln
+    unit_vector%y=unit_vector%y/ln
+    unit_vector%z=unit_vector%z/ln
+  end function create_unit_vector
 
   function generate_random(xmin, xmax, ymin, ymax, zmin, zmax)
     real(kind(1.d0)), intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax

@@ -94,7 +94,7 @@ contains
     real(kind(1.d0)) :: mu
     mu=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
     ph%energy=ph%energy/(1+(ph%energy/electron_mass)*(1-mu))
-    ph%direction=ph%direction*mu
+    ph%direction=create_unit_vector(ph%direction*mu)
   end subroutine incoherent_scattering_reaction
 
   subroutine coherent_scattering_reaction(ph, endf)
@@ -102,7 +102,7 @@ contains
     type(photon), intent(inout) :: ph
     real(kind(1.d0)) :: mu
     mu=sample_coherent_scattering_angle(endf%n_coherent, ph%energy, endf%coherent_A)
-    ph%direction=ph%direction*mu
+    ph%direction=create_unit_vector(ph%direction*mu)
     print *, length(ph%direction)
   end subroutine coherent_scattering_reaction
 
