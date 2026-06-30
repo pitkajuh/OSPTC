@@ -3,6 +3,7 @@ module cell_type
   use coordinate_type
   use surface_type
   use material_type
+  use photon_type
   implicit none
 
   type :: cells
@@ -197,4 +198,17 @@ contains
     result1%y=radial*sin(azimuthal_angle)
     result1%z=this%wallz_negative%v+(this%wallz_positive%v-this%wallz_negative%v)*std_uniform_distribution()
   end function cell_initial_position_cylinder_z
+
+  subroutine cell_search(cell_list, n, ph)
+    class(cells), intent(inout), allocatable :: cell_list(:)
+    type(photon), intent(inout) :: ph
+    integer, intent(in) :: n
+    type(coordinate) :: new_location
+    integer :: i
+
+    do i=1, n
+       print *, cell_list(i)%cell_array%name
+    end do
+  end subroutine cell_search
+
 end module cell_type

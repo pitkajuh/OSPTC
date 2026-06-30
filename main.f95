@@ -33,7 +33,7 @@ program main
   class is (cell_cylinder_truncated_z)
      cell_array%name="source"
      cell_array%cell_material=steel1
-     call cell_array%create(0.1_8, -0.1_8, 0.1_8, 0.0_8, 0.0_8, 0.0_8)
+     call cell_array%create(0.05_8, -0.05_8, 0.05_8, 0.0_8, 0.0_8, 0.0_8)
   end select
 
   allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
@@ -115,44 +115,46 @@ program main
      ! do i=1, co_60_source%activity
         ph=co_60_source%pdf()
         ph%origin=cell_all(1)%cell_array%random_initial_position()
-        ! new_location=calculate_mfp(ph, cell_all(1)%cell_array%cell_material%get_mu_value(ph%energy))
+        call calculate_mfp(ph, cell_all(1)%cell_array%cell_material &
+             %get_mu_value(ph%energy), cell_all(j)%cell_array%cell_material%density)
+        call cell_search(cell_all, size(cell_all), ph)
         ! print *, "new", new_location%x, new_location%y, new_location%z
         ! ph%origin=new_location
 
         ! print *, "cc", ph%energy
-        do
-           ! print *, ph%energy
-           do j=1, size(cell_all)
+        ! do
+        !    ! print *, ph%energy
+        !    do j=1, size(cell_all)
 
-              new_location=calculate_mfp(ph, &
-                   cell_all(j)%cell_array%cell_material%get_mu_value(ph%energy), cell_all(j)%cell_array%cell_material%density)
-              ! print *, "new", new_location%x, new_location%y, new_location%z
-              ! ph%origin=new_location
-              cell_hit=cell_all(j)%cell_array%cell_test(new_location)
+        !       new_location=calculate_mfp(ph, &
+        !            cell_all(j)%cell_array%cell_material%get_mu_value(ph%energy), cell_all(j)%cell_array%cell_material%density)
+        !       ! print *, "new", new_location%x, new_location%y, new_location%z
+        !       ! ph%origin=new_location
+        !       cell_hit=cell_all(j)%cell_array%cell_test(new_location)
 
-              if(cell_hit .eqv. .true.) then
-                 k=j
-                 ph%origin=new_location
-                 print *, "now", new_location%x, new_location%y, new_location%z
-                 exit
-              end if
-           end do
+        !       if(cell_hit .eqv. .true.) then
+        !          k=j
+        !          ph%origin=new_location
+        !          print *, "now", new_location%x, new_location%y, new_location%z
+        !          exit
+        !       end if
+        !    end do
 
-           ! Photon did not hit any cell. It left the geometry.
-           ! Ignore photons with energy less than 1 keV
-           if(cell_hit .eqv. .false. .or. ph%energy<1000.0_8) then
-              print *, "exit"
-              exit
-           else if(ph%energy>0) then
-              ! continue
-              continue_loop=.true.
-              ! print *, "ph%energy>0"
-           end if
-           ! call show(new_location)
-           ! print *, "now", new_location%x, new_location%y, new_location%z
-           ! print *, cell_hit
-           call reaction_function(cell_all(k)%cell_array%cell_material%endf, ph)
-        end do
+        !    ! Photon did not hit any cell. It left the geometry.
+        !    ! Ignore photons with energy less than 1 keV
+        !    if(cell_hit .eqv. .false. .or. ph%energy<1000.0_8) then
+        !       print *, "exit"
+        !       exit
+        !    else if(ph%energy>0) then
+        !       ! continue
+        !       continue_loop=.true.
+        !       ! print *, "ph%energy>0"
+        !    end if
+        !    ! call show(new_location)
+        !    ! print *, "now", new_location%x, new_location%y, new_location%z
+        !    ! print *, cell_hit
+        !    call reaction_function(cell_all(k)%cell_array%cell_material%endf, ph)
+        ! end do
      ! end do
   ! end do
 
