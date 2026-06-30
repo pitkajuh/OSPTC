@@ -18,6 +18,8 @@ program main
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop
   class(cells), allocatable :: cell_all(:)
+  real(kind(1.d0)) :: distance_to_cell
+
   cell_hit=.false.
   continue_loop=.false.
   k=1
@@ -116,8 +118,17 @@ program main
         ph=co_60_source%pdf()
         ph%origin=cell_all(1)%cell_array%random_initial_position()
         call calculate_mfp(ph, cell_all(1)%cell_array%cell_material &
-             %get_mu_value(ph%energy), cell_all(j)%cell_array%cell_material%density)
-        call cell_search(cell_all, size(cell_all), ph)
+             %get_mu_value(ph%energy), cell_all(1)%cell_array%cell_material%density)
+        i=cell_search(cell_all, size(cell_all), ph)
+        if(i>1) then
+           do j=i, size(cell_all)
+              distance_to_cell=cell_all(j)%cell_array%cell_distance(ph%origin, ph%to)
+              print *, distance_to_cell, ph%origin, ph%to
+           end do
+        end if
+        ! if i=0, photon left geometry
+
+
         ! print *, "new", new_location%x, new_location%y, new_location%z
         ! ph%origin=new_location
 

@@ -174,7 +174,7 @@ contains
     real(kind(1.d0)), dimension(2) :: distances
     distances=(/this%wallz_negative%surface_distance(from, to),  this%wallz_positive%surface_distance(from, to)/)
     distance=this%surface_cylinder%surface_distance(from, to)
-
+    print *, "dst", distance, distances(1), distances(2)
     ! Find the distance to the surface that is the closest one,
     !i.e. find the smallest value. The distance must be >0.
     do i=1, 2
@@ -184,6 +184,7 @@ contains
           distance=distances(i)
        end if
     end do
+
     result1=distance
   end function cell_distance_cylinder_z
 
@@ -199,16 +200,32 @@ contains
     result1%z=this%wallz_negative%v+(this%wallz_positive%v-this%wallz_negative%v)*std_uniform_distribution()
   end function cell_initial_position_cylinder_z
 
-  subroutine cell_search(cell_list, n, ph)
+  function cell_search(cell_list, n, ph) result(cell_index)
     class(cells), intent(inout), allocatable :: cell_list(:)
     type(photon), intent(inout) :: ph
     integer, intent(in) :: n
     type(coordinate) :: new_location
-    integer :: i
+    integer :: i, cell_index
+    logical :: cell_hit
+    cell_index=0
 
     do i=1, n
-       print *, cell_list(i)%cell_array%name
+       ! print *, cell_list(i)%cell_array%name
+       cell_hit=cell_list(i)%cell_array%cell_test(ph%to)
+
+       if(cell_hit .eqv. .true.) then
+          print *, "hit", i
+          cell_index=i
+          ! k=j
+          ! ph%origin=new_location
+          ! print *, "now", new_location%x, new_location%y, new_location%z
+          exit
+       end if
     end do
-  end subroutine cell_search
+
+    if(cell_hit .eqv. .false.) then
+       error stop
+    end if
+  end function cell_search
 
 end module cell_type
