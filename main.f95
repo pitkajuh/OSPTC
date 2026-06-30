@@ -118,12 +118,14 @@ program main
         ph=co_60_source%pdf()
         ph%origin=cell_all(1)%cell_array%random_initial_position()
         call calculate_mfp(ph, cell_all(1)%cell_array%cell_material &
-             %get_mu_value(ph%energy), cell_all(1)%cell_array%cell_material%density)
+             %get_mu_value(ph%energy), cell_all(1)%cell_array%cell_material% &
+             density)
         i=cell_search(cell_all, size(cell_all), ph)
         if(i>1) then
            do j=i, size(cell_all)
               distance_to_cell=cell_all(j)%cell_array%cell_distance(ph%origin, ph%direction)
-              print *, distance_to_cell, ph%origin, ph%to
+              print *, distance_to_cell, ph%origin
+              print *, ph%direction%x*distance_to_cell, ph%direction%y*distance_to_cell, ph%direction%z*distance_to_cell
            end do
         end if
         ! if i=0, photon left geometry
