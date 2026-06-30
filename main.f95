@@ -35,7 +35,7 @@ program main
   class is (cell_cylinder_truncated_z)
      cell_array%name="source"
      cell_array%cell_material=steel1
-     call cell_array%create(0.05_8, -0.05_8, 0.05_8, 0.0_8, 0.0_8, 0.0_8)
+     call cell_array%create(0.1_8, -0.1_8, 0.1_8, 0.0_8, 0.0_8, 0.0_8)
   end select
 
   allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
@@ -43,7 +43,7 @@ program main
   class is (cell_cylinder_truncated_z)
      cell_array%name="outside"
      cell_array%cell_material=nitrogen1
-     call cell_array%create(20.0_8, -20.0_8, 20.0_8, 0.0_8, 0.0_8, 0.0_8)
+     call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
   end select
 
   ! print *, size(cell_all)
