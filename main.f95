@@ -122,7 +122,7 @@ program main
         i=cell_search(cell_all, size(cell_all), ph)
         if(i>1) then
            do j=i, size(cell_all)
-              distance_to_cell=cell_all(j)%cell_array%cell_distance(ph%origin, ph%to)
+              distance_to_cell=cell_all(j)%cell_array%cell_distance(ph%origin, ph%direction)
               print *, distance_to_cell, ph%origin, ph%to
            end do
         end if

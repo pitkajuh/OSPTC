@@ -37,11 +37,11 @@ module cell_type
        logical :: result1
      end function create_cell_test
 
-     function create_cell_distance(this, from, to) result(result1)
+     function create_cell_distance(this, from, direction) result(result1)
        import coordinate
        import cell
        class(cell), intent(inout) :: this
-       type(coordinate), intent(in) :: from, to
+       type(coordinate), intent(in) :: from, direction
        real(kind(1.d0)) :: result1
      end function create_cell_distance
 
@@ -109,18 +109,18 @@ contains
     end if
   end function cell_test_box
 
-  function cell_distance_box(this, from, to) result(result1)
+  function cell_distance_box(this, from, direction) result(result1)
     class(cell_box_3d), intent(inout) :: this
-    type(coordinate), intent(in) :: from, to
+    type(coordinate), intent(in) :: from, direction
     real(kind(1.d0)) :: result1, distance
     integer :: i
     real(kind(1.d0)), dimension(5) :: distances
-    distances(1)=this%wallx_negative%surface_distance(from, to)
-    distances(2)=this%wallx_positive%surface_distance(from, to)
-    distances(3)=this%wally_negative%surface_distance(from, to)
-    distances(4)=this%wally_positive%surface_distance(from, to)
-    distances(5)=this%wallz_negative%surface_distance(from, to)
-    distance=this%wallz_positive%surface_distance(from, to)
+    distances(1)=this%wallx_negative%surface_distance(from, direction)
+    distances(2)=this%wallx_positive%surface_distance(from, direction)
+    distances(3)=this%wally_negative%surface_distance(from, direction)
+    distances(4)=this%wally_positive%surface_distance(from, direction)
+    distances(5)=this%wallz_negative%surface_distance(from, direction)
+    distance=this%wallz_positive%surface_distance(from, direction)
 
     ! Find the distance to the surface that is the closest one, i.e. find the smallest value. The distance must be >0.
     do i=1, 5
@@ -166,14 +166,14 @@ contains
     end if
   end function cell_test_cylinder_z
 
-  function cell_distance_cylinder_z(this, from, to) result(result1)
+  function cell_distance_cylinder_z(this, from, direction) result(result1)
     class(cell_cylinder_truncated_z), intent(inout) :: this
-    type(coordinate), intent(in) :: from, to
+    type(coordinate), intent(in) :: from, direction
     real(kind(1.d0)) :: result1, distance
     integer :: i
     real(kind(1.d0)), dimension(2) :: distances
-    distances=(/this%wallz_negative%surface_distance(from, to),  this%wallz_positive%surface_distance(from, to)/)
-    distance=this%surface_cylinder%surface_distance(from, to)
+    distances=(/this%wallz_negative%surface_distance(from, direction),  this%wallz_positive%surface_distance(from, direction)/)
+    distance=this%surface_cylinder%surface_distance(from, direction)
     print *, "dst", distance, distances(1), distances(2)
     ! Find the distance to the surface that is the closest one,
     !i.e. find the smallest value. The distance must be >0.

@@ -18,11 +18,11 @@ module surface_type
        real(kind(1.d0)) :: result1
      end function create_surface_equation
 
-     function create_surface_distance(this, from, to) result(result1)
+     function create_surface_distance(this, from, direction) result(result1)
        import coordinate
        import surface
        class(surface), intent(inout) :: this
-       type(coordinate), intent(in) :: from, to
+       type(coordinate), intent(in) :: from, direction
        real(kind(1.d0)) :: result1
      end function create_surface_distance
 
@@ -93,12 +93,14 @@ contains
     result1=p%x+this%J
   end function surface_equation_x
 
-  function surface_distance_x(this, from, to) result(result1)
+  function surface_distance_x(this, from, direction) result(result1)
     class(planex), intent(inout) :: this
-    type(coordinate), intent(in) :: from, to
-    real(kind(1.d0)) :: result1
+    type(coordinate), intent(in) :: from, direction
+    real(kind(1.d0)) :: result1, x, u
+    x=from%x
+    u=direction%x
     result1=-1
-    if(to%x>0) result1=-(from%x+this%J)/to%x
+    if(u>0) result1=-(x+this%J)/u
   end function surface_distance_x
 
   function surface_test_x(this, p) result(result1)
@@ -123,12 +125,14 @@ contains
     result1=p%y+this%J
   end function surface_equation_y
 
-  function surface_distance_y(this, from, to) result(result1)
+  function surface_distance_y(this, from, direction) result(result1)
     class(planey), intent(inout) :: this
-    type(coordinate), intent(in) :: from, to
-    real(kind(1.d0)) :: result1
+    type(coordinate), intent(in) :: from, direction
+    real(kind(1.d0)) :: result1, y, v
+    y=from%y
+    v=direction%y
     result1=-1
-    if(to%y>0) result1=-(from%y+this%J)/to%y
+    if(v>0) result1=-(y+this%J)/v
   end function surface_distance_y
 
   function surface_test_y(this, p) result(result1)
@@ -153,12 +157,14 @@ contains
     result1=p%z+this%J
   end function surface_equation_z
 
-  function surface_distance_z(this, from, to) result(result1)
+  function surface_distance_z(this, from, direction) result(result1)
     class(planez), intent(inout) :: this
-    type(coordinate), intent(in) :: from, to
-    real(kind(1.d0)) :: result1
+    type(coordinate), intent(in) :: from, direction
+    real(kind(1.d0)) :: result1, z, w
+    z=from%z
+    w=direction%z
     result1=-1
-    if(to%z>0) result1=-(from%z+this%J)/to%z
+    if(w>0) result1=-(z+this%J)/w
   end function surface_distance_z
 
   function surface_test_z(this, p) result(result1)
@@ -184,16 +190,19 @@ contains
     result1=(p%x-this%centered_at%x)**2+(p%y-this%centered_at%y)**2+this%J
   end function surface_equation_cylinder
 
-  function surface_distance_cylinder(this, from, to) result(result1)
+  function surface_distance_cylinder(this, from, direction) result(result1)
     class(cylinder), intent(inout) :: this
-    type(coordinate), intent(in) :: from, to
-    real(kind(1.d0)) :: result1, in_sqrt, positive, negative, K, L, M
-
+    type(coordinate), intent(in) :: from, direction
+    real(kind(1.d0)) :: result1, in_sqrt, positive, negative, K, L, M, x, y, u, v
+    x=from%x-this%centered_at%x
+    y=from%y-this%centered_at%y
+    u=direction%x
+    v=direction%y
     ! Equation should be A*(x-x0)*(x-x0)+B*(y-y0)*(y-y0)+J, but A and B are omitted because they are 1.
 
-    K=(from%x-this%centered_at%x)**2+(from%y-this%centered_at%y)**2+this%J
-    L=2*(to%x*(from%x-this%centered_at%x)+to%y*(from%y-this%centered_at%y))
-    M=to%x*to%x+to%y*to%y
+    K=x*x+y*y+this%J
+    L=2*(u*x+v*y)
+    M=u*u+v*v
 
     in_sqrt=L*L-4*M*K
 
