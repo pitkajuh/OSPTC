@@ -124,6 +124,9 @@ contains
 
     ! Find the distance to the surface that is the closest one, i.e. find the smallest value. The distance must be >0.
     do i=1, 5
+       ! if(abs(distances(i))<distance) then
+       !    distance=distances(i)
+       ! end if
        if(distances(i)<distance .and. distances(i)>0) then
           distance=distances(i)
        else if(distance<0 .and. distances(i)>0) then
@@ -177,6 +180,13 @@ contains
     print *, "dst", distance, distances(1), distances(2)
     ! Find the distance to the surface that is the closest one,
     !i.e. find the smallest value. The distance must be >0.
+
+    ! do i=1, 2
+    !    if(abs(distances(i))<distance) then
+    !       distance=distances(i)
+    !    end if
+    ! end do
+
     do i=1, 2
        if(distances(i)<distance .and. distances(i)>0) then
           distance=distances(i)

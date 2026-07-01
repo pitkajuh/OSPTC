@@ -122,10 +122,15 @@ program main
              density)
         i=cell_search(cell_all, size(cell_all), ph)
         if(i>1) then
+           ! Move photon to edge of the cells.
            do j=i, size(cell_all)
+
               distance_to_cell=cell_all(j)%cell_array%cell_distance(ph%origin, ph%direction)
-              print *, distance_to_cell, ph%origin
-              print *, ph%direction%x*distance_to_cell, ph%direction%y*distance_to_cell, ph%direction%z*distance_to_cell
+              ! new_location=coordinate(-8.6027095535174212E-003_8, 9.0054778906892424E-002_8, -2.1149397724193358E-002_8)
+              ! centered_at=coordinate(-0.87561649028697774_8, 0.13132575716157124_8, -0.46481104488109493_8)
+              ! distance_to_cell=cell_all(j)%cell_array%cell_distance(new_location, centered_at)
+              print *, distance_to_cell, ph%origin, ph%direction
+              ! print *, ph%direction%x*distance_to_cell, ph%direction%y*distance_to_cell, ph%direction%z*distance_to_cell
            end do
         end if
         ! if i=0, photon left geometry

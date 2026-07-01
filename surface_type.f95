@@ -100,7 +100,7 @@ contains
     x=from%x
     u=direction%x
     result1=-1
-    if(u>0) result1=-(x+this%J)/u
+    if(u/=0) result1=-(x+this%J)/u
   end function surface_distance_x
 
   function surface_test_x(this, p) result(result1)
@@ -132,7 +132,7 @@ contains
     y=from%y
     v=direction%y
     result1=-1
-    if(v>0) result1=-(y+this%J)/v
+    if(v/=0) result1=-(y+this%J)/v
   end function surface_distance_y
 
   function surface_test_y(this, p) result(result1)
@@ -164,7 +164,7 @@ contains
     z=from%z
     w=direction%z
     result1=-1
-    if(w>0) result1=-(z+this%J)/w
+    if(w/=0) result1=-(z+this%J)/w
   end function surface_distance_z
 
   function surface_test_z(this, p) result(result1)
@@ -193,7 +193,7 @@ contains
   function surface_distance_cylinder(this, from, direction) result(result1)
     class(cylinder), intent(inout) :: this
     type(coordinate), intent(in) :: from, direction
-    real(kind(1.d0)) :: result1, in_sqrt, positive, K, L, M, x, y, u, v, x0, y0
+    real(kind(1.d0)) :: result1, in_sqrt, positive, K, L, M, x, y, u, v, x0, y0, negative
     x0=this%centered_at%x
     y0=this%centered_at%y
     x=from%x!-this%centered_at%x
@@ -214,8 +214,12 @@ contains
        result1=-1
     else
        positive=0.5*(-L+in_sqrt**0.5)/M
+       negative=0.5*(-L-in_sqrt**0.5)/M
        result1=positive
+       ! print *, positive, abs(negative)
 
+       ! if(abs(negative)>positive) then
+       !    result1=negative
        if(positive<0) then
           ! No solution exists, the surface is away from line-of-sight.
           result1=-1
