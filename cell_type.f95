@@ -210,32 +210,28 @@ contains
     result1%z=this%wallz_negative%v+(this%wallz_positive%v-this%wallz_negative%v)*std_uniform_distribution()
   end function cell_initial_position_cylinder_z
 
-  function cell_search(cell_list, n, ph) result(cell_index)
+  function cell_search(cell_list, n, mfp) result(cell_index)
     class(cells), intent(inout), allocatable :: cell_list(:)
-    type(photon), intent(inout) :: ph
+    type(coordinate), intent(in) :: mfp
     integer, intent(in) :: n
-    type(coordinate) :: new_location
     integer :: i, cell_index
     logical :: cell_hit
     cell_index=0
 
     do i=1, n
        ! print *, cell_list(i)%cell_array%name
-       cell_hit=cell_list(i)%cell_array%cell_test(ph%to)
+       cell_hit=cell_list(i)%cell_array%cell_test(mfp)
 
        if(cell_hit .eqv. .true.) then
-          print *, "hit", i
           cell_index=i
-          ! k=j
-          ! ph%origin=new_location
-          ! print *, "now", new_location%x, new_location%y, new_location%z
           exit
        end if
     end do
 
-    if(cell_hit .eqv. .false.) then
-       error stop
-    end if
+    ! if(cell_hit .eqv. .false.) then
+    !    print *, "OH no", cell_index
+    !    error stop
+    ! end if
   end function cell_search
 
 end module cell_type

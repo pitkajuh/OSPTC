@@ -9,11 +9,11 @@ program main
   use photon_type
   implicit none
 
-  integer :: i, j, second, k
+  integer :: i, j, second, k, cell_index
   class(cell), allocatable :: source_cell, cell2
   class(material), allocatable :: steel1
   class(material), allocatable :: nitrogen1
-  type(coordinate) :: new_location, centered_at
+  type(coordinate) :: new_location, centered_at, mfp
   type(photon) :: ph
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop
@@ -117,22 +117,40 @@ program main
      ! do i=1, co_60_source%activity
         ph=co_60_source%pdf()
         ph%origin=cell_all(1)%cell_array%random_initial_position()
-        call calculate_mfp(ph, cell_all(1)%cell_array%cell_material &
-             %get_mu_value(ph%energy), cell_all(1)%cell_array%cell_material% &
-             density)
-        i=cell_search(cell_all, size(cell_all), ph)
-        if(i>1) then
-           ! Move photon to edge of the cells.
-           do j=i, size(cell_all)
 
-              distance_to_cell=cell_all(j)%cell_array%cell_distance(ph%origin, ph%direction)
-              ! new_location=coordinate(-8.6027095535174212E-003_8, 9.0054778906892424E-002_8, -2.1149397724193358E-002_8)
-              ! centered_at=coordinate(-0.87561649028697774_8, 0.13132575716157124_8, -0.46481104488109493_8)
-              ! distance_to_cell=cell_all(j)%cell_array%cell_distance(new_location, centered_at)
-              print *, distance_to_cell, ph%origin, ph%direction
-              ! print *, ph%direction%x*distance_to_cell, ph%direction%y*distance_to_cell, ph%direction%z*distance_to_cell
-           end do
+        do k=1, 1000
+
+           mfp=calculate_mfp(ph, cell_all(1)%cell_array%cell_material &
+                %get_mu_value(ph%energy), cell_all(1)%cell_array%cell_material% &
+                density)
+           cell_index=cell_search(cell_all, size(cell_all), mfp)
+
+           if(cell_index>1) then
+              ! Move photon to edge of the cells.
+              do j=cell_index, size(cell_all)
+                 distance_to_cell=cell_all(j)%cell_array%cell_distance(ph%origin, ph%direction)
+                 print *, distance_to_cell, ph%origin, ph%direction
+
+                 if(cell_all(j)%cell_array%cell_material%density==cell_all(j-1) &
+                      %cell_array%cell_material%density) then
+                    ! move to mfp
+                    print *, "same material"
+                    ph%origin=mfp
+                    call reaction_function(cell_all(j)%cell_array%cell_material%endf, ph)
+                    exit
+                 else
+                    ! Add small interpolation distance in order to make sure
+                    ! that the photon ends up on the right side.
+                    distance_to_cell=distance_to_cell*1.01
+                    ph%origin=ph%origin+ph%direction*distance_to_cell
+                 end if
+              end do
+           else if(cell_index==0) then
+              exit
+           else
+              ! print
         end if
+     end do
         ! if i=0, photon left geometry
 
 
