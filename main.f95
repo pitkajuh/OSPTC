@@ -66,7 +66,7 @@ program main
 
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=1E3
+  co_60_source%activity=10!E3
   ! allocate(steel :: steel1)
   ! call steel1%create()
   ! allocate(cell_cylinder_truncated_z :: source_cell)
@@ -111,110 +111,30 @@ program main
   ! ! allocate(cell_cylinder_truncated_z :: cells(1))
   ! ! allocate(cell_cylinder_truncated_z :: cells(2))
 
-  ! do second=1, 1000
-  !    print *, second, "s"
+  allocate(ph)
 
-     ! do i=1, co_60_source%activity
-        allocate(ph)
+  do second=1, 10!00
+     print *, second, "s"
+
+     do i=1, co_60_source%activity
+        cell_index=1
         ph=co_60_source%pdf()
-        ph%origin=cell_all(1)%cell_array%random_initial_position()
+        ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
         ph%next_photon=>null()
         current_photon=>ph
 
         do while (associated(current_photon))
-           call surface_tracking(cell_all, ph, 1)
+           call surface_tracking(cell_all, current_photon, cell_index)
            current_photon=>current_photon%next_photon
         end do
+     end do
+  end do
 
 
-        ! do k=1, 1000
 
-        !    mfp=calculate_mfp(ph, cell_all(1)%cell_array%cell_material &
-        !         %get_mu_value(ph%energy), cell_all(1)%cell_array%cell_material% &
-        !         density)
-        !    cell_index=cell_search(cell_all, size(cell_all), mfp)
-
-        !    if(cell_index>1) then
-        !       ! Move photon to edge of the cells.
-        !       do j=cell_index, size(cell_all)
-        !          distance_to_cell=cell_all(j)%cell_array%cell_distance(ph%origin, ph%direction)
-        !          print *, distance_to_cell, ph%origin, ph%direction
-
-        !          if(cell_all(j)%cell_array%cell_material%density==cell_all(j-1) &
-        !               %cell_array%cell_material%density) then
-        !             ! move to mfp
-        !             print *, "same material"
-        !             ph%origin=mfp
-        !             reaction=.true.
-        !             exit
-        !          else
-        !             ! Add small interpolation distance in order to make sure
-        !             ! that the photon ends up on the right side.
-        !             distance_to_cell=distance_to_cell*1.01
-        !             ph%origin=ph%origin+ph%direction*distance_to_cell
-        !          end if
-        !       end do
-        !    else if(cell_index==0) then
-        !       reaction=.false.
-        !       exit
-        !    else
-        !       reaction=.true.
-        !       exit
-        !    end if
-
-        !    if(reaction .eqv. .true.) then
-        !       exit
-        !    end if
-        ! end do
-        ! ! which index?
-        ! if(reaction .eqv. .true.) then
-        !    print *, j
-        !    ! call reaction_function(cell_all(j)%cell_array%cell_material%endf, ph)
-        ! end if
-        ! if i=0, photon left geometry
-
-
-        ! print *, "new", new_location%x, new_location%y, new_location%z
-        ! ph%origin=new_location
-
-        ! print *, "cc", ph%energy
-        ! do
-        !    ! print *, ph%energy
-        !    do j=1, size(cell_all)
-
-        !       new_location=calculate_mfp(ph, &
-        !            cell_all(j)%cell_array%cell_material%get_mu_value(ph%energy), cell_all(j)%cell_array%cell_material%density)
-        !       ! print *, "new", new_location%x, new_location%y, new_location%z
-        !       ! ph%origin=new_location
-        !       cell_hit=cell_all(j)%cell_array%cell_test(new_location)
-
-        !       if(cell_hit .eqv. .true.) then
-        !          k=j
-        !          ph%origin=new_location
-        !          print *, "now", new_location%x, new_location%y, new_location%z
-        !          exit
-        !       end if
-        !    end do
-
-        !    ! Photon did not hit any cell. It left the geometry.
-        !    ! Ignore photons with energy less than 1 keV
-        !    if(cell_hit .eqv. .false. .or. ph%energy<1000.0_8) then
-        !       print *, "exit"
-        !       exit
-        !    else if(ph%energy>0) then
-        !       ! continue
-        !       continue_loop=.true.
-        !       ! print *, "ph%energy>0"
-        !    end if
-        !    ! call show(new_location)
-        !    ! print *, "now", new_location%x, new_location%y, new_location%z
-        !    ! print *, cell_hit
-        !    call reaction_function(cell_all(k)%cell_array%cell_material%endf, ph)
-        ! end do
-     ! end do
-  ! end do
 
   deallocate(co_60_source)
+  deallocate(ph)
   ! ! call clear_material(steel1)
   ! deallocate(steel1)
   ! deallocate(nitrogen1)

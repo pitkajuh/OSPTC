@@ -198,18 +198,19 @@ contains
   subroutine surface_tracking(cell_all, ph, cell_from)
     class(cells), intent(inout), allocatable :: cell_all(:)
     type(photon), intent(inout) :: ph
-    integer, intent(in) :: cell_from
-    integer :: cell_index, k, j, cell_index_new
+    integer, intent(inout) :: cell_from
+    integer :: cell_index, k, j!, cell_index_new
     logical :: reaction
     real(kind(1.d0)) :: distance_to_cell
     type(coordinate) :: mfp
     reaction=.false.
-    cell_index_new=cell_from
-
+    ! cell_index_new=cell_from
+    ! cell_from=1
+    ! print *, "from", cell_from
     do k=1, 1000
        print *, k
-       mfp=calculate_mfp(ph, cell_all(cell_index_new)%cell_array%cell_material &
-            %get_mu_value(ph%energy), cell_all(cell_index_new)%cell_array% &
+       mfp=calculate_mfp(ph, cell_all(cell_from)%cell_array%cell_material &
+            %get_mu_value(ph%energy), cell_all(cell_from)%cell_array% &
             cell_material% density)
        cell_index=cell_search(cell_all, size(cell_all), mfp)
 
@@ -226,20 +227,27 @@ contains
                 print *, "same material"
                 ph%origin=mfp
                 reaction=.true.
+                call reaction_function(cell_all(j)%cell_array%cell_material% &
+                     endf, ph)
                 exit
              else
                 ! Add small interpolation distance in order to make sure
                 ! that the photon ends up on the right side.
                 distance_to_cell=distance_to_cell*1.01
                 ph%origin=ph%origin+ph%direction*distance_to_cell
-                cell_index_new=j
+                cell_from=j
              end if
           end do
        else if(cell_index==0) then
+          ! remove photon from linked list
           reaction=.false.
           exit
        else
           reaction=.true.
+          ! Reaction happens at the source.
+          call reaction_function(cell_all(cell_index)%cell_array% &
+               cell_material%endf, ph)
+          ! print *, "cell_index", cell_index
           exit
        end if
 
