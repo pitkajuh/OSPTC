@@ -14,7 +14,7 @@ program main
   class(material), allocatable :: steel1
   class(material), allocatable :: nitrogen1
   type(coordinate) :: new_location, centered_at, mfp
-  type(photon) :: ph
+  type(photon), pointer :: ph, current_photon
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop, reaction
   class(cells), allocatable :: cell_all(:)
@@ -115,10 +115,16 @@ program main
   !    print *, second, "s"
 
      ! do i=1, co_60_source%activity
+        allocate(ph)
         ph=co_60_source%pdf()
         ph%origin=cell_all(1)%cell_array%random_initial_position()
-        call surface_tracking(cell_all, ph, 1)
+        ph%next_photon=>null()
+        current_photon=>ph
 
+        do while (associated(current_photon))
+           call surface_tracking(cell_all, ph, 1)
+           current_photon=>current_photon%next_photon
+        end do
 
 
         ! do k=1, 1000

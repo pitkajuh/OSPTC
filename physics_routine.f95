@@ -207,6 +207,7 @@ contains
     cell_index_new=cell_from
 
     do k=1, 1000
+       print *, k
        mfp=calculate_mfp(ph, cell_all(cell_index_new)%cell_array%cell_material &
             %get_mu_value(ph%energy), cell_all(cell_index_new)%cell_array% &
             cell_material% density)

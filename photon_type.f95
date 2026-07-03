@@ -9,6 +9,7 @@ module photon_type
      type(coordinate) :: origin
      ! type(coordinate) :: to
      ! type(coordinate) :: mfp
+     type(photon), pointer :: next_photon => null()
   end type photon
 
 contains
