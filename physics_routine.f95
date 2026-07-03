@@ -172,10 +172,10 @@ contains
     select case(reaction_id)
     case(1)
        call coherent_scattering_reaction(ph, endf)
-       print *, "coh"
+       ! print *, "coh"
     case default
        call incoherent_scattering_reaction(ph, endf)
-       print *, "incoh"
+       ! print *, "incoh"
     end select
 
     ! select case (reaction_id)
@@ -208,14 +208,12 @@ contains
     ! cell_from=1
     ! print *, "from", cell_from
     do k=1, 1000
-       print *, k
        mfp=calculate_mfp(ph, cell_all(cell_from)%cell_array%cell_material &
             %get_mu_value(ph%energy), cell_all(cell_from)%cell_array% &
             cell_material% density)
        cell_index=cell_search(cell_all, size(cell_all), mfp)
 
        if(cell_index>1) then
-          ! Move photon to edge of the cells.
           do j=cell_index, size(cell_all)
              distance_to_cell=cell_all(j)%cell_array% &
                   cell_distance(ph%origin, ph%direction)
