@@ -16,10 +16,10 @@ program main
   type(coordinate) :: new_location, centered_at, mfp
   type(photon) :: ph
   class(radionuclide), allocatable :: co_60_source
-  logical :: cell_hit, continue_loop
+  logical :: cell_hit, continue_loop, reaction
   class(cells), allocatable :: cell_all(:)
   real(kind(1.d0)) :: distance_to_cell
-
+  reaction=.false.
   cell_hit=.false.
   continue_loop=.false.
   k=1
@@ -117,40 +117,54 @@ program main
      ! do i=1, co_60_source%activity
         ph=co_60_source%pdf()
         ph%origin=cell_all(1)%cell_array%random_initial_position()
+        call surface_tracking(cell_all, ph, 1)
 
-        do k=1, 1000
 
-           mfp=calculate_mfp(ph, cell_all(1)%cell_array%cell_material &
-                %get_mu_value(ph%energy), cell_all(1)%cell_array%cell_material% &
-                density)
-           cell_index=cell_search(cell_all, size(cell_all), mfp)
 
-           if(cell_index>1) then
-              ! Move photon to edge of the cells.
-              do j=cell_index, size(cell_all)
-                 distance_to_cell=cell_all(j)%cell_array%cell_distance(ph%origin, ph%direction)
-                 print *, distance_to_cell, ph%origin, ph%direction
+        ! do k=1, 1000
 
-                 if(cell_all(j)%cell_array%cell_material%density==cell_all(j-1) &
-                      %cell_array%cell_material%density) then
-                    ! move to mfp
-                    print *, "same material"
-                    ph%origin=mfp
-                    call reaction_function(cell_all(j)%cell_array%cell_material%endf, ph)
-                    exit
-                 else
-                    ! Add small interpolation distance in order to make sure
-                    ! that the photon ends up on the right side.
-                    distance_to_cell=distance_to_cell*1.01
-                    ph%origin=ph%origin+ph%direction*distance_to_cell
-                 end if
-              end do
-           else if(cell_index==0) then
-              exit
-           else
-              ! print
-        end if
-     end do
+        !    mfp=calculate_mfp(ph, cell_all(1)%cell_array%cell_material &
+        !         %get_mu_value(ph%energy), cell_all(1)%cell_array%cell_material% &
+        !         density)
+        !    cell_index=cell_search(cell_all, size(cell_all), mfp)
+
+        !    if(cell_index>1) then
+        !       ! Move photon to edge of the cells.
+        !       do j=cell_index, size(cell_all)
+        !          distance_to_cell=cell_all(j)%cell_array%cell_distance(ph%origin, ph%direction)
+        !          print *, distance_to_cell, ph%origin, ph%direction
+
+        !          if(cell_all(j)%cell_array%cell_material%density==cell_all(j-1) &
+        !               %cell_array%cell_material%density) then
+        !             ! move to mfp
+        !             print *, "same material"
+        !             ph%origin=mfp
+        !             reaction=.true.
+        !             exit
+        !          else
+        !             ! Add small interpolation distance in order to make sure
+        !             ! that the photon ends up on the right side.
+        !             distance_to_cell=distance_to_cell*1.01
+        !             ph%origin=ph%origin+ph%direction*distance_to_cell
+        !          end if
+        !       end do
+        !    else if(cell_index==0) then
+        !       reaction=.false.
+        !       exit
+        !    else
+        !       reaction=.true.
+        !       exit
+        !    end if
+
+        !    if(reaction .eqv. .true.) then
+        !       exit
+        !    end if
+        ! end do
+        ! ! which index?
+        ! if(reaction .eqv. .true.) then
+        !    print *, j
+        !    ! call reaction_function(cell_all(j)%cell_array%cell_material%endf, ph)
+        ! end if
         ! if i=0, photon left geometry
 
 

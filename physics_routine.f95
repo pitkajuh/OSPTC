@@ -2,6 +2,7 @@ module physics_routine
   use random
   use tape_type
   use interpolate
+  use cell_type
   use photon_type
   use photon_angular_distribution
   use constants, only: electron_mass
@@ -171,8 +172,10 @@ contains
     select case(reaction_id)
     case(1)
        call coherent_scattering_reaction(ph, endf)
+       print *, "coh"
     case default
        call incoherent_scattering_reaction(ph, endf)
+       print *, "incoh"
     end select
 
     ! select case (reaction_id)
@@ -191,5 +194,59 @@ contains
     ! end select
     !    ! print *, "angle", angle*(360/3.141592653589793)
   end subroutine reaction_function
+
+  subroutine surface_tracking(cell_all, ph, cell_from)
+    class(cells), intent(inout), allocatable :: cell_all(:)
+    type(photon), intent(inout) :: ph
+    integer, intent(in) :: cell_from
+    integer :: cell_index, k, j, cell_index_new
+    logical :: reaction
+    real(kind(1.d0)) :: distance_to_cell
+    type(coordinate) :: mfp
+    reaction=.false.
+    cell_index_new=cell_from
+
+    do k=1, 1000
+       mfp=calculate_mfp(ph, cell_all(cell_index_new)%cell_array%cell_material &
+            %get_mu_value(ph%energy), cell_all(cell_index_new)%cell_array% &
+            cell_material% density)
+       cell_index=cell_search(cell_all, size(cell_all), mfp)
+
+       if(cell_index>1) then
+          ! Move photon to edge of the cells.
+          do j=cell_index, size(cell_all)
+             distance_to_cell=cell_all(j)%cell_array% &
+                  cell_distance(ph%origin, ph%direction)
+             print *, distance_to_cell, ph%origin, ph%direction
+
+             if(cell_all(j)%cell_array%cell_material%density==cell_all(j-1) &
+                  %cell_array%cell_material%density) then
+                ! move to mfp
+                print *, "same material"
+                ph%origin=mfp
+                reaction=.true.
+                exit
+             else
+                ! Add small interpolation distance in order to make sure
+                ! that the photon ends up on the right side.
+                distance_to_cell=distance_to_cell*1.01
+                ph%origin=ph%origin+ph%direction*distance_to_cell
+                cell_index_new=j
+             end if
+          end do
+       else if(cell_index==0) then
+          reaction=.false.
+          exit
+       else
+          reaction=.true.
+          exit
+       end if
+
+       ! if(reaction .eqv. .true.) then
+       !    exit
+       ! end if
+    end do
+
+  end subroutine surface_tracking
 
 end module physics_routine
