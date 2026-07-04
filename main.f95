@@ -124,9 +124,9 @@ program main
 
   previous_photon=>null()
 
-  do while (associated(ph))
+  do while (associated(current_photon))
      print *, ph%energy
-     ph=>current_photon%next_photon
+     current_photon%next_photon
   end do
 
   ! do second=1, 10!00
