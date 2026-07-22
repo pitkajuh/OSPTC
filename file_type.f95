@@ -132,7 +132,7 @@ contains
     integer :: i, j
     ! print *, deltax, array(1, index_from), array(2, index_from)
     j=1
-    print *, "from", index_from-1, index_to
+    ! print *, "from", index_from-1, index_to
     ! do i=index_from, index_from+index_to-1
     do i=index_from-1, index_to
        y_km1=array(2, i-1)
@@ -153,7 +153,7 @@ contains
 
 
        ! print *, array(2, i+1), (x_star-x_km1), (x_k-x_km1), y_k, y_km1, (y_k-y_km1)
-       print *, x_star, y_km1+((x_star-x_km1)/(x_k-x_km1))*(y_k-y_km1)
+       ! print *, x_star, y_km1+((x_star-x_km1)/(x_k-x_km1))*(y_k-y_km1)
        !    j=1
        ! else
        !    j=j+1

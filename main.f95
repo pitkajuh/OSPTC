@@ -126,7 +126,7 @@ program main
   current_photon=>ph
 
   do while (associated(current_photon))
-     print *, current_photon%energy
+     ! print *, current_photon%energy
      ! previous_photon=>current_photon
      current_photon=>current_photon%next_photon
   end do
@@ -134,18 +134,20 @@ program main
   ! do second=1, 10!00
   !    print *, second, "s"
 
-  !    do i=1, co_60_source%activity
+     do i=1, co_60_source%activity
         cell_index=1
         ph=co_60_source%pdf()
         ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
         ph%next_photon=>null()
         current_photon=>ph
+        call show(ph%origin)
 
         do while (associated(current_photon))
            call surface_tracking(cell_all, current_photon, cell_index)
+           call show(current_photon%origin)
            current_photon=>current_photon%next_photon
         end do
-  !    end do
+     end do
   ! end do
 
 

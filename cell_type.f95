@@ -177,7 +177,7 @@ contains
     real(kind(1.d0)), dimension(2) :: distances
     distances=(/this%wallz_negative%surface_distance(from, direction),  this%wallz_positive%surface_distance(from, direction)/)
     distance=this%surface_cylinder%surface_distance(from, direction)
-    print *, "dst", distance, distances(1), distances(2)
+    ! print *, "dst", distance, distances(1), distances(2)
     ! Find the distance to the surface that is the closest one,
     !i.e. find the smallest value. The distance must be >0.
 
