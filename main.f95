@@ -122,27 +122,29 @@ program main
      current_photon%next_photon => null()
   end do
 
-  previous_photon=>null()
+  ! previous_photon=>null()
+  current_photon=>ph
 
   do while (associated(current_photon))
-     print *, ph%energy
-     current_photon%next_photon
+     print *, current_photon%energy
+     ! previous_photon=>current_photon
+     current_photon=>current_photon%next_photon
   end do
 
   ! do second=1, 10!00
   !    print *, second, "s"
 
   !    do i=1, co_60_source%activity
-  !       cell_index=1
-  !       ph=co_60_source%pdf()
-  !       ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
-  !       ph%next_photon=>null()
-  !       current_photon=>ph
+        cell_index=1
+        ph=co_60_source%pdf()
+        ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
+        ph%next_photon=>null()
+        current_photon=>ph
 
-  !       do while (associated(current_photon))
-  !          call surface_tracking(cell_all, current_photon, cell_index)
-  !          current_photon=>current_photon%next_photon
-  !       end do
+        do while (associated(current_photon))
+           call surface_tracking(cell_all, current_photon, cell_index)
+           current_photon=>current_photon%next_photon
+        end do
   !    end do
   ! end do
 
