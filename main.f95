@@ -16,7 +16,7 @@ program main
   type(coordinate) :: new_location, centered_at, mfp
   type(photon), pointer :: ph, current_photon, previous_photon
   class(radionuclide), allocatable :: co_60_source
-  logical :: cell_hit, continue_loop, reaction
+  logical :: cell_hit, continue_loop, reaction, end
   class(cells), allocatable :: cell_all(:)
   real(kind(1.d0)) :: distance_to_cell
   reaction=.false.
@@ -130,7 +130,7 @@ program main
      ! previous_photon=>current_photon
      current_photon=>current_photon%next_photon
   end do
-
+  end=.false.
   ! do second=1, 10!00
   !    print *, second, "s"
 
@@ -143,7 +143,7 @@ program main
         call show(ph%origin)
 
         do while (associated(current_photon))
-           call surface_tracking(cell_all, current_photon, cell_index)
+           end=surface_tracking(cell_all, current_photon, cell_index)
            call show(current_photon%origin)
            current_photon=>current_photon%next_photon
         end do

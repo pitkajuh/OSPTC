@@ -195,15 +195,15 @@ contains
     !    ! print *, "angle", angle*(360/3.141592653589793)
   end subroutine reaction_function
 
-  subroutine surface_tracking(cell_all, ph, cell_from)
+  function surface_tracking(cell_all, ph, cell_from) result(end)
     class(cells), intent(inout), allocatable :: cell_all(:)
     type(photon), intent(inout) :: ph
     integer, intent(inout) :: cell_from
     integer :: cell_index, k, j!, cell_index_new
-    logical :: reaction
+    logical :: end
     real(kind(1.d0)) :: distance_to_cell
     type(coordinate) :: mfp
-    reaction=.false.
+    end=.false.
     ! cell_index_new=cell_from
     ! cell_from=1
     ! print *, "from", cell_from
@@ -224,7 +224,7 @@ contains
                 ! move to mfp
                 print *, "same material"
                 ph%origin=mfp
-                reaction=.true.
+                end=.true.
                 call reaction_function(cell_all(j)%cell_array%cell_material% &
                      endf, ph)
                 exit
@@ -238,10 +238,10 @@ contains
           end do
        else if(cell_index==0) then
           ! remove photon from linked list
-          reaction=.false.
+          end=.false.
           exit
        else
-          reaction=.true.
+          end=.true.
           ! Reaction happens at the source.
           call reaction_function(cell_all(cell_index)%cell_array% &
                cell_material%endf, ph)
@@ -254,6 +254,6 @@ contains
        ! end if
     end do
 
-  end subroutine surface_tracking
+  end function surface_tracking
 
 end module physics_routine
