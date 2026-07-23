@@ -14,7 +14,8 @@ program main
   class(material), allocatable :: steel1
   class(material), allocatable :: nitrogen1
   type(coordinate) :: new_location, centered_at, mfp
-  type(photon), pointer :: ph, current_photon, previous_photon
+  type(photon), pointer :: current_photon, previous_photon, ph
+  ! type(photon) :: ph
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop, reaction, end
   class(cells), allocatable :: cell_all(:)
@@ -65,8 +66,8 @@ program main
 
 
 
-  allocate(co_60 :: co_60_source)
-  co_60_source%activity=10!E3
+  ! allocate(co_60 :: co_60_source)
+  ! co_60_source%activity=10!E4
   ! allocate(steel :: steel1)
   ! call steel1%create()
   ! allocate(cell_cylinder_truncated_z :: source_cell)
@@ -112,26 +113,30 @@ program main
   ! ! allocate(cell_cylinder_truncated_z :: cells(2))
 
   allocate(ph)
-  ph%energy=1
-  current_photon=>ph
+  ! ph%energy=1
+  ! current_photon=>ph
 
-  do i=2, 10
-     allocate(current_photon%next_photon)
-     current_photon=>current_photon%next_photon
-     current_photon%energy=i
-     current_photon%next_photon => null()
-  end do
+  ! do i=2, 10
+  !    allocate(current_photon%next_photon)
+  !    current_photon=>current_photon%next_photon
+  !    current_photon%energy=i
+  !    current_photon%next_photon => null()
+  ! end do
 
-  ! previous_photon=>null()
-  current_photon=>ph
+  ! ! previous_photon=>null()
+  ! current_photon=>ph
 
-  do while (associated(current_photon))
-     ! print *, current_photon%energy
-     ! previous_photon=>current_photon
-     current_photon=>current_photon%next_photon
-  end do
+  ! do while (associated(current_photon))
+  !    ! print *, current_photon%energy
+  !    ! previous_photon=>current_photon
+  !    current_photon=>current_photon%next_photon
+  ! end do
+
+  allocate(co_60 :: co_60_source)
+  co_60_source%activity=10E4
+
   end=.false.
-  do second=1, 10
+  do second=1, 1000
      print *, second, "s"
 
      do i=1, co_60_source%activity

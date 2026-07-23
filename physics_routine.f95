@@ -10,6 +10,24 @@ module physics_routine
 
 contains
 
+  subroutine pair_production(ph, mfp)
+    type(photon), intent(inout) :: ph
+    type(coordinate), intent(in) :: mfp
+    type(photon), pointer :: left, right
+    allocate(left)
+    allocate(right)
+
+    left%energy=electron_mass
+    left%direction=create_unit_vector(multiply_scalar(mfp, -1.0_8))
+    left%origin=mfp
+
+    right%energy=electron_mass
+    right%direction=create_unit_vector(mfp)
+    right%origin=mfp
+
+    left%next_photon=right
+  end subroutine pair_production
+
   function photo_ionization(ph, endf, reaction_id) result(end)
     type(tape), intent(in) :: endf
     type(photon), intent(inout) :: ph
@@ -178,43 +196,38 @@ contains
     reaction_id=i-1
   end function select_reaction
 
-  function reaction_function(endf, ph) result(end)
+  function reaction_function(endf, ph, mfp) result(end)
     type(tape), intent(inout) :: endf
     type(photon), intent(inout) :: ph
+    type(coordinate), intent(in) :: mfp
     integer :: reaction_id
     real(kind(1.d0)) :: angle
     logical :: end
     end=.false.
     reaction_id=select_reaction(endf, ph%energy)
 
-    ! select case(reaction_id)
+
+    call pair_production(ph, mfp)
+
+
+    ! select case (reaction_id)
     ! case(1)
+    !    ! print *, "coherent scattering"
     !    call coherent_scattering_reaction(ph, endf)
-    !    ! print *, "coh"
-    ! case default
+    ! case(2)
+    !    ! print *, "incoherent scattering"
     !    call incoherent_scattering_reaction(ph, endf)
-    !    ! print *, "incoh"
+    ! case(3)
+    !    print *, "pair formation in electric field"
+    !    call pair_production(ph, mfp)
+    ! case(4)
+    !    print *, "pair formation in nuclear field"
+    !    call pair_production(ph, mfp)
+    ! case default
+    !    ! print *, "ionization", reaction_id-4, size(endf%mf23%photo_ionization)
+    !    end=photo_ionization(ph, endf, reaction_id)
     ! end select
 
-    select case (reaction_id)
-    case(1)
-       print *, "coherent scattering"
-       call coherent_scattering_reaction(ph, endf)
-    case(2)
-       print *, "incoherent scattering"
-       call incoherent_scattering_reaction(ph, endf)
-    case(3)
-       print *, "pair formation in electric field"
-    case(4)
-       print *, "pair formation in nuclear field"
-    case default
-       print *, "ionization", reaction_id-4, size(endf%mf23%photo_ionization)!, endf%mf23%photo_ionization(reaction_id-4)!%header(2, 1), ph%energy
-       end=photo_ionization(ph, endf, reaction_id)
-
-       ! ph%energy=ph%energy-endf%mf23%photo_ionization(reaction_id-4)%header(2, 1)!linear_interpolation(endf%mf23% &
-       !     photo_ionization(reaction_id)%records, ph%energy, endf%mf23%photo_ionization(reaction_id)%n, 1, 2)
-    end select
-    !    ! print *, "angle", angle*(360/3.141592653589793)
   end function reaction_function
 
   function surface_tracking(cell_all, ph, cell_from) result(end)
@@ -248,7 +261,7 @@ contains
                 ph%origin=mfp
                 end=.false.
                 end=reaction_function(cell_all(j)%cell_array%cell_material% &
-                     endf, ph)
+                     endf, ph, mfp)
                 exit
              else
                 ! Add small interpolation distance in order to make sure
@@ -269,7 +282,7 @@ contains
           ! Reaction happens at the source.
           print *, "at source", cell_from, cell_index
           end=reaction_function(cell_all(cell_index)%cell_array% &
-               cell_material%endf, ph)
+               cell_material%endf, ph, mfp)
 
           ! Photon must be removed, if it has negative energy
           ! if(ph%energy<0) then
