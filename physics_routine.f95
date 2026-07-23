@@ -10,6 +10,16 @@ module physics_routine
 
 contains
 
+  subroutine create_annihilation_photon(photon1, direction, origin, id)
+    type(photon), pointer, intent(inout) :: photon1
+    type(coordinate), intent(in) :: direction, origin
+    integer, intent(in) :: id
+    photon1%energy=electron_mass
+    photon1%origin=origin
+    photon1%direction=create_unit_vector(direction)
+    photon1%id=id
+  end subroutine create_annihilation_photon
+
   subroutine pair_production(ph, mfp)
     type(photon), pointer, intent(inout) :: ph
     type(coordinate), intent(in) :: mfp
@@ -19,27 +29,23 @@ contains
     print *, "pair"
 
     ! Create photon going left
-    left%energy=electron_mass
-    left%direction=create_unit_vector(multiply_scalar(mfp, -1.0_8))
-    left%origin=mfp
-    left%id=ph%id+1
+    call create_annihilation_photon(left, multiply_scalar(mfp, -1.0_8), mfp, ph%id+1)
     ! Connect to head photon
     left%previous_photon=>ph
 
-    right%energy=electron_mass
-    right%direction=create_unit_vector(mfp)
-    right%origin=mfp
-    right%id=left%id+1
+
+    ! Create photon going right
+    call create_annihilation_photon(right, mfp, mfp, ph%id+2)
     right%previous_photon=>left
-
     left%next_photon=>right
-
     ph%next_photon=>left
-
 
     ! temporary_photon=>ph
     ! ph=>ph%next_photon
     ! deallocate(temporary_photon)
+
+
+
     current_photon=>ph
 
 
