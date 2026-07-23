@@ -9,21 +9,16 @@ program main
   use photon_type
   implicit none
 
-  integer :: i, j, second, k, cell_index
-  class(cell), allocatable :: source_cell, cell2
+  integer :: second, cell_index
   class(material), allocatable :: steel1
   class(material), allocatable :: nitrogen1
-  type(coordinate) :: new_location, centered_at, mfp
-  type(photon), pointer :: current_photon, previous_photon, ph
-  ! type(photon) :: ph
+  type(photon), pointer :: current_photon, ph
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop, reaction, end
   class(cells), allocatable :: cell_all(:)
-  real(kind(1.d0)) :: distance_to_cell
   reaction=.false.
   cell_hit=.false.
   continue_loop=.false.
-  k=1
   allocate(steel :: steel1)
   call steel1%create()
   allocate(nitrogen :: nitrogen1)
@@ -82,40 +77,39 @@ program main
 
 
 
-  ! allocate(co_60 :: co_60_source)
-  ! co_60_source%activity=10!E4
+  allocate(co_60 :: co_60_source)
+  co_60_source%activity=10!E4
 
-  ! allocate(ph)
-  ! end=.false.
-  ! ! do second=1, 10!00
-  !    print *, second, "s"
+  allocate(ph)
+  end=.false.
+  do second=1, 1!00
 
-  !    ! do i=1, co_60_source%activity
-  !       cell_index=1
-  !       ph=co_60_source%pdf()
-  !       ph%id=1
-  !       ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
+     ! do i=1, co_60_source%activity
+        cell_index=1
+        ph=co_60_source%pdf()
+        ph%id=1
+        ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
 
-  !       ph%next_photon=>null()
-  !       current_photon=>ph
-  !       print *, "----- origin begin"
-  !       call show(ph%origin)
-  !       print *, "-----"
-  !       do while (associated(current_photon))
-  !          end=surface_tracking(cell_all, current_photon, cell_index)
+        ph%next_photon=>null()
+        current_photon=>ph
+        print *, "----- origin begin"
+        call show(ph%origin)
+        print *, "-----"
+        do while (associated(current_photon))
+           end=surface_tracking(cell_all, current_photon, cell_index)
 
-  !          if(end .eqv. .false.) then
-  !             cycle
-  !          end if
+           if(end .eqv. .false.) then
+              cycle
+           end if
 
-  !          current_photon=>current_photon%next_photon
-  !       end do
-  !    ! end do
-  ! ! end do
-  ! deallocate(co_60_source)
-  ! if(associated(ph)) then
-  !     deallocate(ph)
-  ! end if
+           current_photon=>current_photon%next_photon
+        end do
+     ! end do
+  end do
+  deallocate(co_60_source)
+  if(associated(ph)) then
+      deallocate(ph)
+  end if
 
 
 

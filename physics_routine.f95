@@ -254,7 +254,6 @@ contains
     type(photon), pointer, intent(inout) :: ph
     type(coordinate), intent(in) :: mfp
     integer :: reaction_id
-    real(kind(1.d0)) :: angle
     logical :: end
     end=.false.
     reaction_id=select_reaction(endf, ph%energy)
@@ -328,22 +327,22 @@ contains
           end do
        else if(cell_index==0) then
           ! remove photon from linked list
-          ! has_next=associated(ph%next_photon)
-          ! has_previous=associated(ph%previous_photon)
-          ! temp=>ph
+          has_next=associated(ph%next_photon)
+          has_previous=associated(ph%previous_photon)
+          temp=>ph
 
-          ! if(.not. has_previous) then
-          !    ! Current photon is head.
-          !    ph=>ph%next_photon
-          ! else if(.not. has_next) then
-          !    ! Current photon is last.
-          !    ph=>ph%previous_photon
-          ! else
-          !    ! Current photon is in the middle.
-          !    ph%previous_photon=>ph%next_photon
-          !   ! ph%next_photon=>
-          ! end if
-          ! deallocate(temp)
+          if(.not. has_previous) then
+             ! Current photon is head.
+             ph=>ph%next_photon
+          else if(.not. has_next) then
+             ! Current photon is last.
+             ph=>ph%previous_photon
+          else
+             ! Current photon is in the middle.
+             ph%previous_photon=>ph%next_photon
+            ! ph%next_photon=>
+          end if
+          deallocate(temp)
 
           print *, "exited", cell_from, cell_index
           call show(mfp)
