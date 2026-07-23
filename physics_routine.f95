@@ -10,29 +10,31 @@ module physics_routine
 
 contains
 
-  subroutine photo_ionization(ph, endf, reaction_id)
+  function photo_ionization(ph, endf, reaction_id) result(end)
     type(tape), intent(in) :: endf
     type(photon), intent(inout) :: ph
     integer, intent(in) :: reaction_id
     real(kind(1.d0)) :: ionization_energy
+    logical :: end
+    end=.true.
     ionization_energy=endf%mf23%photo_ionization(reaction_id-4)%header(2, 1)
 
     if(ionization_energy<ph%energy) then
        ph%energy=ph%energy-ionization_energy
+       end=.false.
     end if
-  end subroutine photo_ionization
+  end function photo_ionization
 
   function sample_coherent_scattering_angle(n, energy, A) result(mu)
     real(kind(1.d0)), intent(in), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n
     real(kind(1.d0)) :: Amax, Avalue, rand, mu, x2, x2max
-    integer :: i!, j
+    integer :: i
     x2max=x(energy, -1.0_8)**2
     mu=0.0_8
     Amax=linear_interpolation(A, x2max, n, 1, 2)
     i=0
-    ! j=0
 
     do
        rand=std_uniform_distribution()
@@ -41,10 +43,9 @@ contains
        x2=A(1, i)+(Avalue-A(2, i))*((A(1, i+1)-A(1, i))/(A(2, i+1)-A(2, i)))
        mu=1-2*x2*x2max
 
-    !   j=j+1
        if(rand<0.5*(1+mu)) exit
     end do
-    ! print *, j, mu
+
   end function sample_coherent_scattering_angle
 
   function kahns_method(a) result(mu)
@@ -177,11 +178,13 @@ contains
     reaction_id=i-1
   end function select_reaction
 
-  subroutine reaction_function(endf, ph)
+  function reaction_function(endf, ph) result(end)
     type(tape), intent(inout) :: endf
     type(photon), intent(inout) :: ph
     integer :: reaction_id
     real(kind(1.d0)) :: angle
+    logical :: end
+    end=.false.
     reaction_id=select_reaction(endf, ph%energy)
 
     ! select case(reaction_id)
@@ -205,14 +208,14 @@ contains
     case(4)
        print *, "pair formation in nuclear field"
     case default
-       print *, "ionization", reaction_id, size(endf%mf23%photo_ionization)!, endf%mf23%photo_ionization(reaction_id-4)!%header(2, 1), ph%energy
-       call photo_ionization(ph, endf, reaction_id)
+       print *, "ionization", reaction_id-4, size(endf%mf23%photo_ionization)!, endf%mf23%photo_ionization(reaction_id-4)!%header(2, 1), ph%energy
+       end=photo_ionization(ph, endf, reaction_id)
 
        ! ph%energy=ph%energy-endf%mf23%photo_ionization(reaction_id-4)%header(2, 1)!linear_interpolation(endf%mf23% &
        !     photo_ionization(reaction_id)%records, ph%energy, endf%mf23%photo_ionization(reaction_id)%n, 1, 2)
     end select
     !    ! print *, "angle", angle*(360/3.141592653589793)
-  end subroutine reaction_function
+  end function reaction_function
 
   function surface_tracking(cell_all, ph, cell_from) result(end)
     class(cells), intent(inout), allocatable :: cell_all(:)
@@ -244,7 +247,7 @@ contains
                 print *, "same material"
                 ph%origin=mfp
                 end=.false.
-                call reaction_function(cell_all(j)%cell_array%cell_material% &
+                end=reaction_function(cell_all(j)%cell_array%cell_material% &
                      endf, ph)
                 exit
              else
@@ -265,13 +268,13 @@ contains
           end=.false.
           ! Reaction happens at the source.
           print *, "at source", cell_from, cell_index
-          call reaction_function(cell_all(cell_index)%cell_array% &
+          end=reaction_function(cell_all(cell_index)%cell_array% &
                cell_material%endf, ph)
 
           ! Photon must be removed, if it has negative energy
-          if(ph%energy<0) then
-             end=.true.
-          end if
+          ! if(ph%energy<0) then
+          !    end=.true.
+          ! end if
 
           print *, "----- origin end"
           ph%origin=mfp

@@ -131,10 +131,10 @@ program main
      current_photon=>current_photon%next_photon
   end do
   end=.false.
-  ! do second=1, 10!00
-  !    print *, second, "s"
+  do second=1, 10
+     print *, second, "s"
 
-     ! do i=1, co_60_source%activity
+     do i=1, co_60_source%activity
         cell_index=1
         ph=co_60_source%pdf()
         ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
@@ -152,8 +152,8 @@ program main
 
            current_photon=>current_photon%next_photon
         end do
-     ! end do
-  ! end do
+     end do
+  end do
 
 
 
