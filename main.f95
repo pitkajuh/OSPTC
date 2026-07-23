@@ -53,64 +53,21 @@ program main
   ! print *, source_cell%cell_test(new_location)
 
 
-  ! do i=1, size(cell_all)
-  !    ! select type(cell_array => cell_all(i)%cell_array)
+  do i=1, size(cell_all)
+     ! select type(cell_array => cell_all(i)%cell_array)
 
-  !    !    ! print *,cell_array
-  !    !    ! cell_all%cell_array(i)!%surface_cylinder%v
-  !    ! end select
-  !    print *, cell_all(i)%cell_array%name
-  !    print *, cell_all(i)%cell_array%cell_test(new_location)
-  ! end do
-
-
-
-
-  ! allocate(co_60 :: co_60_source)
-  ! co_60_source%activity=10!E4
-  ! allocate(steel :: steel1)
-  ! call steel1%create()
-  ! allocate(cell_cylinder_truncated_z :: source_cell)
-  ! source_cell%cell_material=steel1
-  ! call source_cell%create(0.5_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
-
-  ! allocate(nitrogen :: nitrogen1)
-  ! call nitrogen1%create()
-  ! allocate(cell_cylinder_truncated_z :: cell2)
-  ! cell2%cell_material=nitrogen1
-  ! call cell2%create(20.0_8, -20.0_8, 20.0_8, 0.0_8, 0.0_8, 0.0_8)
+     !    print *,cell_all(i)%name
+     !    ! cell_all%cell_array(i)!%surface_cylinder%v
+     ! end select
+     print *, cell_all(i)%cell_array%name
+     deallocate(cell_all(i)%cell_array%cell_material%mu)
+     deallocate(cell_all(i)%cell_array%cell_material%endf%coherent_A)
+     ! print *, cell_all(i)%cell_array%cell_test(new_location)
+  end do
 
 
 
-  ! ! new_location=coordinate(0.1_8, 0.1_8, 0.1_8)
-  ! ! print *, source_cell%cell_test(new_location)
 
-  ! ! new_location=coordinate(5_8, 0.1_8, 0.1_8)
-  ! ! print *, source_cell%cell_test(new_location)
-
-  ! ! new_location=coordinate(0.1_8, 5_8, 0.1_8)
-  ! ! print *, source_cell%cell_test(new_location)
-
-  ! ! new_location=coordinate(0.1_8, 0.1_8, 5_8)
-  ! ! print *, source_cell%cell_test(new_location)
-
-  ! ! new_location=coordinate(-5_8, 0.1_8, 0.1_8)
-  ! ! print *, source_cell%cell_test(new_location)
-
-  ! ! new_location=coordinate(0.1_8, -5_8, 0.1_8)
-  ! ! print *, source_cell%cell_test(new_location)
-
-  ! ! new_location=coordinate(0.1_8, 0.1_8, -5_8)
-  ! ! print *, source_cell%cell_test(new_location)
-
-  ! ! print *, steel1%mu(2, 1)
-  ! ! do i=1, nitrogen1%n
-  ! !    print *, nitrogen1%mu(1, i), nitrogen1%mu(2, i), nitrogen1%mu(3, i)
-  ! ! end do
-
-  ! ! allocate(cells(2))
-  ! ! allocate(cell_cylinder_truncated_z :: cells(1))
-  ! ! allocate(cell_cylinder_truncated_z :: cells(2))
 
   allocate(ph)
   ! ph%energy=1
@@ -135,49 +92,36 @@ program main
   allocate(co_60 :: co_60_source)
   co_60_source%activity=10!E4
 
-  end=.false.
-  ! do second=1, 10!00
-     print *, second, "s"
+  ! end=.false.
+  ! ! do second=1, 10!00
+  !    print *, second, "s"
 
-     ! do i=1, co_60_source%activity
-        cell_index=1
-        ph=co_60_source%pdf()
-        ph%id=1
-        ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
+  !    ! do i=1, co_60_source%activity
+  !       cell_index=1
+  !       ph=co_60_source%pdf()
+  !       ph%id=1
+  !       ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
 
-        ph%next_photon=>null()
-        current_photon=>ph
-        print *, "----- origin begin"
-        call show(ph%origin)
-        print *, "-----"
-        do while (associated(current_photon))
-           end=surface_tracking(cell_all, current_photon, cell_index)
+  !       ph%next_photon=>null()
+  !       current_photon=>ph
+  !       print *, "----- origin begin"
+  !       call show(ph%origin)
+  !       print *, "-----"
+  !       do while (associated(current_photon))
+  !          end=surface_tracking(cell_all, current_photon, cell_index)
 
-           if(end .eqv. .false.) then
-              cycle
-           end if
+  !          if(end .eqv. .false.) then
+  !             cycle
+  !          end if
 
-           current_photon=>current_photon%next_photon
-        end do
-     ! end do
-  ! end do
-
-
+  !          current_photon=>current_photon%next_photon
+  !       end do
+  !    ! end do
+  ! ! end do
 
 
+
+        ! deallocate(ph)
   deallocate(co_60_source)
-  deallocate(ph)
-  ! ! call clear_material(steel1)
-  ! deallocate(steel1)
-  ! deallocate(nitrogen1)
-
-
-  ! ! deallocate(cells(1))
-  ! ! deallocate(cells(2))
-  ! ! deallocate(cells)
-
-  ! deallocate(source_cell)
-  ! deallocate(cell2)
-  ! ! call clear_seed()
   deallocate(cell_all)
 end program main

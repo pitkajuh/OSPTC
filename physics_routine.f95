@@ -32,17 +32,17 @@ contains
     call create_annihilation_photon(left, multiply_scalar(mfp, -1.0_8), mfp, ph%id+1)
     ! Connect to head photon
     left%previous_photon=>ph
-
+    ph%next_photon=>left
 
     ! Create photon going right
     call create_annihilation_photon(right, mfp, mfp, ph%id+2)
     right%previous_photon=>left
     left%next_photon=>right
-    ph%next_photon=>left
 
-    ! temporary_photon=>ph
-    ! ph=>ph%next_photon
-    ! deallocate(temporary_photon)
+
+    temporary_photon=>ph
+    ph=>ph%next_photon
+    deallocate(temporary_photon)
 
 
 
@@ -175,11 +175,9 @@ contains
     type(tape), intent(inout) :: endf
     type(photon), pointer, intent(inout) :: ph
     real(kind(1.d0)) :: mu
-    print *, "energy before", ph%energy
     mu=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
     ph%energy=ph%energy/(1+(ph%energy/electron_mass)*(1-mu))
     ph%direction=create_unit_vector(ph%direction*mu)
-    print *, "energy after", ph%energy
   end subroutine incoherent_scattering_reaction
 
   subroutine coherent_scattering_reaction(ph, endf)
@@ -237,6 +235,10 @@ contains
     !    print *, i-1, limits(i)/total
     ! end do
 
+    ! do i=1, 4+endf%mf23%n_ionization
+    !    print *, i, limits(i)/total
+    ! end do
+
     do i=2, 4+endf%mf23%n_ionization
        if(random_value<limits(i)/total) then
           exit
@@ -257,27 +259,23 @@ contains
     end=.false.
     reaction_id=select_reaction(endf, ph%energy)
 
-
-    call pair_production(ph, mfp)
-
-
-    ! select case (reaction_id)
-    ! case(1)
-    !    ! print *, "coherent scattering"
-    !    call coherent_scattering_reaction(ph, endf)
-    ! case(2)
-    !    ! print *, "incoherent scattering"
-    !    call incoherent_scattering_reaction(ph, endf)
-    ! case(3)
-    !    print *, "pair formation in electric field"
-    !    call pair_production(ph, mfp)
-    ! case(4)
-    !    print *, "pair formation in nuclear field"
-    !    call pair_production(ph, mfp)
-    ! case default
-    !    ! print *, "ionization", reaction_id-4, size(endf%mf23%photo_ionization)
-    !    end=photo_ionization(ph, endf, reaction_id)
-    ! end select
+    select case (reaction_id)
+    case(1)
+       print *, "coherent scattering", ph%energy
+       call coherent_scattering_reaction(ph, endf)
+    case(2)
+       print *, "incoherent scattering", ph%energy
+       call incoherent_scattering_reaction(ph, endf)
+    case(3)
+       print *, "pair formation in electric field", ph%energy
+       call pair_production(ph, mfp)
+    case(4)
+       print *, "pair formation in nuclear field", ph%energy
+       call pair_production(ph, mfp)
+    case default
+       print *, "ionization", ph%energy
+       end=photo_ionization(ph, endf, reaction_id)
+    end select
 
   end function reaction_function
 
@@ -285,9 +283,9 @@ contains
     class(cells), intent(inout), allocatable :: cell_all(:)
     type(photon), pointer, intent(inout) :: ph
     integer, intent(inout) :: cell_from
-    type(photon), pointer :: current_photon
+    type(photon), pointer :: current_photon, temp
     integer :: cell_index, k, j!, cell_index_new
-    logical :: end
+    logical :: end, has_next, has_previous
     real(kind(1.d0)) :: distance_to_cell
     type(coordinate) :: mfp
     end=.false.
@@ -295,6 +293,11 @@ contains
     ! cell_from=1
     ! print *, "from", cell_from
     do k=1, 1000
+       if(ph%energy<1000) then
+          end=.true.
+          exit
+       end if
+
        mfp=calculate_mfp(ph, cell_all(cell_from)%cell_array%cell_material &
             %get_mu_value(ph%energy), cell_all(cell_from)%cell_array% &
             cell_material% density)
@@ -325,6 +328,23 @@ contains
           end do
        else if(cell_index==0) then
           ! remove photon from linked list
+          ! has_next=associated(ph%next_photon)
+          ! has_previous=associated(ph%previous_photon)
+          ! temp=>ph
+
+          ! if(.not. has_previous) then
+          !    ! Current photon is head.
+          !    ph=>ph%next_photon
+          ! else if(.not. has_next) then
+          !    ! Current photon is last.
+          !    ph=>ph%previous_photon
+          ! else
+          !    ! Current photon is in the middle.
+          !    ph%previous_photon=>ph%next_photon
+          !   ! ph%next_photon=>
+          ! end if
+          ! deallocate(temp)
+
           print *, "exited", cell_from, cell_index
           call show(mfp)
           end=.true.
@@ -332,7 +352,7 @@ contains
        else
           end=.false.
           ! Reaction happens at the source.
-          print *, "at source", cell_from, cell_index
+          ! print *, "at source", cell_from, cell_index
           end=reaction_function(cell_all(cell_index)%cell_array% &
                cell_material%endf, ph, mfp)
 

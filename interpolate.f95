@@ -26,12 +26,20 @@ contains
        print *, array(axis1, 2), array(axis2, 2)
        print *, array(axis1, 3), array(axis2, 3)
        error stop
+    else if(array(axis1, 1)==array(axis1, 2) .and. x<=array(axis1, 3)) then
+       i=2
+       r=array(axis2, i-1)+(x-array(axis1, i-1))*(array(axis2, i)-&
+            array(axis2, i-1))/(array(axis1, i)-array(axis1, i-1))
     else
        i=binary_search(array, x, nx, axis1)
 
-       if(array(axis1, 1)==array(axis1, 2)) then
-          i=2
-       end if
+       ! if(array(axis1, 1)==array(axis1, 2) .and. x<=array(axis1, 3)) then
+       !    ! print *, "help?", x
+       !    ! print *, array(axis1, 1), array(axis2, 1)
+       !    ! print *, array(axis1, 2), array(axis2, 2)
+       !    ! print *, array(axis1, 3), array(axis2, 3)
+       !    i=2
+       ! end if
 
        r=array(axis2, i-1)+(x-array(axis1, i-1))*(array(axis2, i)-&
             array(axis2, i-1))/(array(axis1, i)-array(axis1, i-1))

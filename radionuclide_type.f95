@@ -34,9 +34,11 @@ contains
     origin=coordinate(1.0_8, 1.0_8, 1.0_8)
 
     if(std_uniform_distribution()<=0.85) then
-       call create_photon(ph, 1173E3_8, origin)
+       ! call create_photon(ph, 1173E3_8, origin)
+       call create_photon(ph, 1173E4_8, origin)
     else
-       call create_photon(ph, 1332E3_8, origin)
+       ! call create_photon(ph, 1332E3_8, origin)
+       call create_photon(ph, 1332E4_8, origin)
     end if
   end function pdf_co_60
 
