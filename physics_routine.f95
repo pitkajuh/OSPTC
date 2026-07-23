@@ -11,26 +11,71 @@ module physics_routine
 contains
 
   subroutine pair_production(ph, mfp)
-    type(photon), intent(inout) :: ph
+    type(photon), pointer, intent(inout) :: ph
     type(coordinate), intent(in) :: mfp
-    type(photon), pointer :: left, right
+    type(photon), pointer :: left, right, current_photon, temporary_photon
     allocate(left)
     allocate(right)
+    print *, "pair"
 
+    ! Create photon going left
     left%energy=electron_mass
     left%direction=create_unit_vector(multiply_scalar(mfp, -1.0_8))
     left%origin=mfp
+    left%id=ph%id+1
+    ! Connect to head photon
+    left%previous_photon=>ph
 
     right%energy=electron_mass
     right%direction=create_unit_vector(mfp)
     right%origin=mfp
+    right%id=left%id+1
+    right%previous_photon=>left
 
-    left%next_photon=right
+    left%next_photon=>right
+
+    ph%next_photon=>left
+
+
+    ! temporary_photon=>ph
+    ! ph=>ph%next_photon
+    ! deallocate(temporary_photon)
+    current_photon=>ph
+
+
+
+
+    ! do while(associated(current_photon))
+    !    ! print *, current_photon%energy
+    !    if(.not. associated(current_photon%next_photon)) then
+    !       ! print *, "aocrahoec"
+    !       allocate(current_photon%next_photon)
+    !       current_photon%next_photon=>left
+    !       ! print *, "at", current_photon%next_photon%energy
+    !       ! current_photon%next_photon%next_photon=>right
+    !       exit
+    !    end if
+    !    current_photon=>current_photon%next_photon
+    ! end do
+
+    current_photon=>ph
+
+    do while(associated(current_photon))
+       print *, current_photon%energy, current_photon%id
+       ! if(associated(current_photon%next_photon)) then
+       !    current_photon%next_photon=>left
+       !    exit
+       ! end if
+       current_photon=>current_photon%next_photon
+    end do
+
+
+    ! ph%next_photon
   end subroutine pair_production
 
   function photo_ionization(ph, endf, reaction_id) result(end)
     type(tape), intent(in) :: endf
-    type(photon), intent(inout) :: ph
+    type(photon), pointer, intent(inout) :: ph
     integer, intent(in) :: reaction_id
     real(kind(1.d0)) :: ionization_energy
     logical :: end
@@ -122,7 +167,7 @@ contains
 
   subroutine incoherent_scattering_reaction(ph, endf)
     type(tape), intent(inout) :: endf
-    type(photon), intent(inout) :: ph
+    type(photon), pointer, intent(inout) :: ph
     real(kind(1.d0)) :: mu
     print *, "energy before", ph%energy
     mu=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
@@ -133,7 +178,7 @@ contains
 
   subroutine coherent_scattering_reaction(ph, endf)
     type(tape), intent(inout) :: endf
-    type(photon), intent(inout) :: ph
+    type(photon), pointer, intent(inout) :: ph
     real(kind(1.d0)) :: mu
     mu=sample_coherent_scattering_angle(endf%n_coherent, ph%energy, endf%coherent_A)
     ph%direction=create_unit_vector(ph%direction*mu)
@@ -159,7 +204,7 @@ contains
     real(kind(1.d0)) :: r, total, random_value
     real(kind(1.d0)), dimension(4+endf%mf23%n_ionization+1) :: limits
     integer :: i, reaction_id
-    ! allocate(limits(4+endf%mf23%n_ionization+1))
+
     i=2
     r=0.0_8
     limits(1)=0.0
@@ -198,7 +243,7 @@ contains
 
   function reaction_function(endf, ph, mfp) result(end)
     type(tape), intent(inout) :: endf
-    type(photon), intent(inout) :: ph
+    type(photon), pointer, intent(inout) :: ph
     type(coordinate), intent(in) :: mfp
     integer :: reaction_id
     real(kind(1.d0)) :: angle
@@ -232,8 +277,9 @@ contains
 
   function surface_tracking(cell_all, ph, cell_from) result(end)
     class(cells), intent(inout), allocatable :: cell_all(:)
-    type(photon), intent(inout) :: ph
+    type(photon), pointer, intent(inout) :: ph
     integer, intent(inout) :: cell_from
+    type(photon), pointer :: current_photon
     integer :: cell_index, k, j!, cell_index_new
     logical :: end
     real(kind(1.d0)) :: distance_to_cell
@@ -284,19 +330,24 @@ contains
           end=reaction_function(cell_all(cell_index)%cell_array% &
                cell_material%endf, ph, mfp)
 
-          ! Photon must be removed, if it has negative energy
-          ! if(ph%energy<0) then
-          !    end=.true.
-          ! end if
-
-          print *, "----- origin end"
-          ph%origin=mfp
-          call show(mfp)
-          print *, "-----"
+          ! print *, "----- origin end1"
+          ! ph%origin=mfp
+          ! call show(mfp)
+          ! print *, "-----"
           exit
        end if
        print *, ph%energy
     end do
+
+    if(end .eqv. .true.) then
+       print *, "id", ph%id
+       ! current_photon=>ph
+
+       ! do while(associated(current_photon))
+       !    if()
+       ! end do
+    end if
+
 
   end function surface_tracking
 

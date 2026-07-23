@@ -4,6 +4,7 @@ module photon_type
   implicit none
 
   type :: photon
+     integer :: id
      real(kind(1.d0)) :: energy
      type(coordinate) :: direction
      type(coordinate) :: origin

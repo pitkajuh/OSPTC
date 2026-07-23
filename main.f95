@@ -133,16 +133,18 @@ program main
   ! end do
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=10E4
+  co_60_source%activity=10!E4
 
   end=.false.
-  do second=1, 1000
+  ! do second=1, 10!00
      print *, second, "s"
 
-     do i=1, co_60_source%activity
+     ! do i=1, co_60_source%activity
         cell_index=1
         ph=co_60_source%pdf()
+        ph%id=1
         ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
+
         ph%next_photon=>null()
         current_photon=>ph
         print *, "----- origin begin"
@@ -157,8 +159,8 @@ program main
 
            current_photon=>current_photon%next_photon
         end do
-     end do
-  end do
+     ! end do
+  ! end do
 
 
 
