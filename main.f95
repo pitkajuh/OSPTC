@@ -29,12 +29,15 @@ program main
   allocate(nitrogen :: nitrogen1)
   call nitrogen1%create()
 
+
+
+
   allocate(cell_all(2))
 
   allocate(cell_cylinder_truncated_z::cell_all(1)%cell_array)
   select type(cell_array => cell_all(1)%cell_array)
   class is (cell_cylinder_truncated_z)
-     cell_array%name="source"
+     ! cell_array%name="source"
      cell_array%cell_material=steel1
      call cell_array%create(0.1_8, -0.1_8, 0.1_8, 0.0_8, 0.0_8, 0.0_8)
   end select
@@ -42,7 +45,7 @@ program main
   allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
   select type(cell_array => cell_all(2)%cell_array)
   class is (cell_cylinder_truncated_z)
-     cell_array%name="outside"
+     ! cell_array%name="outside"
      cell_array%cell_material=nitrogen1
      call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
   end select
@@ -53,23 +56,11 @@ program main
   ! print *, source_cell%cell_test(new_location)
 
 
-  do i=1, size(cell_all)
-     ! select type(cell_array => cell_all(i)%cell_array)
-
-     !    print *,cell_all(i)%name
-     !    ! cell_all%cell_array(i)!%surface_cylinder%v
-     ! end select
-     print *, cell_all(i)%cell_array%name
-     deallocate(cell_all(i)%cell_array%cell_material%mu)
-     deallocate(cell_all(i)%cell_array%cell_material%endf%coherent_A)
-     ! print *, cell_all(i)%cell_array%cell_test(new_location)
-  end do
 
 
 
 
 
-  allocate(ph)
   ! ph%energy=1
   ! current_photon=>ph
 
@@ -89,9 +80,12 @@ program main
   !    current_photon=>current_photon%next_photon
   ! end do
 
-  allocate(co_60 :: co_60_source)
-  co_60_source%activity=10!E4
 
+
+  ! allocate(co_60 :: co_60_source)
+  ! co_60_source%activity=10!E4
+
+  ! allocate(ph)
   ! end=.false.
   ! ! do second=1, 10!00
   !    print *, second, "s"
@@ -118,10 +112,34 @@ program main
   !       end do
   !    ! end do
   ! ! end do
+  ! deallocate(co_60_source)
+  ! if(associated(ph)) then
+  !     deallocate(ph)
+  ! end if
 
 
 
-        ! deallocate(ph)
-  deallocate(co_60_source)
+  ! do i=1, size(cell_all)
+  !    ! deallocate(cell_all(i))
+  !    ! select type(cell_array => cell_all(i)%cell_array)
+
+  !    !    print *,cell_all(i)%name
+  !    !    ! cell_all%cell_array(i)!%surface_cylinder%v
+  !    ! end select
+  !    ! print *, cell_all(i)%cell_array%name
+  !    ! deallocate(cell_all(i)%cell_array%cell_material%mu)
+  !    ! deallocate(cell_all(i)%cell_array%cell_material%endf%coherent_A)
+  !    ! deallocate(cell_all(i)%cell_array%cell_material%endf%mf23%photo_ionization)
+  !    ! call clear_mf23(cell_all(i)%cell_array%cell_material%endf%mf23)
+  !    ! call clear_mf27(cell_all(i)%cell_array%cell_material%endf%mf27)
+  !    ! ! print *, cell_all(i)%cell_array%cell_test(new_location)
+  ! end do
+
+
+
+
+  deallocate(steel1)
+  deallocate(nitrogen1)
+
   deallocate(cell_all)
 end program main

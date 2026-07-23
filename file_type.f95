@@ -66,7 +66,7 @@ contains
     do i=1, this%n_ionization!this%photo_ionization(n-8)
        call section_destructor(this%photo_ionization(i))
     end do
-    deallocate(this%photo_ionization)
+    ! deallocate(this%photo_ionization)
   end subroutine clear_mf23
 
   subroutine create_mf23(this, z, ios, n)
