@@ -29,7 +29,8 @@ contains
     print *, "pair"
 
     ! Create photon going left
-    call create_annihilation_photon(left, multiply_scalar(mfp, -1.0_8), mfp, ph%id+1)
+    call create_annihilation_photon(left, multiply_scalar(mfp, -1.0_8), &
+         mfp, ph%id+1)
     ! Connect to head photon
     left%previous_photon=>ph
     ph%next_photon=>left
@@ -42,8 +43,10 @@ contains
 
     temporary_photon=>ph
     ph=>ph%next_photon
-    deallocate(temporary_photon)
-
+    if(associated(temporary_photon)) then
+       print *, "deleting photon", temporary_photon%id
+       deallocate(temporary_photon)
+    end if
 
 
     current_photon=>ph
@@ -64,16 +67,16 @@ contains
     !    current_photon=>current_photon%next_photon
     ! end do
 
-    current_photon=>ph
+    ! current_photon=>ph
 
-    do while(associated(current_photon))
-       print *, current_photon%energy, current_photon%id
-       ! if(associated(current_photon%next_photon)) then
-       !    current_photon%next_photon=>left
-       !    exit
-       ! end if
-       current_photon=>current_photon%next_photon
-    end do
+    ! do while(associated(current_photon))
+    !    print *, current_photon%energy, current_photon%id
+    !    ! if(associated(current_photon%next_photon)) then
+    !    !    current_photon%next_photon=>left
+    !    !    exit
+    !    ! end if
+    !    current_photon=>current_photon%next_photon
+    ! end do
 
 
     ! ph%next_photon
@@ -283,14 +286,13 @@ contains
     type(photon), pointer, intent(inout) :: ph
     integer, intent(inout) :: cell_from
     type(photon), pointer :: current_photon, temp
-    integer :: cell_index, k, j!, cell_index_new
+    integer :: cell_index, k, j
     logical :: end, has_next, has_previous
     real(kind(1.d0)) :: distance_to_cell
     type(coordinate) :: mfp
     end=.false.
-    ! cell_index_new=cell_from
-    ! cell_from=1
-    ! print *, "from", cell_from
+    print *, "PHOTON", ph%id
+
     do k=1, 1000
        if(ph%energy<1000) then
           end=.true.
@@ -306,7 +308,6 @@ contains
           do j=cell_index, size(cell_all)
              distance_to_cell=cell_all(j)%cell_array% &
                   cell_distance(ph%origin, ph%direction)
-             ! print *, distance_to_cell, ph%origin, ph%direction
 
              if(cell_all(j)%cell_array%cell_material%density==cell_all(j-1) &
                   %cell_array%cell_material%density) then
@@ -329,22 +330,33 @@ contains
           ! remove photon from linked list
           has_next=associated(ph%next_photon)
           has_previous=associated(ph%previous_photon)
-          temp=>ph
 
+          ! temp=>ph
           if(.not. has_previous) then
              ! Current photon is head.
+             print *, "AAA .not. has_previous"
+             temp=>ph
              ph=>ph%next_photon
+             deallocate(temp)
           else if(.not. has_next) then
              ! Current photon is last.
-             ph=>ph%previous_photon
+             print *, "AAA .not. has_next"
+             temp=>ph
+             ! ph=>ph%previous_photon
+             ph%previous_photon=>null()
+             deallocate(temp)
           else
              ! Current photon is in the middle.
-             ph%previous_photon=>ph%next_photon
-            ! ph%next_photon=>
-          end if
-          deallocate(temp)
+             print *, "AAA, middle"
+             temp=>ph
+             ph%previous_photon%next_photon=>ph%next_photon
+             ph%next_photon%previous_photon=>ph%previous_photon
 
-          print *, "exited", cell_from, cell_index
+             deallocate(temp)
+          end if
+
+
+          print *, "exited"
           call show(mfp)
           end=.true.
           exit
@@ -364,15 +376,15 @@ contains
        print *, ph%energy
     end do
 
-    if(end .eqv. .true.) then
-       print *, "id", ph%id
-       ! current_photon=>ph
+    ! if(end .eqv. .true.) then
+    !    print *, "id", ph%id
+    !    ! current_photon=>ph
 
-       ! do while(associated(current_photon))
-       !    if()
-       ! end do
-    end if
-
+    !    ! do while(associated(current_photon))
+    !    !    if()
+    !    ! end do
+    ! end if
+    print *, " "
 
   end function surface_tracking
 

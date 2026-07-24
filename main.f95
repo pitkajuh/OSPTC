@@ -8,14 +8,35 @@ program main
   use physics_routine
   use photon_type
   implicit none
-
+  integer, allocatable :: seed1(:)
+  ! integer, dimension(100) :: ix
+  integer :: n, time, count1, i
   integer :: second, cell_index
   class(material), allocatable :: steel1
   class(material), allocatable :: nitrogen1
-  type(photon), pointer :: current_photon, ph
+  type(photon), pointer :: current_photon, ph, temp
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop, reaction, end
   class(cells), allocatable :: cell_all(:)
+
+  ! call random_seed(size=n)
+  ! allocate(seed1(n))
+  ! call system_clock(count=count1)
+  ! print *, count1
+  ! do i=1, n
+  !    seed1(i)=count1+i*99999
+  ! end do
+
+  ! call random_seed(put=seed1)
+
+  ! seed1=count
+  ! call random_seed(put=ix(1:n))
+
+  ! call random_seed(size=n)
+  ! allocate(seed1(n))
+  ! seed1=time()
+  ! call random_seed(get=seed1)
+
   reaction=.false.
   cell_hit=.false.
   continue_loop=.false.
@@ -106,10 +127,22 @@ program main
         end do
      ! end do
   end do
+  print *, "END"
   deallocate(co_60_source)
-  if(associated(ph)) then
-      deallocate(ph)
-  end if
+
+  current_photon=>ph
+
+  do while(associated(current_photon))
+     temp=>current_photon
+     current_photon=>current_photon%next_photon
+     if(associated(temp)) then
+        deallocate(temp)
+     end if
+  end do
+
+  ! if(associated(ph)) then
+  !     deallocate(ph)
+  ! end if
 
 
 
@@ -130,10 +163,9 @@ program main
   ! end do
 
 
-
-
   deallocate(steel1)
   deallocate(nitrogen1)
 
   deallocate(cell_all)
+
 end program main
