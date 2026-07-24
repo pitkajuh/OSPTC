@@ -117,32 +117,42 @@ program main
         call show(ph%origin)
         print *, "-----"
         do while (associated(current_photon))
+           print *, "looping"
            end=surface_tracking(cell_all, current_photon, cell_index)
 
            if(end .eqv. .false.) then
               cycle
+           else if(end .eqv. .true. .or. .not. associated(current_photon)) then
+              exit
            end if
 
            current_photon=>current_photon%next_photon
         end do
      ! end do
   end do
+
+  ph=>current_photon
+
   print *, "END"
+  print *, "delete source"
   deallocate(co_60_source)
 
-  current_photon=>ph
+  ! current_photon=>ph
 
-  do while(associated(current_photon))
-     temp=>current_photon
-     current_photon=>current_photon%next_photon
-     if(associated(temp)) then
-        deallocate(temp)
-     end if
-  end do
+  ! do while(associated(current_photon))
+  !    temp=>current_photon
 
-  ! if(associated(ph)) then
-  !     deallocate(ph)
-  ! end if
+  !    if(associated(temp)) then
+  !       print *, "delete", temp%id
+  !       deallocate(temp)
+  !    end if
+  !    current_photon=>current_photon%next_photon
+  ! end do
+
+  if(associated(ph)) then
+     print *, "main, deleting", ph%id
+      deallocate(ph)
+  end if
 
 
 
@@ -162,10 +172,11 @@ program main
   !    ! ! print *, cell_all(i)%cell_array%cell_test(new_location)
   ! end do
 
-
+  print *, "del steel1"
   deallocate(steel1)
+  print *, "del nitrogen1"
   deallocate(nitrogen1)
-
+  print *, "del cells"
   deallocate(cell_all)
 
 end program main

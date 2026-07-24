@@ -32,7 +32,7 @@ contains
     call create_annihilation_photon(left, multiply_scalar(mfp, -1.0_8), &
          mfp, ph%id+1)
     ! Connect to head photon
-    left%previous_photon=>ph
+    ! left%previous_photon=>ph
     ph%next_photon=>left
 
     ! Create photon going right
@@ -328,36 +328,44 @@ contains
           end do
        else if(cell_index==0) then
           ! remove photon from linked list
-          has_next=associated(ph%next_photon)
-          has_previous=associated(ph%previous_photon)
+          ! has_next=associated(ph%next_photon)
+          ! has_previous=associated(ph%previous_photon)
+          ! print *, "exited, want to delete", ph%id
 
-          ! temp=>ph
-          if(.not. has_previous) then
-             ! Current photon is head.
-             print *, "AAA .not. has_previous"
-             temp=>ph
-             ph=>ph%next_photon
-             deallocate(temp)
-          else if(.not. has_next) then
-             ! Current photon is last.
-             print *, "AAA .not. has_next"
-             temp=>ph
-             ! ph=>ph%previous_photon
-             ph%previous_photon=>null()
-             deallocate(temp)
-          else
-             ! Current photon is in the middle.
-             print *, "AAA, middle"
-             temp=>ph
-             ph%previous_photon%next_photon=>ph%next_photon
-             ph%next_photon%previous_photon=>ph%previous_photon
+          ! ! temp=>ph
+          ! if(has_next .and. .not. has_previous) then
+          !    ! Current photon is head.
+          !    print *, "AAA .not. has_previous"
+          !    temp=>ph
+          !    ph=>ph%next_photon
+          !    deallocate(temp)
+          ! else if(.not. has_next .and. has_previous) then
+          !    ! Current photon is last.
+          !    print *, "AAA .not. has_next"
+          !    print *, "previous photon is", ph%previous_photon%id
+          !    temp=>ph
+          !    ! ph=>ph%previous_photon
+          !    ph%previous_photon=>null()
+          !    deallocate(temp)
+          ! else if(has_previous .and. has_next) then
+          !    ! Current photon is in the middle.
+          !    print *, "AAA, middle", has_previous, has_next
+          !    temp=>ph
+          !    print *, "first", ph%previous_photon%next_photon%id, ph%next_photon%id
+          !    ph%previous_photon%next_photon=>ph%next_photon
+          !    print *, "second", ph%next_photon%previous_photon%id, ph%previous_photon%id
+          !    ph%next_photon%previous_photon=>ph%previous_photon
 
-             deallocate(temp)
-          end if
+          !    deallocate(temp)
+          ! else
+          !    print *, "deleting11", ph%id
+          !    deallocate(ph)
+          !    ph=>null()
+          !    print *, "deleted11"
+          ! !    print *, "what happened?"
+          ! !    error stop
+          ! end if
 
-
-          print *, "exited"
-          call show(mfp)
           end=.true.
           exit
        else
@@ -376,14 +384,52 @@ contains
        print *, ph%energy
     end do
 
-    ! if(end .eqv. .true.) then
+    if(end .eqv. .true.) then
+       has_next=associated(ph%next_photon)
+       has_previous=associated(ph%previous_photon)
+       print *, "exited, want to delete", ph%id
+
+       ! temp=>ph
+       if(has_next .and. .not. has_previous) then
+          ! Current photon is head.
+          print *, "AAA .not. has_previous"
+          temp=>ph
+          ph=>ph%next_photon
+          deallocate(temp)
+       else if(.not. has_next .and. has_previous) then
+          ! Current photon is last.
+          print *, "AAA .not. has_next"
+          print *, "previous photon is", ph%previous_photon%id
+          temp=>ph
+          ! ph=>ph%previous_photon
+          ph%previous_photon=>null()
+          deallocate(temp)
+       else if(has_previous .and. has_next) then
+          ! Current photon is in the middle.
+          print *, "AAA, middle", has_previous, has_next
+          temp=>ph
+          print *, "first", ph%previous_photon%next_photon%id, ph%next_photon%id
+          ph%previous_photon%next_photon=>ph%next_photon
+          print *, "second", ph%next_photon%previous_photon%id, ph%previous_photon%id
+          ph%next_photon%previous_photon=>ph%previous_photon
+
+          deallocate(temp)
+       else
+          print *, "deleting11", ph%id
+          deallocate(ph)
+          ph=>null()
+          print *, "deleted11"
+          !    print *, "what happened?"
+          !    error stop
+       end if
+
     !    print *, "id", ph%id
     !    ! current_photon=>ph
 
     !    ! do while(associated(current_photon))
     !    !    if()
     !    ! end do
-    ! end if
+    end if
     print *, " "
 
   end function surface_tracking
