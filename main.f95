@@ -99,7 +99,7 @@ program main
 
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=10!E4
+  co_60_source%activity=10E2
 
   ! allocate(ph)
   end=.false.
@@ -114,25 +114,24 @@ program main
 
         ph%next_photon=>null()
         current_photon=>ph
-        print *, "----- origin begin"
-        call show(ph%origin)
-        print *, "-----"
+        ! print *, "----- origin begin"
+        ! call show(ph%origin)
+        ! print *, "-----"
         do while (associated(current_photon))
            end=surface_tracking(cell_all, current_photon, cell_index)
 
            if(end .eqv. .false.) then
               cycle
            else if(end .eqv. .true.) then
-              print *, "exiting loop"
+              ! print *, "exiting loop"
               ! ph=>current_photon
               if(associated(current_photon)) then
-                 print *, "main, deleting", current_photon%id
+                 ! print *, "main, deleting", current_photon%id
                  deallocate(current_photon)
               end if
               ! deallocate(current_photon)
               exit
            end if
-           print *, "acore"
            current_photon=>current_photon%next_photon
         end do
      end do

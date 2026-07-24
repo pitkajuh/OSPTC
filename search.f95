@@ -22,7 +22,11 @@ contains
        i=left+floor(A1)
 
        if(i==1) then
-          print *, "Houston, we have a problem."
+          i=i+1
+          print *, "Houston, we have a problem.", x, nx
+          print *, array(1, 1), array(2, 1)
+          print *, array(1, 2), array(2, 2)
+          print *, array(1, 3), array(2, 3)
        end if
 
        if(array(axis, i)<x) then
@@ -33,10 +37,6 @@ contains
           exit
        end if
     end do
-
-    if(i==1) then
-       print *, "Houston1, we have a problem."
-    end if
 
   end function binary_search
 end module search

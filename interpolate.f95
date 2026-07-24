@@ -21,7 +21,7 @@ contains
        r=x*array(2, i)/array(1, i)
     else if(x>array(1, nx)) then
        ! Needs extrapolation
-       print *, "Houston2, we have a problem, want ", x
+       print *, "Houston2, we have a problem, want extrapolation", x
        print *, array(axis1, 1), array(axis2, 1)
        print *, array(axis1, 2), array(axis2, 2)
        print *, array(axis1, 3), array(axis2, 3)
@@ -40,7 +40,7 @@ contains
        !    ! print *, array(axis1, 3), array(axis2, 3)
        !    i=2
        ! end if
-
+       ! print *, "i=", i
        r=array(axis2, i-1)+(x-array(axis1, i-1))*(array(axis2, i)-&
             array(axis2, i-1))/(array(axis1, i)-array(axis1, i-1))
     end if

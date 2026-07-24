@@ -26,7 +26,7 @@ contains
     type(photon), pointer :: left, right, current_photon, temporary_photon
     allocate(left)
     allocate(right)
-    print *, "pair"
+    ! print *, "pair"
 
     ! Create photon going left
     call create_annihilation_photon(left, multiply_scalar(mfp, -1.0_8), &
@@ -44,7 +44,7 @@ contains
     temporary_photon=>ph
     ph=>ph%next_photon
     if(associated(temporary_photon)) then
-       print *, "deleting photon", temporary_photon%id
+       ! print *, "deleting photon", temporary_photon%id
        deallocate(temporary_photon)
     end if
 
@@ -158,7 +158,7 @@ contains
     xmax=x(energy, -1.0_8)
     mu=0.0_8
     ! print *, "sample"
-    ! print *, xmax
+
     Amax=linear_interpolation(A, xmax, n, 1, 2)
     a1=energy/electron_mass
     i=0
@@ -294,6 +294,7 @@ contains
     ! print *, "PHOTON", ph%id
 
     do k=1, 1000
+       ! Ignore photons with energy less than 1 keV.
        if(ph%energy<1000) then
           end=.true.
           exit
@@ -387,48 +388,39 @@ contains
     if(end .eqv. .true.) then
        has_next=associated(ph%next_photon)
        has_previous=associated(ph%previous_photon)
-       print *, "exited, want to delete", ph%id
+       ! print *, "exited, want to delete", ph%id
 
        ! temp=>ph
        if(has_next .and. .not. has_previous) then
           ! Current photon is head.
-          print *, "AAA .not. has_previous"
+          ! print *, "AAA .not. has_previous"
           temp=>ph
           ph=>ph%next_photon
           deallocate(temp)
        else if(.not. has_next .and. has_previous) then
           ! Current photon is last.
-          print *, "AAA .not. has_next"
-          print *, "previous photon is", ph%previous_photon%id
+          ! print *, "AAA .not. has_next"
+          ! print *, "previous photon is", ph%previous_photon%id
           temp=>ph
           ! ph=>ph%previous_photon
           ph%previous_photon=>null()
           deallocate(temp)
        else if(has_previous .and. has_next) then
           ! Current photon is in the middle.
-          print *, "AAA, middle", has_previous, has_next
+          ! print *, "AAA, middle", has_previous, has_next
           temp=>ph
-          print *, "first", ph%previous_photon%next_photon%id, ph%next_photon%id
+          ! print *, "first", ph%previous_photon%next_photon%id, ph%next_photon%id
           ph%previous_photon%next_photon=>ph%next_photon
-          print *, "second", ph%next_photon%previous_photon%id, ph%previous_photon%id
+          ! print *, "second", ph%next_photon%previous_photon%id, ph%previous_photon%id
           ph%next_photon%previous_photon=>ph%previous_photon
 
           deallocate(temp)
        else
-          print *, "deleting11", ph%id
+          ! print *, "deleting11", ph%id
           deallocate(ph)
           ph=>null()
-          print *, "deleted11"
-          !    print *, "what happened?"
-          !    error stop
+          ! print *, "deleted11"
        end if
-
-    !    print *, "id", ph%id
-    !    ! current_photon=>ph
-
-    !    ! do while(associated(current_photon))
-    !    !    if()
-    !    ! end do
     end if
 
   end function surface_tracking
