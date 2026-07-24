@@ -101,11 +101,12 @@ program main
   allocate(co_60 :: co_60_source)
   co_60_source%activity=10!E4
 
-  allocate(ph)
+  ! allocate(ph)
   end=.false.
-  do second=1, 1!00
+  do second=1, 10
 
-     ! do i=1, co_60_source%activity
+     do i=1, co_60_source%activity
+        allocate(ph)
         cell_index=1
         ph=co_60_source%pdf()
         ph%id=1
@@ -117,21 +118,27 @@ program main
         call show(ph%origin)
         print *, "-----"
         do while (associated(current_photon))
-           print *, "looping"
            end=surface_tracking(cell_all, current_photon, cell_index)
 
            if(end .eqv. .false.) then
               cycle
-           else if(end .eqv. .true. .or. .not. associated(current_photon)) then
+           else if(end .eqv. .true.) then
+              print *, "exiting loop"
+              ! ph=>current_photon
+              if(associated(current_photon)) then
+                 print *, "main, deleting", current_photon%id
+                 deallocate(current_photon)
+              end if
+              ! deallocate(current_photon)
               exit
            end if
-
+           print *, "acore"
            current_photon=>current_photon%next_photon
         end do
-     ! end do
+     end do
   end do
 
-  ph=>current_photon
+  ! ph=>current_photon
 
   print *, "END"
   print *, "delete source"
@@ -149,10 +156,10 @@ program main
   !    current_photon=>current_photon%next_photon
   ! end do
 
-  if(associated(ph)) then
-     print *, "main, deleting", ph%id
-      deallocate(ph)
-  end if
+  ! if(associated(ph)) then
+  !    print *, "main, deleting", ph%id
+  !     deallocate(ph)
+  ! end if
 
 
 

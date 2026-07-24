@@ -263,19 +263,19 @@ contains
 
     select case (reaction_id)
     case(1)
-       print *, "coherent scattering", ph%energy
+       ! print *, "coherent scattering", ph%energy
        call coherent_scattering_reaction(ph, endf)
     case(2)
-       print *, "incoherent scattering", ph%energy
+       ! print *, "incoherent scattering", ph%energy
        call incoherent_scattering_reaction(ph, endf)
     case(3)
-       print *, "pair formation in electric field", ph%energy
+       ! print *, "pair formation in electric field", ph%energy
        call pair_production(ph, mfp)
     case(4)
-       print *, "pair formation in nuclear field", ph%energy
+       ! print *, "pair formation in nuclear field", ph%energy
        call pair_production(ph, mfp)
     case default
-       print *, "ionization", ph%energy
+       ! print *, "ionization", ph%energy
        end=photo_ionization(ph, endf, reaction_id)
     end select
 
@@ -291,7 +291,7 @@ contains
     real(kind(1.d0)) :: distance_to_cell
     type(coordinate) :: mfp
     end=.false.
-    print *, "PHOTON", ph%id
+    ! print *, "PHOTON", ph%id
 
     do k=1, 1000
        if(ph%energy<1000) then
@@ -381,7 +381,7 @@ contains
           ! print *, "-----"
           exit
        end if
-       print *, ph%energy
+       ! print *, ph%energy
     end do
 
     if(end .eqv. .true.) then
@@ -430,7 +430,6 @@ contains
     !    !    if()
     !    ! end do
     end if
-    print *, " "
 
   end function surface_tracking
 
