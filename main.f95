@@ -1,4 +1,5 @@
 program main
+  use omp_lib
   use interpolate
   use random
   use cell_type
@@ -99,12 +100,13 @@ program main
 
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=10E2
-
+  co_60_source%activity=1E4
+  call omp_set_num_threads(4)
   ! allocate(ph)
   end=.false.
-  do second=1, 10
 
+  !!!$omp parallel do reduction(+:ph)
+  do second=1, 10
      do i=1, co_60_source%activity
         allocate(ph)
         cell_index=1
@@ -136,6 +138,7 @@ program main
         end do
      end do
   end do
+  !!!$omp end parallel do
 
   ! ph=>current_photon
 

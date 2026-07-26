@@ -17,19 +17,25 @@ contains
     else if(array(axis1, nx)==x) then
        i=nx
        r=array(axis2, i)
-    else if(x<array(1, 1)) then
-       r=x*array(2, i)/array(1, i)
-    else if(x>array(1, nx)) then
+    ! else if(x<array(axis1, 1)) then
+    !    r=x*array(axis2, i)/array(axis1, i)
+    else if(x>array(axis1, nx)) then
        ! Needs extrapolation
        print *, "Houston2, we have a problem, want extrapolation", x
        print *, array(axis1, 1), array(axis2, 1)
        print *, array(axis1, 2), array(axis2, 2)
        print *, array(axis1, 3), array(axis2, 3)
        error stop
-    else if(array(axis1, 1)==array(axis1, 2) .and. x<=array(axis1, 3)) then
+    else if(array(axis1, 1)==array(axis1, 2)) then
        i=2
        r=array(axis2, i-1)+(x-array(axis1, i-1))*(array(axis2, i)-&
             array(axis2, i-1))/(array(axis1, i)-array(axis1, i-1))
+    ! else if(array(axis1, 1)) then
+
+    ! else if(array(axis1, 1)==array(axis1, 2) .and. x<=array(axis1, 3)) then
+    !    i=2
+    !    r=array(axis2, i-1)+(x-array(axis1, i-1))*(array(axis2, i)-&
+    !         array(axis2, i-1))/(array(axis1, i)-array(axis1, i-1))
     else
        i=binary_search(array, x, nx, axis1)
 

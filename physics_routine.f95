@@ -216,7 +216,11 @@ contains
     r=0.0_8
     limits(1)=0.0
     total=0.0_8
-
+    ! print *, energy
+    ! do i=1, endf%mf23%pair_formation_elec%n
+    !    print *, endf%mf23%pair_formation_elec%records(1, i), endf%mf23%pair_formation_elec%records(2, i)
+    ! end do
+    ! error stop
     call sum_cross_sections(limits, endf%mf23%coherent_scattering%records, &
          energy, endf%mf23%coherent_scattering%n, total, 2)
     call sum_cross_sections(limits, endf%mf23%incoherent_scattering%records, &
