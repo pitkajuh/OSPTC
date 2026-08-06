@@ -30,6 +30,7 @@ module file_type
      type(section_pair_formation) :: pair_formation_elec
      type(section_pair_formation) :: pair_formation_nuc
      type(section_photo_ionization), allocatable :: photo_ionization(:)
+     real(kind(1.d0)), allocatable :: ionization_energies(:)
    contains
      procedure, pass :: create => create_mf23
      procedure, pass :: file_clear => clear_mf23
@@ -66,6 +67,8 @@ contains
     do i=1, this%n_ionization!this%photo_ionization(n-8)
        call section_destructor(this%photo_ionization(i))
     end do
+    print *, "clear ion"
+    deallocate(this%ionization_energies)
     ! deallocate(this%photo_ionization)
   end subroutine clear_mf23
 

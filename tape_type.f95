@@ -19,6 +19,7 @@ contains
 
   subroutine clear_tape(this)
     type(tape), intent(inout) :: this
+    print *, "clear mf23"
     call clear_mf23(this%mf23)
     call clear_mf27(this%mf27)
   end subroutine clear_tape

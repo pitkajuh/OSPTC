@@ -13,7 +13,7 @@ module cell_type
   type, abstract :: cell
      character :: name
      integer :: hits
-     class(material), allocatable :: cell_material
+     class(material), pointer:: cell_material
    contains
      procedure(create_cell_test), deferred :: cell_test
      procedure(create_cell_distance), deferred :: cell_distance

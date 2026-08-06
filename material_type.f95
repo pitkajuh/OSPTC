@@ -62,7 +62,7 @@ contains
   function get_mu_value(this, energy) result(mu_value)
     class(material), intent(in) :: this
     real(kind(1.d0)) :: energy, mu_value
-    ! mu values are tabulated with respect to MeV.
+    ! mu values are tabulated as function of MeV
     mu_value=linear_interpolation(this%mu, energy*1E-6_8, this%n, 1, 2)
   end function get_mu_value
 
@@ -72,13 +72,28 @@ contains
     call clear_tape(this%endf)
   end subroutine clear_material
 
+  subroutine get_ionization_energies(this)
+    class(material), intent(inout) :: this
+    integer :: i
+    i=1
+
+    allocate(this%endf%mf23%ionization_energies(this%endf%mf23%n_ionization))
+
+    do i=1, this%endf%mf23%n_ionization
+       this%endf%mf23%ionization_energies(i)=this%endf%mf23% &
+            photo_ionization(this%endf%mf23%n_ionization-i+1)%header(1, 2)
+    end do
+
+  end subroutine get_ionization_energies
+
   subroutine create_steel(this)
     class(steel), intent(inout) :: this
     this%density=7.874
+    print *, "Create steel"
     call read_tape(this%endf, 'cross-sections/photoat-026_Fe_000.endf')
     this%n=37
     allocate(this%mu(3, 37))
-    print *, "Create steel"
+    call get_ionization_energies(this)
     ! Taken from https://physics.nist.gov/PhysRefData/XrayMassCoef/ElemTab/z26.html
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,9.085E+03,9.052E+03,&
@@ -108,10 +123,11 @@ contains
   subroutine create_iodine(this)
     class(iodine), intent(inout) :: this
     this%density=4.930
+    print *, "Create iodine"
     call read_tape(this%endf, 'cross-sections/photoat-053_I_000.endf')
     this%n=48
     allocate(this%mu(3, 48))
-
+    ! call get_ionization_energies(this)
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,9.096E+03,9.078E+03,&
          1.03542E+03,8.465E+03,8.448E+03,1.07210E+03,7.863E+03,7.847E+03,&
@@ -143,10 +159,11 @@ contains
   subroutine create_sodium(this)
     class(sodium),intent(inout) :: this
     this%density=9.710E-01
+    print *, "Create sodium"
     call read_tape(this%endf, 'cross-sections/photoat-011_Na_000.endf')
     this%n=39
     allocate(this%mu(3, 39))
-
+    call get_ionization_energies(this)
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,6.542E+02,6.522E+02,&
          1.03542E+03,5.960E+02,5.941E+02,1.07210E+03,5.429E+02,5.410E+02,&
@@ -173,10 +190,11 @@ contains
   subroutine create_titanium(this)
     class(titanium), intent(inout) :: this
     this%density=4.540
+    print*, "Create titanium"
     call read_tape(this%endf, 'cross-sections/photoat-022_Ti_000.endf')
     this%n=38
     allocate(this%mu(3, 38))
-
+    call get_ionization_energies(this)
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E+03,5.869E+03,5.860E+03,&
          1.50000E+03,2.096E+03,2.091E+03,2.00000E+03,9.860E+02,9.824E+02,&
@@ -203,10 +221,12 @@ contains
   subroutine create_nitrogen(this)
     class(nitrogen), intent(inout) :: this
     this%density=1.165E-03
+    print *, "Create nitrogen"
     call read_tape(this%endf, 'cross-sections/photoat-007_N_000.endf')
     this%n=36
+    call get_ionization_energies(this)
     allocate(this%mu(3, 36))
-    print *, "Create nitrogen"
+
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,3.311E+03,3.306E+03,&
          1.50000E-03,1.083E+03,1.080E+03,2.00000E-03,4.769E+02,4.755E+02,&
@@ -232,9 +252,11 @@ contains
   subroutine create_hydrogen(this)
     class(hydrogen), intent(inout) :: this
     this%density=8.375E-05
+    print *, "Create hydrogen"
     call read_tape(this%endf, 'cross-sections/photoat-001_H_000.endf')
     this%n=36
     allocate(this%mu(3, 36))
+    ! call get_ionization_energies(this)
 
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,7.217E+00,6.820E+00,&
@@ -262,9 +284,11 @@ contains
   subroutine create_oxygen(this)
     class(oxygen), intent(inout) :: this
     this%density=1.332E-03
+    print *, "Create oxygen"
     call read_tape(this%endf, 'cross-sections/photoat-008_O_000.endf')
     this%n=36
     allocate(this%mu(3, 36))
+    call get_ionization_energies(this)
 
     ! Energy (MeV), μ/ρ (cm2/g), μ_en/ρ (cm2/g)
     this%mu=reshape([1.00000E-03,4.590E+03,4.576E+03,&

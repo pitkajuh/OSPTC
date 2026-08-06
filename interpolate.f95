@@ -8,6 +8,8 @@ contains
     real(kind(1.d0)), intent(in), dimension(:, :) :: array
     integer :: i
     real(kind(1.d0)) :: r
+    ! logical :: ch
+    ! ch=x>=array(axis1, 2) .and. array(axis1, 3)>=x
     r=0.0_8
     i=1
 
@@ -27,7 +29,8 @@ contains
        print *, array(axis1, 3), array(axis2, 3)
        error stop
     else if(array(axis1, 1)==array(axis1, 2)) then
-       i=2
+       ! Photoionization has two same values.
+       i=3
        r=array(axis2, i-1)+(x-array(axis1, i-1))*(array(axis2, i)-&
             array(axis2, i-1))/(array(axis1, i)-array(axis1, i-1))
     ! else if(array(axis1, 1)) then

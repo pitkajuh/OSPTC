@@ -4,6 +4,7 @@ module physics_routine
   use interpolate
   use cell_type
   use photon_type
+  use search
   use photon_angular_distribution
   use constants, only: electron_mass
   implicit none
@@ -89,11 +90,12 @@ contains
     real(kind(1.d0)) :: ionization_energy
     logical :: end
     end=.true.
-    ionization_energy=endf%mf23%photo_ionization(reaction_id-4)%header(2, 1)
+    ionization_energy=endf%mf23%ionization_energies(reaction_id)
 
     if(ionization_energy<ph%energy) then
        ph%energy=ph%energy-ionization_energy
        end=.false.
+    ! else if(ph%energy-ionization_energy==0)
     end if
   end function photo_ionization
 
@@ -205,55 +207,122 @@ contains
     total=total+r
   end subroutine sum_cross_sections
 
+  ! subroutine select_possible_reactions(endf, energy)
+  !   ! Select which reactions are possible with the given energy.
+  !   ! Scattering reactions are always possible. Pair production
+  !   ! and ionization depends on the energy
+  !   type(tape), intent(in) :: endf
+  !   real(kind(1.d0)), intent(in) :: energy
+  !   integer :: i, size
+  !   ! Start from number 2 because there are always at least
+  !   ! two reactions (coherent and incoherent scattering.)
+  !   size=2
+
+  !   if(energy>=2*electron_mass) then
+  !      ! Include pair production in nuclear field. ID=5
+  !      size=size+1
+  !      i=1
+  !   if(energy>=4*electron_mass) then
+  !      ! Include pair production in electron field. ID=4
+  !      size=size+1
+  !      i=1
+  !   do i=1, endf%mf23%n_ionization
+  !      if(energy>=endf%mf23%photo_ionization(i)%header(1, 2)) then
+  !         size=size+1
+  !         print *, endf%mf23%photo_ionization(i)%header(1, 2)
+  !      end if
+  !   end do
+  ! end subroutine select_possible_reactions
+
   function select_reaction(endf, energy) result(reaction_id)
     type(tape), intent(inout) :: endf
     real(kind(1.d0)), intent(in) :: energy
     real(kind(1.d0)) :: r, total, random_value
-    real(kind(1.d0)), dimension(4+endf%mf23%n_ionization+1) :: limits
-    integer :: i, reaction_id
-
+    integer, dimension(2) :: scattering_ids
+    integer, dimension(2) :: pair_production_ids
+    integer :: i, reaction_id, pair_production_size, to
+    real(kind(1.d0)), dimension(2) :: coherent_and_incoherent
+    real(kind(1.d0)), dimension(2) :: pair_production_cross_sections
+    real(kind(1.d0)), allocatable :: ionization_cross_sections(:)
+    pair_production_size=0
     i=2
     r=0.0_8
-    limits(1)=0.0
     total=0.0_8
-    ! print *, energy
-    ! do i=1, endf%mf23%pair_formation_elec%n
-    !    print *, endf%mf23%pair_formation_elec%records(1, i), endf%mf23%pair_formation_elec%records(2, i)
-    ! end do
-    ! error stop
-    call sum_cross_sections(limits, endf%mf23%coherent_scattering%records, &
-         energy, endf%mf23%coherent_scattering%n, total, 2)
-    call sum_cross_sections(limits, endf%mf23%incoherent_scattering%records, &
-         energy, endf%mf23%incoherent_scattering%n, total, 3)
-    call sum_cross_sections(limits, endf%mf23%pair_formation_elec%records, &
-         energy, endf%mf23%pair_formation_elec%n, total, 4)
-    call sum_cross_sections(limits, endf%mf23%pair_formation_nuc%records, &
-         energy, endf%mf23%pair_formation_nuc%n, total, 5)
+    reaction_id=0
 
-    do i=1, endf%mf23%n_ionization
-       ! print *, i, endf%mf23%n_ionization, total, limits(i)
-       call sum_cross_sections(limits, endf%mf23%photo_ionization(i)%records, &
-            energy, endf%mf23%photo_ionization(i)%n, total, 5+i)
+    total=linear_interpolation(endf%mf23%coherent_scattering% &
+         records, energy, endf%mf23%coherent_scattering%n, 1, 2)
+    coherent_and_incoherent(1)=total
+    scattering_ids(1)=502
+    call sum_cross_sections(coherent_and_incoherent, endf%mf23% &
+         incoherent_scattering%records, energy, &
+         endf%mf23%incoherent_scattering%n, total, 2)
+    scattering_ids(2)=504
+
+    if(energy>=4*electron_mass) then
+       pair_production_size=pair_production_size+1
+       pair_production_ids(pair_production_size)=515
+       r=linear_interpolation(endf%mf23%pair_formation_elec% &
+            records, energy, endf%mf23%pair_formation_elec%n, 1, 2)
+       total=total+r
+       pair_production_cross_sections(pair_production_size)=total
+    end if
+
+    if(energy>=2*electron_mass) then
+       pair_production_size=pair_production_size+1
+       pair_production_ids(pair_production_size)=517
+       r=linear_interpolation(endf%mf23%pair_formation_nuc% &
+            records, energy, endf%mf23%pair_formation_nuc%n, 1, 2)
+       total=total+r
+       pair_production_cross_sections(pair_production_size)=total
+    end if
+
+    ! Compare energy to largest ionization value. If it is equal or
+    ! larger, all ionization reactions can be included.
+    if(energy>=endf%mf23%ionization_energies(endf%mf23%n_ionization)) then
+       to=endf%mf23%n_ionization
+    else
+       to=binary_search_1d(endf%mf23%ionization_energies, energy, &
+            endf%mf23%n_ionization)
+    end if
+
+    allocate(ionization_cross_sections(to))
+
+    do i=1, to
+       r=linear_interpolation(endf%mf23%photo_ionization(i)%records, &
+            energy, endf%mf23%photo_ionization(i)%n, 1, 2)
+       total=total+r
+       ionization_cross_sections(i)=total
     end do
 
     random_value=std_uniform_distribution()
-    ! print *, energy, 4+endf%mf23%n_ionization+1, endf%mf23%n_ionization
-    ! do i=2, 4+endf%mf23%n_ionization+1
-    !    print *, i-1, limits(i)/total
-    ! end do
 
-    ! do i=1, 4+endf%mf23%n_ionization
-    !    print *, i, limits(i)/total
-    ! end do
-
-    do i=2, 4+endf%mf23%n_ionization
-       if(random_value<limits(i)/total) then
-          exit
+    do i=1, 2
+       print *, random_value, coherent_and_incoherent(i)/total,  coherent_and_incoherent(i)
+       if(random_value<coherent_and_incoherent(i)/total) then
+          deallocate(ionization_cross_sections)
+          reaction_id=scattering_ids(i)
+          return
        end if
     end do
-    ! deallocate(limits)
-    ! print *, i-1, limits(i-1)/total, random_value, limits(i)/total
-    reaction_id=i-1
+
+    do i=1, pair_production_size
+       print *, random_value, pair_production_cross_sections(i)/total, pair_production_cross_sections(i)
+       if(random_value<pair_production_cross_sections(i)/total) then
+          deallocate(ionization_cross_sections)
+          reaction_id=pair_production_ids(i)
+          return
+       end if
+    end do
+
+    do i=1, to
+       print *, random_value, ionization_cross_sections(i)/total, ionization_cross_sections(i)
+       if(random_value<ionization_cross_sections(i)/total) then
+          reaction_id=i
+          deallocate(ionization_cross_sections)
+          return
+       end if
+    end do
   end function select_reaction
 
   function reaction_function(endf, ph, mfp) result(end)
@@ -266,20 +335,20 @@ contains
     reaction_id=select_reaction(endf, ph%energy)
 
     select case (reaction_id)
-    case(1)
-       ! print *, "coherent scattering", ph%energy
+    case(502)
+       print *, "coherent scattering", ph%energy
        call coherent_scattering_reaction(ph, endf)
-    case(2)
-       ! print *, "incoherent scattering", ph%energy
+    case(504)
+       print *, "incoherent scattering", ph%energy
        call incoherent_scattering_reaction(ph, endf)
-    case(3)
-       ! print *, "pair formation in electric field", ph%energy
+    case(515)
+       print *, "pair formation in electric field", ph%energy
        call pair_production(ph, mfp)
-    case(4)
-       ! print *, "pair formation in nuclear field", ph%energy
+    case(517)
+       print *, "pair formation in nuclear field", ph%energy
        call pair_production(ph, mfp)
     case default
-       ! print *, "ionization", ph%energy
+       print *, "ionization", ph%energy
        end=photo_ionization(ph, endf, reaction_id)
     end select
 

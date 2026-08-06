@@ -9,12 +9,12 @@ program main
   use physics_routine
   use photon_type
   implicit none
+
   integer, allocatable :: seed1(:)
   ! integer, dimension(100) :: ix
   integer :: n, time, count1, i
   integer :: second, cell_index
-  class(material), allocatable :: steel1
-  class(material), allocatable :: nitrogen1
+  class(material), pointer :: steel1, nitrogen1
   type(photon), pointer :: current_photon, ph, temp
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop, reaction, end
@@ -46,16 +46,13 @@ program main
   allocate(nitrogen :: nitrogen1)
   call nitrogen1%create()
 
-
-
-
   allocate(cell_all(2))
 
   allocate(cell_cylinder_truncated_z::cell_all(1)%cell_array)
   select type(cell_array => cell_all(1)%cell_array)
   class is (cell_cylinder_truncated_z)
      ! cell_array%name="source"
-     cell_array%cell_material=steel1
+     cell_array%cell_material=>steel1
      call cell_array%create(0.1_8, -0.1_8, 0.1_8, 0.0_8, 0.0_8, 0.0_8)
   end select
 
@@ -63,7 +60,7 @@ program main
   select type(cell_array => cell_all(2)%cell_array)
   class is (cell_cylinder_truncated_z)
      ! cell_array%name="outside"
-     cell_array%cell_material=nitrogen1
+     cell_array%cell_material=>nitrogen1
      call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
   end select
 
@@ -71,12 +68,6 @@ program main
 
   ! new_location=coordinate(0.1_8, 0.1_8, 0.1_8)
   ! print *, source_cell%cell_test(new_location)
-
-
-
-
-
-
 
   ! ph%energy=1
   ! current_photon=>ph
@@ -100,13 +91,13 @@ program main
 
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=1E4
-  call omp_set_num_threads(4)
+  co_60_source%activity=1
+  ! call omp_set_num_threads(4)
   ! allocate(ph)
   end=.false.
 
   !!!$omp parallel do reduction(+:ph)
-  do second=1, 10
+  do second=1, 1
      do i=1, co_60_source%activity
         allocate(ph)
         cell_index=1
@@ -119,7 +110,7 @@ program main
         ! print *, "----- origin begin"
         ! call show(ph%origin)
         ! print *, "-----"
-        do while (associated(current_photon))
+        do while(associated(current_photon))
            end=surface_tracking(cell_all, current_photon, cell_index)
 
            if(end .eqv. .false.) then
@@ -167,25 +158,40 @@ program main
 
   ! do i=1, size(cell_all)
   !    ! deallocate(cell_all(i))
-  !    ! select type(cell_array => cell_all(i)%cell_array)
-
-  !    !    print *,cell_all(i)%name
-  !    !    ! cell_all%cell_array(i)!%surface_cylinder%v
-  !    ! end select
-  !    ! print *, cell_all(i)%cell_array%name
-  !    ! deallocate(cell_all(i)%cell_array%cell_material%mu)
-  !    ! deallocate(cell_all(i)%cell_array%cell_material%endf%coherent_A)
-  !    ! deallocate(cell_all(i)%cell_array%cell_material%endf%mf23%photo_ionization)
-  !    ! call clear_mf23(cell_all(i)%cell_array%cell_material%endf%mf23)
-  !    ! call clear_mf27(cell_all(i)%cell_array%cell_material%endf%mf27)
-  !    ! ! print *, cell_all(i)%cell_array%cell_test(new_location)
+  !    select type(cell_array => cell_all(i)%cell_array)
+  !       deallocate(cell_array)
+  !       deallocate(cell_array(i))
+  !       deallocate(cell_all(i))
+  ! !    !    print *,cell_all(i)%name
+  ! !    !    ! cell_all%cell_array(i)!%surface_cylinder%v
+  !    end select
+  ! !    ! print *, cell_all(i)%cell_array%name
+  ! !    ! deallocate(cell_all(i)%cell_array%cell_material%mu)
+  ! !    ! deallocate(cell_all(i)%cell_array%cell_material%endf%coherent_A)
+  ! !    ! deallocate(cell_all(i)%cell_array%cell_material%endf%mf23%photo_ionization)
+  ! !    ! call clear_mf23(cell_all(i)%cell_array%cell_material%endf%mf23)
+  ! !    ! call clear_mf27(cell_all(i)%cell_array%cell_material%endf%mf27)
+  ! !    ! ! print *, cell_all(i)%cell_array%cell_test(new_location)
   ! end do
 
-  print *, "del steel1"
-  deallocate(steel1)
-  print *, "del nitrogen1"
-  deallocate(nitrogen1)
+  ! print *, "del steel1"
+  ! call clear_material(steel1)
+  ! deallocate(steel1)
+
+  ! print *, "del nitrogen1"
+  ! call clear_material(nitrogen1)
+  ! deallocate(nitrogen1)
+  ! cell_all(2)%cell_array%cell_material=>null()
   print *, "del cells"
   deallocate(cell_all)
 
+  print *, "del steel1"
+  call clear_material(steel1)
+  deallocate(steel1)
+
+  print *, "del nitrogen1"
+  call clear_material(nitrogen1)
+  deallocate(nitrogen1)
+
+  print *, "END"
 end program main
