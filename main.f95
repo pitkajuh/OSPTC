@@ -97,38 +97,38 @@ program main
   end=.false.
 
   !!!$omp parallel do reduction(+:ph)
-  ! do second=1, 1
-  !    do i=1, co_60_source%activity
-  !       allocate(ph)
-  !       cell_index=1
-  !       ph=co_60_source%pdf()
-  !       ph%id=1
-  !       ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
+  do second=1, 1
+     do i=1, co_60_source%activity
+        allocate(ph)
+        cell_index=1
+        ph=co_60_source%pdf()
+        ph%id=1
+        ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
 
-  !       ph%next_photon=>null()
-  !       current_photon=>ph
-  !       ! print *, "----- origin begin"
-  !       ! call show(ph%origin)
-  !       ! print *, "-----"
-  !       do while(associated(current_photon))
-  !          end=surface_tracking(cell_all, current_photon, cell_index)
+        ph%next_photon=>null()
+        current_photon=>ph
+        ! print *, "----- origin begin"
+        ! call show(ph%origin)
+        ! print *, "-----"
+        do while(associated(current_photon))
+           end=surface_tracking(cell_all, current_photon, cell_index)
 
-  !          if(end .eqv. .false.) then
-  !             cycle
-  !          else if(end .eqv. .true.) then
-  !             ! print *, "exiting loop"
-  !             ! ph=>current_photon
-  !             if(associated(current_photon)) then
-  !                ! print *, "main, deleting", current_photon%id
-  !                deallocate(current_photon)
-  !             end if
-  !             ! deallocate(current_photon)
-  !             exit
-  !          end if
-  !          current_photon=>current_photon%next_photon
-  !       end do
-  !    end do
-  ! end do
+           if(end .eqv. .false.) then
+              cycle
+           else if(end .eqv. .true.) then
+              ! print *, "exiting loop"
+              ! ph=>current_photon
+              if(associated(current_photon)) then
+                 ! print *, "main, deleting", current_photon%id
+                 deallocate(current_photon)
+              end if
+              ! deallocate(current_photon)
+              exit
+           end if
+           current_photon=>current_photon%next_photon
+        end do
+     end do
+  end do
   !!!$omp end parallel do
 
   ! ph=>current_photon

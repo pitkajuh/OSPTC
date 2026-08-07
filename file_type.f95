@@ -118,11 +118,12 @@ contains
     do
        to=i!-4
        ! to=n_photo-i!+1!-4+1
-       if(to==0) exit
+       ! if(to==0) exit
+       ! print *, "to", to
        call this%photo_ionization(to)%read_section_header(z, ios, MF, MT)
        if(MT==0 .and. MF==0) exit
 
-       print *, this%photo_ionization(to)%header(1, 2), n_photo, to
+       ! print *, this%photo_ionization(to)%header(1, 2), n_photo, to
        allocate(this%photo_ionization(to)%records(2, 2*int(this%photo_ionization(to)%header(1, 3))))
 
 
@@ -132,8 +133,9 @@ contains
        i=i+1
     end do
     ! print *, i
-    this%n_ionization=i-5
-
+    ! this%n_ionization=i-5
+    this%n_ionization=i-1
+    ! print *, "size", this%n_ionization
   end subroutine create_mf23
 
   subroutine extend_scattering(array, index_from, index_to)
@@ -192,6 +194,7 @@ contains
     class(MF27), intent(inout) :: this
     integer :: z, ios, MF, MT, n
     n=0
+
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     allocate(this%coherent_factor%records(2, 2*int( &
          this%coherent_factor%header(1, 3))))
