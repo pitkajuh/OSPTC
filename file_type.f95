@@ -59,12 +59,17 @@ contains
   subroutine clear_mf23(this)
     class(MF23), intent(inout) :: this
     integer :: i
+    print *, "clear coherent"
     call section_destructor(this%coherent_scattering)
+    print *, "clear incoherent"
     call section_destructor(this%incoherent_scattering)
+    print *, "clear pair1"
     call section_destructor(this%pair_formation_elec)
+    print *, "clear pair2"
     call section_destructor(this%pair_formation_nuc)
 
     do i=1, this%n_ionization!this%photo_ionization(n-8)
+           print *, "clear ion", i
        call section_destructor(this%photo_ionization(i))
     end do
     print *, "clear ion"
@@ -74,7 +79,7 @@ contains
 
   subroutine create_mf23(this, z, ios, n)
     class(MF23), intent(inout) :: this
-    integer :: z, ios, MF, MT, n, i
+    integer :: z, ios, MF, MT, n, i, n_photo, to
 
     ! Skip 23501
     call this%coherent_scattering%skip_section(z, ios)
@@ -103,23 +108,27 @@ contains
 
     ! Skip 23522
     ! allocate(this%photo_ionization(n-8))
-    allocate(this%photo_ionization(n-7))
+    n_photo=n-7
+    allocate(this%photo_ionization(n_photo))
     call this%photo_ionization(1)%skip_section(z, ios)
 
-    i=5
+    ! i=5
     ! i=4
-
-
-
+    i=1
     do
-       call this%photo_ionization(i-4)%read_section_header(z, ios, MF, MT)
+       to=i!-4
+       ! to=n_photo-i!+1!-4+1
+       if(to==0) exit
+       call this%photo_ionization(to)%read_section_header(z, ios, MF, MT)
        if(MT==0 .and. MF==0) exit
-       allocate(this%photo_ionization(i-4)%records(2, 2*int(this%photo_ionization(i-4)%header(1, 3))))
+
+       print *, this%photo_ionization(to)%header(1, 2), n_photo, to
+       allocate(this%photo_ionization(to)%records(2, 2*int(this%photo_ionization(to)%header(1, 3))))
 
 
 
-       call this%photo_ionization(i-4)%read_section(z, ios, MF, MT, &
-            int(this%photo_ionization(i-4)%header(1, 3)), this%photo_ionization(i-4)%records)
+       call this%photo_ionization(to)%read_section(z, ios, MF, MT, &
+            int(this%photo_ionization(to)%header(1, 3)), this%photo_ionization(to)%records)
        i=i+1
     end do
     ! print *, i

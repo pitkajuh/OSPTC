@@ -252,6 +252,7 @@ contains
 
     total=linear_interpolation(endf%mf23%coherent_scattering% &
          records, energy, endf%mf23%coherent_scattering%n, 1, 2)
+    print *, "TATOL", total
     coherent_and_incoherent(1)=total
     scattering_ids(1)=502
     call sum_cross_sections(coherent_and_incoherent, endf%mf23% &
@@ -260,6 +261,7 @@ contains
     scattering_ids(2)=504
 
     if(energy>=4*electron_mass) then
+       print *, "energy>=4*electron_mass"
        pair_production_size=pair_production_size+1
        pair_production_ids(pair_production_size)=515
        r=linear_interpolation(endf%mf23%pair_formation_elec% &
@@ -269,6 +271,7 @@ contains
     end if
 
     if(energy>=2*electron_mass) then
+       print *, "energy>=2*electron_mass"
        pair_production_size=pair_production_size+1
        pair_production_ids(pair_production_size)=517
        r=linear_interpolation(endf%mf23%pair_formation_nuc% &
@@ -279,18 +282,33 @@ contains
 
     ! Compare energy to largest ionization value. If it is equal or
     ! larger, all ionization reactions can be included.
+    print *, energy, endf%mf23%ionization_energies(endf%mf23%n_ionization), endf%mf23%ionization_energies(1)
     if(energy>=endf%mf23%ionization_energies(endf%mf23%n_ionization)) then
        to=endf%mf23%n_ionization
     else
+       print *, "not all"
        to=binary_search_1d(endf%mf23%ionization_energies, energy, &
             endf%mf23%n_ionization)
     end if
 
-    allocate(ionization_cross_sections(to))
+    do i=1, endf%mf23%n_ionization
+       print *, "energy", endf%mf23%ionization_energies(i), energy
+    end do
 
+
+    allocate(ionization_cross_sections(to))
+    if(to<endf%mf23%n_ionization) then
+       print *, "start ion", energy, endf%mf23%ionization_energies(to), &
+            endf%mf23%ionization_energies(endf%mf23%n_ionization-to), to, endf%mf23%n_ionization, &
+            endf%mf23%ionization_energies(to+1)
+    end if
     do i=1, to
-       r=linear_interpolation(endf%mf23%photo_ionization(i)%records, &
-            energy, endf%mf23%photo_ionization(i)%n, 1, 2)
+       ! r=linear_interpolation(endf%mf23%photo_ionization(i)%records, &
+       !      energy, endf%mf23%photo_ionization(i)%n, 1, 2)
+       r=linear_interpolation(endf%mf23%photo_ionization(endf%mf23%n_ionization-i+1)%records, &
+            energy, endf%mf23%photo_ionization(endf%mf23%n_ionization-i+1)%n, 1, 2)
+       print *, "total, r", total, r, to
+       print *, ""
        total=total+r
        ionization_cross_sections(i)=total
     end do
@@ -298,7 +316,7 @@ contains
     random_value=std_uniform_distribution()
 
     do i=1, 2
-       print *, random_value, coherent_and_incoherent(i)/total,  coherent_and_incoherent(i)
+       print *, "scatter", random_value, coherent_and_incoherent(i)/total,  coherent_and_incoherent(i), total
        if(random_value<coherent_and_incoherent(i)/total) then
           deallocate(ionization_cross_sections)
           reaction_id=scattering_ids(i)
@@ -307,7 +325,7 @@ contains
     end do
 
     do i=1, pair_production_size
-       print *, random_value, pair_production_cross_sections(i)/total, pair_production_cross_sections(i)
+       print *, "pair", random_value, pair_production_cross_sections(i)/total, pair_production_cross_sections(i), total
        if(random_value<pair_production_cross_sections(i)/total) then
           deallocate(ionization_cross_sections)
           reaction_id=pair_production_ids(i)
@@ -316,7 +334,7 @@ contains
     end do
 
     do i=1, to
-       print *, random_value, ionization_cross_sections(i)/total, ionization_cross_sections(i)
+       print *, "ion", random_value, ionization_cross_sections(i)/total, ionization_cross_sections(i), total
        if(random_value<ionization_cross_sections(i)/total) then
           reaction_id=i
           deallocate(ionization_cross_sections)

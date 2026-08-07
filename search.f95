@@ -69,7 +69,13 @@ contains
           print *, array(1, 3), array(2, 3)
           error stop
        end if
-
+       ! if(i==2) then
+       !    print *, "help"
+       !    print *, x, nx, A1, left, right
+       !    print *, array(1, 1), array(2, 1)
+       !    print *, array(1, 2), array(2, 2)
+       !    print *, array(1, 3), array(2, 3)
+       ! end if
        ! if(array(axis, i)==x) then
        !    exit
        if(array(axis, i)<x) then
@@ -80,6 +86,6 @@ contains
           exit
        end if
     end do
-
+    ! print *, "end", i, x, nx, A1, left, right
   end function binary_search
 end module search
