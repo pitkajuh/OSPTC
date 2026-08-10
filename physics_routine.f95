@@ -160,7 +160,9 @@ contains
     xmax=x(energy, -1.0_8)
     mu=0.0_8
     ! print *, "sample"
-
+    rand=0.0_8
+    Avalue=0.0_8
+    x_value=0.0_8
     Amax=linear_interpolation(A, xmax, n, 1, 2)
     a1=energy/electron_mass
     i=0
@@ -252,7 +254,7 @@ contains
 
     total=linear_interpolation(endf%mf23%coherent_scattering% &
          records, energy, endf%mf23%coherent_scattering%n, 1, 2)
-    print *, "TATOL", total
+    ! print *, "TATOL", total
     coherent_and_incoherent(1)=total
     scattering_ids(1)=502
     call sum_cross_sections(coherent_and_incoherent, endf%mf23% &
@@ -261,54 +263,57 @@ contains
     scattering_ids(2)=504
 
     if(energy>=4*electron_mass) then
-       print *, "energy>=4*electron_mass"
+       ! print *, "energy>=4*electron_mass"
        pair_production_size=pair_production_size+1
        pair_production_ids(pair_production_size)=515
        r=linear_interpolation(endf%mf23%pair_formation_elec% &
             records, energy, endf%mf23%pair_formation_elec%n, 1, 2)
+       ! print *, total, r
        total=total+r
        pair_production_cross_sections(pair_production_size)=total
     end if
 
     if(energy>=2*electron_mass) then
-       print *, "energy>=2*electron_mass"
+       ! print *, "energy>=2*electron_mass"
        pair_production_size=pair_production_size+1
        pair_production_ids(pair_production_size)=517
        r=linear_interpolation(endf%mf23%pair_formation_nuc% &
             records, energy, endf%mf23%pair_formation_nuc%n, 1, 2)
+       ! print *, total, r
        total=total+r
        pair_production_cross_sections(pair_production_size)=total
     end if
 
     ! Compare energy to largest ionization value. If it is equal or
     ! larger, all ionization reactions can be included.
-    print *, energy, endf%mf23%ionization_energies(endf%mf23%n_ionization), endf%mf23%ionization_energies(1)
+    ! print *, energy, endf%mf23%ionization_energies(endf%mf23%n_ionization), endf%mf23%ionization_energies(1)
     if(energy>=endf%mf23%ionization_energies(endf%mf23%n_ionization)) then
        to=endf%mf23%n_ionization
     else
-       print *, "not all"
+       ! print *, "not all"
        to=binary_search_1d(endf%mf23%ionization_energies, energy, &
             endf%mf23%n_ionization)
     end if
 
-    do i=1, endf%mf23%n_ionization
-       print *, "energy", endf%mf23%ionization_energies(i), energy
-    end do
+    ! do i=1, endf%mf23%n_ionization
+    !    ! print *, "energy", endf%mf23%ionization_energies(i), energy
+    ! end do
 
 
     allocate(ionization_cross_sections(to))
-    if(to<endf%mf23%n_ionization) then
-       print *, "start ion", energy, endf%mf23%ionization_energies(to), &
-            endf%mf23%ionization_energies(endf%mf23%n_ionization-to), to, endf%mf23%n_ionization, &
-            endf%mf23%ionization_energies(to+1)
-    end if
+    ! if(to<endf%mf23%n_ionization) then
+    !    print *, "start ion", energy, endf%mf23%ionization_energies(to), &
+    !         endf%mf23%ionization_energies(endf%mf23%n_ionization-to), to, endf%mf23%n_ionization, &
+    !         endf%mf23%ionization_energies(to+1)
+    ! end if
     do i=1, to
        ! r=linear_interpolation(endf%mf23%photo_ionization(i)%records, &
        !      energy, endf%mf23%photo_ionization(i)%n, 1, 2)
        r=linear_interpolation(endf%mf23%photo_ionization(endf%mf23%n_ionization-i+1)%records, &
             energy, endf%mf23%photo_ionization(endf%mf23%n_ionization-i+1)%n, 1, 2)
-       print *, "total, r", total, r, to
-       print *, ""
+       ! print *, "total, r", total, r, to
+       ! print *, ""
+       ! print *, "get ion", total, r, energy, endf%mf23%ionization_energies(i)
        total=total+r
        ionization_cross_sections(i)=total
     end do
@@ -316,7 +321,7 @@ contains
     random_value=std_uniform_distribution()
 
     do i=1, 2
-       print *, "scatter", random_value, coherent_and_incoherent(i)/total,  coherent_and_incoherent(i), total
+       ! print *, "scatter", random_value, coherent_and_incoherent(i)/total,  coherent_and_incoherent(i), total
        if(random_value<coherent_and_incoherent(i)/total) then
           deallocate(ionization_cross_sections)
           reaction_id=scattering_ids(i)
@@ -325,7 +330,7 @@ contains
     end do
 
     do i=1, pair_production_size
-       print *, "pair", random_value, pair_production_cross_sections(i)/total, pair_production_cross_sections(i), total
+       ! print *, "pair", random_value, pair_production_cross_sections(i)/total, pair_production_cross_sections(i), total
        if(random_value<pair_production_cross_sections(i)/total) then
           deallocate(ionization_cross_sections)
           reaction_id=pair_production_ids(i)
@@ -334,7 +339,7 @@ contains
     end do
 
     do i=1, to
-       print *, "ion", random_value, ionization_cross_sections(i)/total, ionization_cross_sections(i), total
+       ! print *, "ion", random_value, ionization_cross_sections(i)/total, ionization_cross_sections(i), total
        if(random_value<ionization_cross_sections(i)/total) then
           reaction_id=i
           deallocate(ionization_cross_sections)
@@ -354,19 +359,19 @@ contains
 
     select case (reaction_id)
     case(502)
-       print *, "coherent scattering", ph%energy
+       ! print *, "coherent scattering", ph%energy
        call coherent_scattering_reaction(ph, endf)
     case(504)
-       print *, "incoherent scattering", ph%energy
+       ! print *, "incoherent scattering", ph%energy
        call incoherent_scattering_reaction(ph, endf)
     case(515)
-       print *, "pair formation in electric field", ph%energy
+       ! print *, "pair formation in electric field", ph%energy
        call pair_production(ph, mfp)
     case(517)
-       print *, "pair formation in nuclear field", ph%energy
+       ! print *, "pair formation in nuclear field", ph%energy
        call pair_production(ph, mfp)
     case default
-       print *, "ionization", ph%energy
+       ! print *, "ionization", ph%energy
        end=photo_ionization(ph, endf, reaction_id)
     end select
 
@@ -376,12 +381,20 @@ contains
     class(cells), intent(inout), allocatable :: cell_all(:)
     type(photon), pointer, intent(inout) :: ph
     integer, intent(inout) :: cell_from
-    type(photon), pointer :: current_photon, temp
+    type(photon), pointer :: temp
     integer :: cell_index, k, j
     logical :: end, has_next, has_previous
     real(kind(1.d0)) :: distance_to_cell
     type(coordinate) :: mfp
     end=.false.
+    has_next=.false.
+    has_previous=.false.
+    mfp=coordinate(0.0_8, 0.0_8, 0.0_8)
+    distance_to_cell=0.0_8
+    cell_index=1
+    k=1
+    j=1
+
     ! print *, "PHOTON", ph%id
 
     do k=1, 1000

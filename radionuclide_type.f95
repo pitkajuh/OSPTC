@@ -6,7 +6,7 @@ module radionuclide_type
 
   type, abstract :: radionuclide
      integer :: activity
-     real(kind(1.d0)) :: half_life
+     ! real(kind(1.d0)) :: half_life
    contains
      procedure(create_pdf), deferred :: pdf
   end type radionuclide

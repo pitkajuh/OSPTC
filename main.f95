@@ -91,13 +91,13 @@ program main
 
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=1
+  co_60_source%activity=1E4
   ! call omp_set_num_threads(4)
   ! allocate(ph)
   end=.false.
 
   !!!$omp parallel do reduction(+:ph)
-  do second=1, 1
+  do second=1, 100
      do i=1, co_60_source%activity
         allocate(ph)
         cell_index=1

@@ -98,12 +98,25 @@ contains
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) e1, v2, e2, v4, e3, v6, MAT, MF, MT
        if(MT==0) exit
-       records(1, i)=e1
-       records(2, i)=v2
-       records(1, i+1)=e2
-       records(2, i+1)=v4
-       records(1, i+2)=e3
-       records(2, i+2)=v6
+
+       if(e1==e2 .or. v2==0.0_8) then
+          ! Ionization rows have form
+          ! 7117.00000 0.0 7117.00000 33116.3511 7220.00000 31869.8000
+          ! values 7117.00000 0.0 are omitted.
+          ! Same for pair production
+          ! 1022000.00 0.0 1025120.00 3.02833E-8 1025233.25 3.25429E-8
+          records(1, i)=e2
+          records(2, i)=v4
+          records(1, i+1)=e3
+          records(2, i+1)=v6
+       else
+          records(1, i)=e1
+          records(2, i)=v2
+          records(1, i+1)=e2
+          records(2, i+1)=v4
+          records(1, i+2)=e3
+          records(2, i+2)=v6
+       end if
        i=i+3
     end do
   end subroutine read_section

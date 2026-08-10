@@ -59,20 +59,15 @@ contains
   subroutine clear_mf23(this)
     class(MF23), intent(inout) :: this
     integer :: i
-    print *, "clear coherent"
     call section_destructor(this%coherent_scattering)
-    print *, "clear incoherent"
     call section_destructor(this%incoherent_scattering)
-    print *, "clear pair1"
     call section_destructor(this%pair_formation_elec)
-    print *, "clear pair2"
     call section_destructor(this%pair_formation_nuc)
 
     do i=1, this%n_ionization!this%photo_ionization(n-8)
-           print *, "clear ion", i
        call section_destructor(this%photo_ionization(i))
     end do
-    print *, "clear ion"
+
     deallocate(this%ionization_energies)
     ! deallocate(this%photo_ionization)
   end subroutine clear_mf23
@@ -102,7 +97,7 @@ contains
     call this%pair_formation_nuc%skip_section(z, ios)
 
     call this%pair_formation_nuc%read_section_header(z, ios, MF, MT)
-    allocate(this%pair_formation_nuc%records(2, 2*int(this%pair_formation_nuc%header(1, 3))))
+    allocate(this%pair_formation_nuc%records(2, 2*int(this%pair_formation_nuc%header(1, 3))-1))
     call this%pair_formation_nuc%read_section(z, ios, MF, MT, &
          int(this%pair_formation_nuc%header(1, 3)), this%pair_formation_nuc%records)
 
@@ -124,7 +119,7 @@ contains
        if(MT==0 .and. MF==0) exit
 
        ! print *, this%photo_ionization(to)%header(1, 2), n_photo, to
-       allocate(this%photo_ionization(to)%records(2, 2*int(this%photo_ionization(to)%header(1, 3))))
+       allocate(this%photo_ionization(to)%records(2, 2*int(this%photo_ionization(to)%header(1, 3))-1))
 
 
 
