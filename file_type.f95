@@ -74,21 +74,24 @@ contains
 
   subroutine create_mf23(this, z, ios, n)
     class(MF23), intent(inout) :: this
-    integer ::  MF, MT, i, n_photo, to
+    integer ::  MF, MT, i, n_photo, to, value_column_size
     integer, intent(inout) :: z, ios, n
     ! Skip 23501
     call this%coherent_scattering%skip_section(z, ios)
     call this%coherent_scattering%read_section_header(z, ios, MF, MT)
+    value_column_size=
     allocate(this%coherent_scattering%records(2, 2*int(this%coherent_scattering%header(1, 3))))
     call this%coherent_scattering%read_section(z, ios, MF, MT, &
          int(this%coherent_scattering%header(1, 3)), this%coherent_scattering%records)
 
     call this%incoherent_scattering%read_section_header(z, ios, MF, MT)
+    value_column_size=
     allocate(this%incoherent_scattering%records(2, 2*int(this%incoherent_scattering%header(1, 3))))
     call this%incoherent_scattering%read_section(z, ios, MF, MT, &
          int(this%incoherent_scattering%header(1, 3)), this%incoherent_scattering%records)
 
     call this%pair_formation_elec%read_section_header(z, ios, MF, MT)
+    value_column_size=
     allocate(this%pair_formation_elec%records(2, 2*int(this%pair_formation_elec%header(1, 3))))
     call this%pair_formation_elec%read_section(z, ios, MF, MT, &
          int(this%pair_formation_elec%header(1, 3)), this%pair_formation_elec%records)
@@ -97,6 +100,7 @@ contains
     call this%pair_formation_nuc%skip_section(z, ios)
 
     call this%pair_formation_nuc%read_section_header(z, ios, MF, MT)
+    value_column_size=
     allocate(this%pair_formation_nuc%records(2, 2*int(this%pair_formation_nuc%header(1, 3))-1))
     call this%pair_formation_nuc%read_section(z, ios, MF, MT, &
          int(this%pair_formation_nuc%header(1, 3)), this%pair_formation_nuc%records)
