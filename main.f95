@@ -43,27 +43,27 @@ program main
   continue_loop=.false.
   allocate(steel :: steel1)
   call steel1%create()
-  ! allocate(nitrogen :: nitrogen1)
-  ! call nitrogen1%create()
+  allocate(nitrogen :: nitrogen1)
+  call nitrogen1%create()
 
-  ! allocate(cell_all(2))
+  allocate(cell_all(2))
 
-  ! allocate(cell_cylinder_truncated_z::cell_all(1)%cell_array)
-  ! select type(cell_array => cell_all(1)%cell_array)
-  ! class is (cell_cylinder_truncated_z)
-  !    ! cell_array%name="source"
-  !    cell_array%cell_material=>steel1
-  !    call cell_array%create(0.1_8, -0.1_8, 0.1_8, 0.0_8, 0.0_8, 0.0_8)
-  ! end select
+  allocate(cell_cylinder_truncated_z::cell_all(1)%cell_array)
+  select type(cell_array => cell_all(1)%cell_array)
+  class is (cell_cylinder_truncated_z)
+     ! cell_array%name="source"
+     cell_array%cell_material=>steel1
+     call cell_array%create(0.1_8, -0.1_8, 0.1_8, 0.0_8, 0.0_8, 0.0_8)
+  end select
 
-  ! allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
-  ! select type(cell_array => cell_all(2)%cell_array)
-  ! class is (cell_cylinder_truncated_z)
-  !    ! cell_array%name="outside"
-  !    ! cell_array%cell_material=>nitrogen1
-  !    cell_array%cell_material=>steel1
-  !    call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
-  ! end select
+  allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
+  select type(cell_array => cell_all(2)%cell_array)
+  class is (cell_cylinder_truncated_z)
+     ! cell_array%name="outside"
+     ! cell_array%cell_material=>nitrogen1
+     cell_array%cell_material=>steel1
+     call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
+  end select
 
   ! print *, size(cell_all)
 
@@ -183,16 +183,16 @@ program main
   ! call clear_material(nitrogen1)
   ! deallocate(nitrogen1)
   ! cell_all(2)%cell_array%cell_material=>null()
-  ! print *, "del cells"
-  ! deallocate(cell_all)
+  print *, "del cells"
+  deallocate(cell_all)
 
   print *, "del steel1"
   call clear_material(steel1)
   deallocate(steel1)
 
-  ! print *, "del nitrogen1"
-  ! call clear_material(nitrogen1)
-  ! deallocate(nitrogen1)
+  print *, "del nitrogen1"
+  call clear_material(nitrogen1)
+  deallocate(nitrogen1)
 
   print *, "END"
 end program main

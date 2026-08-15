@@ -116,12 +116,14 @@ contains
           records(2, i)=v4
           records(1, i+1)=e3
           records(2, i+1)=v6
+       else if(i+1>n) then
+          records(1, i)=e1
+          records(2, i)=v2
        else if(i+2>n) then
           records(1, i)=e1
           records(2, i)=v2
           records(1, i+1)=e2
           records(2, i+1)=v4
-
        else
           records(1, i)=e1
           records(2, i)=v2
