@@ -14,7 +14,7 @@ module file_type
      subroutine create_file(this, z, ios, n)
        import file
        class(file), intent(inout) :: this
-       integer :: z, ios, n
+       integer, intent(inout) :: z, ios, n
      end subroutine create_file
 
      subroutine file_destructor(this)
@@ -74,8 +74,8 @@ contains
 
   subroutine create_mf23(this, z, ios, n)
     class(MF23), intent(inout) :: this
-    integer :: z, ios, MF, MT, n, i, n_photo, to
-
+    integer ::  MF, MT, i, n_photo, to
+    integer, intent(inout) :: z, ios, n
     ! Skip 23501
     call this%coherent_scattering%skip_section(z, ios)
     call this%coherent_scattering%read_section_header(z, ios, MF, MT)
@@ -187,7 +187,8 @@ contains
 
   subroutine create_mf27(this, z, ios, n)
     class(MF27), intent(inout) :: this
-    integer :: z, ios, MF, MT, n
+    integer, intent(inout) :: z, ios, n
+    integer :: MF, MT
     n=0
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)

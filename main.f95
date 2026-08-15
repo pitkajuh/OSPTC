@@ -91,7 +91,7 @@ program main
 
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=1E4
+  co_60_source%activity=1
   ! call omp_set_num_threads(4)
   ! allocate(ph)
   end=.false.
@@ -101,7 +101,7 @@ program main
      do i=1, co_60_source%activity
         allocate(ph)
         cell_index=1
-        ph=co_60_source%pdf()
+        call co_60_source%pdf(ph)
         ph%id=1
         ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
 

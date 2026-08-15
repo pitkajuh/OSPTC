@@ -21,7 +21,7 @@ contains
     ! using spherical coordinates. The radius of the sphere
     ! is not sampled because the sampling is done from the
     ! origin of the sphere.
-    type(photon) :: this
+    type(photon), intent(inout) :: this
     type(coordinate) :: random_emission_direction1
     real(kind(1.d0)) :: azimuthal_angle, polar_angle
 
@@ -42,9 +42,9 @@ contains
   end function calculate_mfp
 
   subroutine create_photon(this, energy, origin)
-    real(kind(1.d0)), intent(in) :: energy
-    type(coordinate), intent(in) :: origin
-    type(photon) :: this
+    real(kind(1.d0)), intent(inout) :: energy
+    type(coordinate), intent(inout) :: origin
+    type(photon), intent(inout):: this
     this%origin=origin
     this%energy=energy
     call random_emission_direction(this)

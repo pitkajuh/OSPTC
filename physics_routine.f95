@@ -155,25 +155,31 @@ contains
     real(kind(1.d0)), intent(in), allocatable :: A(:, :)
     real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n
-    real(kind(1.d0)) :: Amax, Avalue, rand, mu, x_value, xmax, a1
-    integer :: i
+    real(kind(1.d0)) :: Amax, Avalue, rand, mu, x_value, xmax, a1, compare
     xmax=x(energy, -1.0_8)
     mu=0.0_8
     ! print *, "sample"
     rand=0.0_8
     Avalue=0.0_8
     x_value=0.0_8
-    Amax=linear_interpolation(A, xmax, n, 1, 2)
+    Amax=1/linear_interpolation(A, xmax, n, 1, 2)
+    ! print *, n, energy
     a1=energy/electron_mass
-    i=0
+
     do
+       ! print *, 1
        mu=kahns_method(a1)
+       ! print *, 2
        rand=std_uniform_distribution()
+       ! print *, 3
        x_value=x(energy, mu)
+       ! print *, 4
        Avalue=linear_interpolation(A, x_value, n, 1, 2)
-       i=i+1
+       ! print *, 5
        ! print *, i, Avalue/Amax
-       if(rand<=Avalue/Amax) exit
+       compare=Avalue*Amax
+       if(rand<=compare) exit
+       ! print *, 6
     end do
     ! print *, i, mu
   end function sample_incoherent_scattering_angle
@@ -183,8 +189,11 @@ contains
     type(photon), pointer, intent(inout) :: ph
     real(kind(1.d0)) :: mu
     mu=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
+    ! print *, "angle"
     ph%energy=ph%energy/(1+(ph%energy/electron_mass)*(1-mu))
+    ! print *,"e"
     ph%direction=create_unit_vector(ph%direction*mu)
+    ! print *, "dir"
   end subroutine incoherent_scattering_reaction
 
   subroutine coherent_scattering_reaction(ph, endf)
@@ -386,6 +395,7 @@ contains
     logical :: end, has_next, has_previous
     real(kind(1.d0)) :: distance_to_cell
     type(coordinate) :: mfp
+    temp=>null()
     end=.false.
     has_next=.false.
     has_previous=.false.
