@@ -133,58 +133,6 @@ contains
     ! print *, "size", this%n_ionization
   end subroutine create_mf23
 
-  subroutine extend_scattering(array, index_from, index_to)
-    real(kind(1.d0)), intent(inout), allocatable :: array(:, :)
-    ! real(kind(1.d0)), intent(in) :: deltax
-    integer, intent(in) :: index_from, index_to
-    real(kind(1.d0)) y_km1, y_k, x_km1, x_k, x_star
-    integer :: i, j
-    ! print *, deltax, array(1, index_from), array(2, index_from)
-    j=1
-    ! print *, "from", index_from-1, index_to
-    ! do i=index_from, index_from+index_to-1
-    do i=index_from-1, index_to
-       y_km1=array(2, i-1)
-       x_km1=array(1, i-1)
-
-       x_k=array(1, i)
-       y_k=array(2, i)
-
-       ! array(1, i+1)=array(1, i)!+deltax
-       x_star=array(1, i+1)
-       ! x_star=array(1, i)+0.05*array(1, i)
-       array(1, i+1)=x_star
-
-       ! if(j==100) then
-
-
-      array(2, i+1)=y_km1+((x_star-x_km1)/(x_k-x_km1))*(y_k-y_km1)
-
-
-       ! print *, array(2, i+1), (x_star-x_km1), (x_k-x_km1), y_k, y_km1, (y_k-y_km1)
-       ! print *, x_star, y_km1+((x_star-x_km1)/(x_k-x_km1))*(y_k-y_km1)
-       !    j=1
-       ! else
-       !    j=j+1
-       ! end if
-
-
-
-
-       ! if(array(2, i+1)<0) then
-       !    print *, "i", i
-       !    exit
-       ! end if
-
-       ! print *, y_km1, y_k,x_km1,x_k, array(2, i+1)
-
-
-
-       ! array(1, i+1)=array(1, i-1)+deltax
-       ! array(2, i+1)=array(2, i-1)+(array(2, i)-array(2, i-1))*((array(1, i+1)-array(1, i-1))/(array(1, i)-array(1, i-1)))
-    end do
-  end subroutine extend_scattering
-
   subroutine create_mf27(this, z, ios, n)
     class(MF27), intent(inout) :: this
     integer, intent(inout) :: z, ios, n
@@ -205,30 +153,31 @@ contains
     ! end do
 
 
-    print *, "AAA"
+    ! print *, "AAA"
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
     value_column_size=int(this%incoherent_function%header(1, 3))-1
+    this%incoherent_function%header(1, 3)=value_column_size
     ! print *, "incoh", value_column_size
     allocate(this%incoherent_function%records(2, value_column_size))
     call this%incoherent_function%read_section(z, ios, MF, MT, &
          value_column_size, this%incoherent_function%records)
 
-    do i=1, value_column_size
-       print *, i, this%incoherent_function%records(1, i), &
-            this%incoherent_function%records(2, i), size(this%incoherent_function%records)
-    end do
+    ! do i=1, value_column_size
+    !    print *, i, this%incoherent_function%records(1, i), &
+    !         this%incoherent_function%records(2, i), size(this%incoherent_function%records)
+    ! end do
 
-    ! call this%imaginary_factor%read_section_header(z, ios, MF, MT)
-    ! value_column_size=int(this%imaginary_factor%header(1, 3))
-    ! allocate(this%imaginary_factor%records(2, 2*value_column_size))
-    ! call this%imaginary_factor%read_section(z, ios, MF, MT, &
-    !      value_column_size, this%imaginary_factor%records)
+    call this%imaginary_factor%read_section_header(z, ios, MF, MT)
+    value_column_size=int(this%imaginary_factor%header(1, 3))
+    allocate(this%imaginary_factor%records(2, 2*value_column_size))
+    call this%imaginary_factor%read_section(z, ios, MF, MT, &
+         value_column_size, this%imaginary_factor%records)
 
-    ! call this%real_factor%read_section_header(z, ios, MF, MT)
-    ! value_column_size=int(this%real_factor%header(1, 3))
-    ! allocate(this%real_factor%records(2, 2*value_column_size))
-    ! call this%real_factor%read_section(z, ios, MF, MT, &
-    !      value_column_size, this%real_factor%records)
+    call this%real_factor%read_section_header(z, ios, MF, MT)
+    value_column_size=int(this%real_factor%header(1, 3))
+    allocate(this%real_factor%records(2, 2*value_column_size))
+    call this%real_factor%read_section(z, ios, MF, MT, &
+         value_column_size, this%real_factor%records)
 
   end subroutine create_mf27
 end module file_type

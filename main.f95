@@ -187,8 +187,8 @@ program main
   ! deallocate(cell_all)
 
   print *, "del steel1"
-  ! call clear_material(steel1)
-  ! deallocate(steel1)
+  call clear_material(steel1)
+  deallocate(steel1)
 
   ! print *, "del nitrogen1"
   ! call clear_material(nitrogen1)

@@ -100,12 +100,12 @@ contains
        if(MT==0) exit
        ! print *, e1, v2, e2, v4, e3, v6, MAT, MF, MT
        if(e1==0.0_8 .and. v2==0.0_8) then
-          print *, "chcr"
           records(1, i)=e2
           records(2, i)=v4
           records(1, i+1)=e3
           records(2, i+1)=v6
-          print *, e2, v4, e3, v6
+          i=i-1
+          ! print *, "crcc", e2, v4, e3, v6
        else if(e1==e2 .or. v2==0.0_8) then
           ! Ionization rows have form
           ! 7117.00000 0.0 7117.00000 33116.3511 7220.00000 31869.8000
@@ -129,7 +129,7 @@ contains
           records(2, i+1)=v4
           records(1, i+2)=e3
           records(2, i+2)=v6
-          print *, e1, v2, e2, v4, e3, v6, MAT, MF, MT
+          ! print *, "AA", e1, v2, e2, v4, e3, v6
        end if
        i=i+3
     end do
