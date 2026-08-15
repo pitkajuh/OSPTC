@@ -188,35 +188,47 @@ contains
   subroutine create_mf27(this, z, ios, n)
     class(MF27), intent(inout) :: this
     integer, intent(inout) :: z, ios, n
-    integer :: MF, MT
-    n=0
+    integer :: MF, MT, value_column_size, i
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
-    allocate(this%coherent_factor%records(2, 2*int( &
-         this%coherent_factor%header(1, 3))))
-
+    value_column_size=int(this%coherent_factor%header(1, 3))
+    ! allocate(this%coherent_factor%records(2, 2*value_column_size))
+    allocate(this%coherent_factor%records(2, value_column_size))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
-         int(this%coherent_factor%header(1, 3)), &
-         this%coherent_factor%records)
+         value_column_size, this%coherent_factor%records)
 
+    ! print *, "coh", value_column_size
+    ! do i=1, value_column_size
+    !    print *, i, this%coherent_factor%records(1, i), &
+    !         this%coherent_factor%records(2, i), size(this%coherent_factor%records)
+    !    if(i==1000) exit
+    ! end do
+
+
+    print *, "AAA"
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
-    allocate(this%incoherent_function%records(2, 2*int( &
-         this%incoherent_function%header(1, 3))))
+    value_column_size=int(this%incoherent_function%header(1, 3))-1
+    ! print *, "incoh", value_column_size
+    allocate(this%incoherent_function%records(2, value_column_size))
     call this%incoherent_function%read_section(z, ios, MF, MT, &
-         int(this%incoherent_function%header(1, 3)), &
-         this%incoherent_function%records)
+         value_column_size, this%incoherent_function%records)
 
-    call this%imaginary_factor%read_section_header(z, ios, MF, MT)
-    allocate(this%imaginary_factor%records(2, 2*int( &
-         this%imaginary_factor%header(1, 3))))
-    call this%imaginary_factor%read_section(z, ios, MF, MT, &
-         int(this%imaginary_factor%header(1, 3)), &
-         this%imaginary_factor%records)
+    do i=1, value_column_size
+       print *, i, this%incoherent_function%records(1, i), &
+            this%incoherent_function%records(2, i), size(this%incoherent_function%records)
+    end do
 
-    call this%real_factor%read_section_header(z, ios, MF, MT)
-    allocate(this%real_factor%records(2, 2*int(this%real_factor%header(1, 3))))
-    call this%real_factor%read_section(z, ios, MF, MT, &
-         int(this%real_factor%header(1, 3)), this%real_factor%records)
+    ! call this%imaginary_factor%read_section_header(z, ios, MF, MT)
+    ! value_column_size=int(this%imaginary_factor%header(1, 3))
+    ! allocate(this%imaginary_factor%records(2, 2*value_column_size))
+    ! call this%imaginary_factor%read_section(z, ios, MF, MT, &
+    !      value_column_size, this%imaginary_factor%records)
+
+    ! call this%real_factor%read_section_header(z, ios, MF, MT)
+    ! value_column_size=int(this%real_factor%header(1, 3))
+    ! allocate(this%real_factor%records(2, 2*value_column_size))
+    ! call this%real_factor%read_section(z, ios, MF, MT, &
+    !      value_column_size, this%real_factor%records)
 
   end subroutine create_mf27
 end module file_type

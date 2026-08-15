@@ -98,8 +98,15 @@ contains
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) e1, v2, e2, v4, e3, v6, MAT, MF, MT
        if(MT==0) exit
-
-       if(e1==e2 .or. v2==0.0_8) then
+       ! print *, e1, v2, e2, v4, e3, v6, MAT, MF, MT
+       if(e1==0.0_8 .and. v2==0.0_8) then
+          print *, "chcr"
+          records(1, i)=e2
+          records(2, i)=v4
+          records(1, i+1)=e3
+          records(2, i+1)=v6
+          print *, e2, v4, e3, v6
+       else if(e1==e2 .or. v2==0.0_8) then
           ! Ionization rows have form
           ! 7117.00000 0.0 7117.00000 33116.3511 7220.00000 31869.8000
           ! values 7117.00000 0.0 are omitted.
@@ -109,6 +116,12 @@ contains
           records(2, i)=v4
           records(1, i+1)=e3
           records(2, i+1)=v6
+       else if(i+2>n) then
+          records(1, i)=e1
+          records(2, i)=v2
+          records(1, i+1)=e2
+          records(2, i+1)=v4
+
        else
           records(1, i)=e1
           records(2, i)=v2
@@ -116,6 +129,7 @@ contains
           records(2, i+1)=v4
           records(1, i+2)=e3
           records(2, i+2)=v6
+          print *, e1, v2, e2, v4, e3, v6, MAT, MF, MT
        end if
        i=i+3
     end do

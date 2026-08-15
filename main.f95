@@ -43,26 +43,27 @@ program main
   continue_loop=.false.
   allocate(steel :: steel1)
   call steel1%create()
-  allocate(nitrogen :: nitrogen1)
-  call nitrogen1%create()
+  ! allocate(nitrogen :: nitrogen1)
+  ! call nitrogen1%create()
 
-  allocate(cell_all(2))
+  ! allocate(cell_all(2))
 
-  allocate(cell_cylinder_truncated_z::cell_all(1)%cell_array)
-  select type(cell_array => cell_all(1)%cell_array)
-  class is (cell_cylinder_truncated_z)
-     ! cell_array%name="source"
-     cell_array%cell_material=>steel1
-     call cell_array%create(0.1_8, -0.1_8, 0.1_8, 0.0_8, 0.0_8, 0.0_8)
-  end select
+  ! allocate(cell_cylinder_truncated_z::cell_all(1)%cell_array)
+  ! select type(cell_array => cell_all(1)%cell_array)
+  ! class is (cell_cylinder_truncated_z)
+  !    ! cell_array%name="source"
+  !    cell_array%cell_material=>steel1
+  !    call cell_array%create(0.1_8, -0.1_8, 0.1_8, 0.0_8, 0.0_8, 0.0_8)
+  ! end select
 
-  allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
-  select type(cell_array => cell_all(2)%cell_array)
-  class is (cell_cylinder_truncated_z)
-     ! cell_array%name="outside"
-     cell_array%cell_material=>nitrogen1
-     call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
-  end select
+  ! allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
+  ! select type(cell_array => cell_all(2)%cell_array)
+  ! class is (cell_cylinder_truncated_z)
+  !    ! cell_array%name="outside"
+  !    ! cell_array%cell_material=>nitrogen1
+  !    cell_array%cell_material=>steel1
+  !    call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
+  ! end select
 
   ! print *, size(cell_all)
 
@@ -97,38 +98,38 @@ program main
   end=.false.
 
   !!!$omp parallel do reduction(+:ph)
-  do second=1, 100
-     do i=1, co_60_source%activity
-        allocate(ph)
-        cell_index=1
-        call co_60_source%pdf(ph)
-        ph%id=1
-        ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
+  ! do second=1, 100
+  !    do i=1, co_60_source%activity
+  !       allocate(ph)
+  !       cell_index=1
+  !       call co_60_source%pdf(ph)
+  !       ph%id=1
+  !       ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
 
-        ph%next_photon=>null()
-        current_photon=>ph
-        ! print *, "----- origin begin"
-        ! call show(ph%origin)
-        ! print *, "-----"
-        do while(associated(current_photon))
-           end=surface_tracking(cell_all, current_photon, cell_index)
+  !       ph%next_photon=>null()
+  !       current_photon=>ph
+  !       ! print *, "----- origin begin"
+  !       ! call show(ph%origin)
+  !       ! print *, "-----"
+  !       do while(associated(current_photon))
+  !          end=surface_tracking(cell_all, current_photon, cell_index)
 
-           if(end .eqv. .false.) then
-              cycle
-           else if(end .eqv. .true.) then
-              ! print *, "exiting loop"
-              ! ph=>current_photon
-              if(associated(current_photon)) then
-                 ! print *, "main, deleting", current_photon%id
-                 deallocate(current_photon)
-              end if
-              ! deallocate(current_photon)
-              exit
-           end if
-           current_photon=>current_photon%next_photon
-        end do
-     end do
-  end do
+  !          if(end .eqv. .false.) then
+  !             cycle
+  !          else if(end .eqv. .true.) then
+  !             ! print *, "exiting loop"
+  !             ! ph=>current_photon
+  !             if(associated(current_photon)) then
+  !                ! print *, "main, deleting", current_photon%id
+  !                deallocate(current_photon)
+  !             end if
+  !             ! deallocate(current_photon)
+  !             exit
+  !          end if
+  !          current_photon=>current_photon%next_photon
+  !       end do
+  !    end do
+  ! end do
   !!!$omp end parallel do
 
   ! ph=>current_photon
@@ -182,16 +183,16 @@ program main
   ! call clear_material(nitrogen1)
   ! deallocate(nitrogen1)
   ! cell_all(2)%cell_array%cell_material=>null()
-  print *, "del cells"
-  deallocate(cell_all)
+  ! print *, "del cells"
+  ! deallocate(cell_all)
 
   print *, "del steel1"
-  call clear_material(steel1)
-  deallocate(steel1)
+  ! call clear_material(steel1)
+  ! deallocate(steel1)
 
-  print *, "del nitrogen1"
-  call clear_material(nitrogen1)
-  deallocate(nitrogen1)
+  ! print *, "del nitrogen1"
+  ! call clear_material(nitrogen1)
+  ! deallocate(nitrogen1)
 
   print *, "END"
 end program main
