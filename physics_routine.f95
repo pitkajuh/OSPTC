@@ -271,7 +271,7 @@ contains
          endf%mf23%incoherent_scattering%n, total, 2)
     scattering_ids(2)=504
 
-    if(energy>=4*electron_mass) then
+    if(energy>=endf%mf23%pair_formation_elec%records(1, 1)) then
        ! print *, "energy>=4*electron_mass"
        pair_production_size=pair_production_size+1
        pair_production_ids(pair_production_size)=515
@@ -282,7 +282,7 @@ contains
        pair_production_cross_sections(pair_production_size)=total
     end if
 
-    if(energy>=2*electron_mass) then
+    if(energy>=endf%mf23%pair_formation_nuc%records(1, 1)) then
        ! print *, "energy>=2*electron_mass"
        pair_production_size=pair_production_size+1
        pair_production_ids(pair_production_size)=517

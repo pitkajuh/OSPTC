@@ -14,11 +14,18 @@ program main
   ! integer, dimension(100) :: ix
   integer :: n, time, count1, i
   integer :: second, cell_index
-  class(material), pointer :: steel1, nitrogen1
+  class(material), pointer :: steel1, nitrogen1, steel2
   type(photon), pointer :: current_photon, ph, temp
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop, reaction, end
   class(cells), allocatable :: cell_all(:)
+
+  ! allocate(steel :: steel2)
+  ! call steel2%create()
+  ! call clear_material(steel2)
+  ! deallocate(steel2)
+
+
 
   ! call random_seed(size=n)
   ! allocate(seed1(n))
@@ -92,13 +99,13 @@ program main
 
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=100
+  co_60_source%activity=1E4
   ! call omp_set_num_threads(4)
   ! allocate(ph)
   end=.false.
 
   !!!$omp parallel do reduction(+:ph)
-  do second=1, 10
+  do second=1, 100
      do i=1, co_60_source%activity
         allocate(ph)
         cell_index=1
