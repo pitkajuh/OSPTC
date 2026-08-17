@@ -67,7 +67,6 @@ contains
 
     if(MF==0 .and. MT==0) return
 
-    ! print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
     this%header(1, 1)=ZA
     this%header(2, 1)=AWR
     this%header(3, 1)=L1
@@ -77,7 +76,6 @@ contains
 
     do i=2, 3
        read(z, '(2E11.0,4I11,I4,I2,I3,I5)', iostat=ios) ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
-       ! print *, ZA, AWR, L1, L2, N1, N2, MAT, MF, MT
        this%header(1, i)=ZA
        this%header(2, i)=AWR
        this%header(3, i)=L1
@@ -98,14 +96,12 @@ contains
     do
        read(z, '(6E11.0,I4,I2,I3)', iostat=ios) e1, v2, e2, v4, e3, v6, MAT, MF, MT
        if(MT==0) exit
-       ! print *, e1, v2, e2, v4, e3, v6, MAT, MF, MT
        if(e1==0.0_8 .and. v2==0.0_8) then
           records(1, i)=e2
           records(2, i)=v4
           records(1, i+1)=e3
           records(2, i+1)=v6
           i=i-1
-          ! print *, "crcc", e2, v4, e3, v6
        else if(e1==e2 .or. v2==0.0_8) then
           ! Ionization rows have form
           ! 7117.00000 0.0 7117.00000 33116.3511 7220.00000 31869.8000
@@ -132,7 +128,6 @@ contains
           records(2, i+1)=v4
           records(1, i+2)=e3
           records(2, i+2)=v6
-          ! print *, "AA", e1, v2, e2, v4, e3, v6
        end if
        i=i+3
     end do

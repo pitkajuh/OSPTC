@@ -64,12 +64,11 @@ contains
     call section_destructor(this%pair_formation_elec)
     call section_destructor(this%pair_formation_nuc)
 
-    do i=1, this%n_ionization!this%photo_ionization(n-8)
+    do i=1, this%n_ionization
        call section_destructor(this%photo_ionization(i))
     end do
 
     deallocate(this%ionization_energies)
-    ! deallocate(this%photo_ionization)
   end subroutine clear_mf23
 
   subroutine create_mf23(this, z, ios, n)
@@ -83,20 +82,12 @@ contains
     allocate(this%coherent_scattering%records(2, value_column_size))
     call this%coherent_scattering%read_section(z, ios, MF, MT, &
          value_column_size, this%coherent_scattering%records)
-    ! print *, value_column_size
 
-    ! do i=1, int(this%coherent_scattering%header(1, 3))
-    !    print *, i, this%coherent_scattering%records(1, i), this%coherent_scattering%records(2, i)
-    ! end do
     call this%incoherent_scattering%read_section_header(z, ios, MF, MT)
     value_column_size=int(this%incoherent_scattering%header(1, 3))
     allocate(this%incoherent_scattering%records(2, value_column_size))
     call this%incoherent_scattering%read_section(z, ios, MF, MT, &
          value_column_size, this%incoherent_scattering%records)
-    ! print *, value_column_size
-    ! do i=1, int(this%incoherent_scattering%header(1, 3))
-    !    print *, i, this%incoherent_scattering%records(1, i), this%incoherent_scattering%records(2, i)
-    ! end do
 
     call this%pair_formation_elec%read_section_header(z, ios, MF, MT)
     value_column_size=int(this%pair_formation_elec%header(1, 3))-1
@@ -104,12 +95,6 @@ contains
     allocate(this%pair_formation_elec%records(2, value_column_size))
     call this%pair_formation_elec%read_section(z, ios, MF, MT, &
          value_column_size, this%pair_formation_elec%records)
-    ! print *, value_column_size
-    ! do i=1, int(this%pair_formation_elec%header(1, 3))
-    !    print *, i, this%pair_formation_elec%records(1, i), this%pair_formation_elec%records(2, i)
-    ! end do
-
-
 
     ! Skip 23516
     call this%pair_formation_nuc%skip_section(z, ios)
@@ -120,46 +105,26 @@ contains
     allocate(this%pair_formation_nuc%records(2, value_column_size))
     call this%pair_formation_nuc%read_section(z, ios, MF, MT, &
          value_column_size, this%pair_formation_nuc%records)
-    ! print *, value_column_size
-    ! do i=1, int(this%pair_formation_nuc%header(1, 3))
-    !    print *, i, this%pair_formation_nuc%records(1, i), this%pair_formation_nuc%records(2, i)
-    ! end do
-
-
 
     ! Skip 23522
-    ! allocate(this%photo_ionization(n-8))
     n_photo=n-7
     allocate(this%photo_ionization(n_photo))
     call this%photo_ionization(1)%skip_section(z, ios)
-
-    ! i=5
-    ! i=4
     i=1
+
     do
-       to=i!-4
-       ! to=n_photo-i!+1!-4+1
-       ! if(to==0) exit
-       ! print *, "to", to
+       to=i
        call this%photo_ionization(to)%read_section_header(z, ios, MF, MT)
        if(MT==0 .and. MF==0) exit
 
-       ! print *, this%photo_ionization(to)%header(1, 2), n_photo, to
        value_column_size=int(this%photo_ionization(to)%header(1, 3))-1
        this%photo_ionization(to)%header(1, 3)=value_column_size
        allocate(this%photo_ionization(to)%records(2, value_column_size))
-       ! print *, "ion", value_column_size
-
-
        call this%photo_ionization(to)%read_section(z, ios, MF, MT, &
             value_column_size, this%photo_ionization(to)%records)
        i=i+1
     end do
-    ! print *, i
-    ! this%n_ionization=i-5
     this%n_ionization=i-1
-    ! print *, "size", this%n_ionization
-    ! print *, ""
   end subroutine create_mf23
 
   subroutine create_mf27(this, z, ios, n)
@@ -169,32 +134,16 @@ contains
 
     call this%coherent_factor%read_section_header(z, ios, MF, MT)
     value_column_size=int(this%coherent_factor%header(1, 3))
-    ! allocate(this%coherent_factor%records(2, 2*value_column_size))
     allocate(this%coherent_factor%records(2, value_column_size))
     call this%coherent_factor%read_section(z, ios, MF, MT, &
          value_column_size, this%coherent_factor%records)
 
-    ! print *, "coh", value_column_size
-    ! do i=1, value_column_size
-    !    print *, i, this%coherent_factor%records(1, i), &
-    !         this%coherent_factor%records(2, i), size(this%coherent_factor%records)
-    !    if(i==1000) exit
-    ! end do
-
-
-    ! print *, "AAA"
     call this%incoherent_function%read_section_header(z, ios, MF, MT)
     value_column_size=int(this%incoherent_function%header(1, 3))-1
     this%incoherent_function%header(1, 3)=value_column_size
-    ! print *, "incoh", value_column_size
     allocate(this%incoherent_function%records(2, value_column_size))
     call this%incoherent_function%read_section(z, ios, MF, MT, &
          value_column_size, this%incoherent_function%records)
-
-    ! do i=1, value_column_size
-    !    print *, i, this%incoherent_function%records(1, i), &
-    !         this%incoherent_function%records(2, i), size(this%incoherent_function%records)
-    ! end do
 
     call this%imaginary_factor%read_section_header(z, ios, MF, MT)
     value_column_size=int(this%imaginary_factor%header(1, 3))

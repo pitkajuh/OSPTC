@@ -33,42 +33,21 @@ contains
 
   subroutine create_incoherent(incoherent_function, A, n)
     real(kind(1.d0)), intent(inout), allocatable :: A(:, :)
-    ! real(kind(1.d0)), allocatable :: incoherent(:, :)
     real(kind(1.d0)), intent(in), allocatable :: incoherent_function(:, :)
     integer, intent(in) :: n
     integer :: i
     real(kind(1.d0)) :: deltax
 
-
-    ! deltax=incoherent_function(1, n)/n
-    ! print *, deltax
-
     A(1, 1)=incoherent_function(1, 1)
     deltax=A(1, 1)
     A(2, 1)=0.5_8*(incoherent_function(2, 1))*deltax
-    ! A(1, 1)=0
-    ! A(2, 1)=0
-
-    ! print *, A(1, 1), A(2, 1)
-    ! do i=1, n
-    !    print *, incoherent_function(1, i), incoherent_function(2, i)
-    ! end do
 
     do i=2, n
        A(1, i)=incoherent_function(1, i)
        deltax=A(1, i)-A(1, i-1)
-
-       ! H=linear_interpolation(incoherent_function, x_value, n, 1, 2)
-       ! T=linear_interpolation(incoherent_function, x_value, n, 1, 2)
-       ! H=incoherent_function(2, i-1)
-       ! T=incoherent_function(2, i)
-       ! A(2, i)=A(2, i-1)+0.5_8*(incoherent_function(2, i-1)+incoherent_function(2, i))*deltax
        A(2, i)=A(2, i-1)+0.5_8*(fn(incoherent_function, i-1)+fn(incoherent_function, i))*deltax
-       ! print *, deltax, A(2, i), A(2, i-1)
-       ! print *, A(1, i), A(2, i)!, x_i, x_im1
-       ! print *, deltax
     end do
-    print *, "Incoherent generated"
+    print *, "Incoherent scattering distribution generated"
   end subroutine create_incoherent
 
   function F(x1, coherent_factor, n) result(r)
@@ -87,17 +66,9 @@ contains
     real(kind(1.d0)) :: deltax2, H, T, x2_i, x2_im1
     integer :: i
 
-    ! call system('rm t1.txt')
-    ! open(newunit=new1, file="t1.txt", status="new", action="write")
-
     A(1, 1)=coherent_factor(1, 1)**2
     deltax2=A(1, 1)
     A(2, 1)=0.5_8*(coherent_factor(2, 1)**2)*deltax2
-    ! write(new1, *) A(1, 1), ";", A(2, 1)
-
-    ! do i=1, n2
-    !    print *, coherent_factor(1, i), coherent_factor(2, i)
-    ! end do
 
     do i=2, n
        A(1, i)=coherent_factor(1, i)**2
@@ -105,19 +76,12 @@ contains
        x2_im1=A(1, i-1)
        deltax2=x2_i-x2_im1
 
-       ! print *, i, n
        H=F(x2_im1**0.5_8, coherent_factor, n2)
        T=F(x2_i**0.5_8, coherent_factor, n2)
-
        A(2, i)=A(2, i-1)+0.5_8*(H**2+T**2)*deltax2
-       ! A(2, i)=0.5_8*(H**2+T**2)*deltax2
-
-       ! print *, A(1, i), A(2, i)
-       ! write(new1, *) A(1, i), ";", A(2, i)
     end do
 
-    ! close(new1)
-    print *, "Coherent generated"
+    print *, "Coherent scattering distribution generated"
 
   end subroutine create_coherent
 end module photon_angular_distribution

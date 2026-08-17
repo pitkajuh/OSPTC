@@ -32,16 +32,6 @@ contains
        print *, array(axis1, 2), array(axis2, 2)
        print *, array(axis1, 3), array(axis2, 3)
        error stop
-    else if(array(axis1, 1)==array(axis1, 2) .and. (x<=array(axis1, 3) .and. x>=array(axis1, 2))) then
-       print *, "i am needed1"
-       i=3
-       r=array(axis2, i-1)+(x-array(axis1, i-1))*(array(axis2, i)-&
-            array(axis2, i-1))/(array(axis1, i)-array(axis1, i-1))
-    else if(array(axis2, 1)==0.0_8 .and. array(axis1, 1)<x .and. array(axis1, 2)>x) then
-       print *, "i am needed2"
-       i=2
-       r=array(axis2, i-1)+(x-array(axis1, i-1))*(array(axis2, i)-&
-            array(axis2, i-1))/(array(axis1, i)-array(axis1, i-1))
     else
        i=binary_search(array, x, nx, axis1)
        r=array(axis2, i-1)+(x-array(axis1, i-1))*(array(axis2, i)-&

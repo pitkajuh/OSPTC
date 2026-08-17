@@ -27,13 +27,11 @@ contains
     type(photon), pointer :: left, right, current_photon, temporary_photon
     allocate(left)
     allocate(right)
-    ! print *, "pair"
 
     ! Create photon going left
     call create_annihilation_photon(left, multiply_scalar(mfp, -1.0_8), &
          mfp, ph%id+1)
     ! Connect to head photon
-    ! left%previous_photon=>ph
     ph%next_photon=>left
 
     ! Create photon going right
@@ -41,46 +39,14 @@ contains
     right%previous_photon=>left
     left%next_photon=>right
 
-
     temporary_photon=>ph
     ph=>ph%next_photon
+
     if(associated(temporary_photon)) then
-       ! print *, "deleting photon", temporary_photon%id
        deallocate(temporary_photon)
     end if
 
-
     current_photon=>ph
-
-
-
-
-    ! do while(associated(current_photon))
-    !    ! print *, current_photon%energy
-    !    if(.not. associated(current_photon%next_photon)) then
-    !       ! print *, "aocrahoec"
-    !       allocate(current_photon%next_photon)
-    !       current_photon%next_photon=>left
-    !       ! print *, "at", current_photon%next_photon%energy
-    !       ! current_photon%next_photon%next_photon=>right
-    !       exit
-    !    end if
-    !    current_photon=>current_photon%next_photon
-    ! end do
-
-    ! current_photon=>ph
-
-    ! do while(associated(current_photon))
-    !    print *, current_photon%energy, current_photon%id
-    !    ! if(associated(current_photon%next_photon)) then
-    !    !    current_photon%next_photon=>left
-    !    !    exit
-    !    ! end if
-    !    current_photon=>current_photon%next_photon
-    ! end do
-
-
-    ! ph%next_photon
   end subroutine pair_production
 
   function photo_ionization(ph, endf, reaction_id) result(end)
@@ -158,30 +124,20 @@ contains
     real(kind(1.d0)) :: Amax, Avalue, rand, mu, x_value, xmax, a1, compare
     xmax=x(energy, -1.0_8)
     mu=0.0_8
-    ! print *, "sample"
     rand=0.0_8
     Avalue=0.0_8
     x_value=0.0_8
     Amax=1/linear_interpolation(A, xmax, n, 1, 2)
-    ! print *, n, energy
     a1=energy/electron_mass
 
     do
-       ! print *, 1
        mu=kahns_method(a1)
-       ! print *, 2
        rand=std_uniform_distribution()
-       ! print *, 3
        x_value=x(energy, mu)
-       ! print *, 4
        Avalue=linear_interpolation(A, x_value, n, 1, 2)
-       ! print *, 5
-       ! print *, i, Avalue/Amax
        compare=Avalue*Amax
        if(rand<=compare) exit
-       ! print *, 6
     end do
-    ! print *, i, mu
   end function sample_incoherent_scattering_angle
 
   subroutine incoherent_scattering_reaction(ph, endf)
@@ -189,11 +145,8 @@ contains
     type(photon), pointer, intent(inout) :: ph
     real(kind(1.d0)) :: mu
     mu=sample_incoherent_scattering_angle(endf%n_incoherent, ph%energy, endf%incoherent_A)
-    ! print *, "angle"
     ph%energy=ph%energy/(1+(ph%energy/electron_mass)*(1-mu))
-    ! print *,"e"
     ph%direction=create_unit_vector(ph%direction*mu)
-    ! print *, "dir"
   end subroutine incoherent_scattering_reaction
 
   subroutine coherent_scattering_reaction(ph, endf)
@@ -202,7 +155,6 @@ contains
     real(kind(1.d0)) :: mu
     mu=sample_coherent_scattering_angle(endf%n_coherent, ph%energy, endf%coherent_A)
     ph%direction=create_unit_vector(ph%direction*mu)
-    ! print *, length(ph%direction)
   end subroutine coherent_scattering_reaction
 
   subroutine sum_cross_sections(limits, records, energy, n, total, i)
@@ -212,38 +164,10 @@ contains
     integer, intent(in) :: n, i
     real(kind(1.d0)), allocatable :: records(:, :)
     real(kind(1.d0)) :: r
-    ! print *, "sum"
     r=linear_interpolation(records, energy, n, 1, 2)
     limits(i)=r+limits(i-1)
     total=total+r
   end subroutine sum_cross_sections
-
-  ! subroutine select_possible_reactions(endf, energy)
-  !   ! Select which reactions are possible with the given energy.
-  !   ! Scattering reactions are always possible. Pair production
-  !   ! and ionization depends on the energy
-  !   type(tape), intent(in) :: endf
-  !   real(kind(1.d0)), intent(in) :: energy
-  !   integer :: i, size
-  !   ! Start from number 2 because there are always at least
-  !   ! two reactions (coherent and incoherent scattering.)
-  !   size=2
-
-  !   if(energy>=2*electron_mass) then
-  !      ! Include pair production in nuclear field. ID=5
-  !      size=size+1
-  !      i=1
-  !   if(energy>=4*electron_mass) then
-  !      ! Include pair production in electron field. ID=4
-  !      size=size+1
-  !      i=1
-  !   do i=1, endf%mf23%n_ionization
-  !      if(energy>=endf%mf23%photo_ionization(i)%header(1, 2)) then
-  !         size=size+1
-  !         print *, endf%mf23%photo_ionization(i)%header(1, 2)
-  !      end if
-  !   end do
-  ! end subroutine select_possible_reactions
 
   function select_reaction(endf, energy) result(reaction_id)
     type(tape), intent(inout) :: endf
@@ -263,66 +187,47 @@ contains
 
     total=linear_interpolation(endf%mf23%coherent_scattering% &
          records, energy, endf%mf23%coherent_scattering%n, 1, 2)
-    ! print *, "TATOL", total
     coherent_and_incoherent(1)=total
     scattering_ids(1)=502
+
     call sum_cross_sections(coherent_and_incoherent, endf%mf23% &
          incoherent_scattering%records, energy, &
          endf%mf23%incoherent_scattering%n, total, 2)
     scattering_ids(2)=504
 
     if(energy>=endf%mf23%pair_formation_elec%records(1, 1)) then
-       ! print *, "energy>=4*electron_mass"
        pair_production_size=pair_production_size+1
        pair_production_ids(pair_production_size)=515
        r=linear_interpolation(endf%mf23%pair_formation_elec% &
             records, energy, endf%mf23%pair_formation_elec%n, 1, 2)
-       ! print *, total, r
        total=total+r
        pair_production_cross_sections(pair_production_size)=total
     end if
 
     if(energy>=endf%mf23%pair_formation_nuc%records(1, 1)) then
-       ! print *, "energy>=2*electron_mass"
        pair_production_size=pair_production_size+1
        pair_production_ids(pair_production_size)=517
        r=linear_interpolation(endf%mf23%pair_formation_nuc% &
             records, energy, endf%mf23%pair_formation_nuc%n, 1, 2)
-       ! print *, total, r
        total=total+r
        pair_production_cross_sections(pair_production_size)=total
     end if
 
     ! Compare energy to largest ionization value. If it is equal or
     ! larger, all ionization reactions can be included.
-    ! print *, energy, endf%mf23%ionization_energies(endf%mf23%n_ionization), endf%mf23%ionization_energies(1)
     if(energy>=endf%mf23%ionization_energies(endf%mf23%n_ionization)) then
        to=endf%mf23%n_ionization
     else
-       ! print *, "not all"
        to=binary_search_1d(endf%mf23%ionization_energies, energy, &
             endf%mf23%n_ionization)
     end if
 
-    ! do i=1, endf%mf23%n_ionization
-    !    ! print *, "energy", endf%mf23%ionization_energies(i), energy
-    ! end do
-
-
     allocate(ionization_cross_sections(to))
-    ! if(to<endf%mf23%n_ionization) then
-    !    print *, "start ion", energy, endf%mf23%ionization_energies(to), &
-    !         endf%mf23%ionization_energies(endf%mf23%n_ionization-to), to, endf%mf23%n_ionization, &
-    !         endf%mf23%ionization_energies(to+1)
-    ! end if
+
     do i=1, to
-       ! r=linear_interpolation(endf%mf23%photo_ionization(i)%records, &
-       !      energy, endf%mf23%photo_ionization(i)%n, 1, 2)
-       r=linear_interpolation(endf%mf23%photo_ionization(endf%mf23%n_ionization-i+1)%records, &
-            energy, endf%mf23%photo_ionization(endf%mf23%n_ionization-i+1)%n, 1, 2)
-       ! print *, "total, r", total, r, to
-       ! print *, ""
-       ! print *, "get ion", total, r, energy, endf%mf23%ionization_energies(i)
+       r=linear_interpolation(endf%mf23%photo_ionization(endf%mf23% &
+            n_ionization-i+1)%records, energy, endf%mf23% &
+            photo_ionization(endf%mf23%n_ionization-i+1)%n, 1, 2)
        total=total+r
        ionization_cross_sections(i)=total
     end do
@@ -330,7 +235,6 @@ contains
     random_value=std_uniform_distribution()
 
     do i=1, 2
-       ! print *, "scatter", random_value, coherent_and_incoherent(i)/total,  coherent_and_incoherent(i), total
        if(random_value<coherent_and_incoherent(i)/total) then
           deallocate(ionization_cross_sections)
           reaction_id=scattering_ids(i)
@@ -339,7 +243,6 @@ contains
     end do
 
     do i=1, pair_production_size
-       ! print *, "pair", random_value, pair_production_cross_sections(i)/total, pair_production_cross_sections(i), total
        if(random_value<pair_production_cross_sections(i)/total) then
           deallocate(ionization_cross_sections)
           reaction_id=pair_production_ids(i)
@@ -348,7 +251,6 @@ contains
     end do
 
     do i=1, to
-       ! print *, "ion", random_value, ionization_cross_sections(i)/total, ionization_cross_sections(i), total
        if(random_value<ionization_cross_sections(i)/total) then
           reaction_id=i
           deallocate(ionization_cross_sections)
@@ -405,8 +307,6 @@ contains
     k=1
     j=1
 
-    ! print *, "PHOTON", ph%id
-
     do k=1, 1000
        ! Ignore photons with energy less than 1 keV.
        if(ph%energy<1000) then
@@ -442,98 +342,39 @@ contains
              end if
           end do
        else if(cell_index==0) then
-          ! remove photon from linked list
-          ! has_next=associated(ph%next_photon)
-          ! has_previous=associated(ph%previous_photon)
-          ! print *, "exited, want to delete", ph%id
-
-          ! ! temp=>ph
-          ! if(has_next .and. .not. has_previous) then
-          !    ! Current photon is head.
-          !    print *, "AAA .not. has_previous"
-          !    temp=>ph
-          !    ph=>ph%next_photon
-          !    deallocate(temp)
-          ! else if(.not. has_next .and. has_previous) then
-          !    ! Current photon is last.
-          !    print *, "AAA .not. has_next"
-          !    print *, "previous photon is", ph%previous_photon%id
-          !    temp=>ph
-          !    ! ph=>ph%previous_photon
-          !    ph%previous_photon=>null()
-          !    deallocate(temp)
-          ! else if(has_previous .and. has_next) then
-          !    ! Current photon is in the middle.
-          !    print *, "AAA, middle", has_previous, has_next
-          !    temp=>ph
-          !    print *, "first", ph%previous_photon%next_photon%id, ph%next_photon%id
-          !    ph%previous_photon%next_photon=>ph%next_photon
-          !    print *, "second", ph%next_photon%previous_photon%id, ph%previous_photon%id
-          !    ph%next_photon%previous_photon=>ph%previous_photon
-
-          !    deallocate(temp)
-          ! else
-          !    print *, "deleting11", ph%id
-          !    deallocate(ph)
-          !    ph=>null()
-          !    print *, "deleted11"
-          ! !    print *, "what happened?"
-          ! !    error stop
-          ! end if
-
           end=.true.
           exit
        else
-          end=.false.
           ! Reaction happens at the source.
-          ! print *, "at source", cell_from, cell_index
           end=reaction_function(cell_all(cell_index)%cell_array% &
                cell_material%endf, ph, mfp)
-
-          ! print *, "----- origin end1"
-          ! ph%origin=mfp
-          ! call show(mfp)
-          ! print *, "-----"
           exit
        end if
-       ! print *, ph%energy
     end do
 
     if(end .eqv. .true.) then
        has_next=associated(ph%next_photon)
        has_previous=associated(ph%previous_photon)
-       ! print *, "exited, want to delete", ph%id
 
-       ! temp=>ph
        if(has_next .and. .not. has_previous) then
           ! Current photon is head.
-          ! print *, "AAA .not. has_previous"
           temp=>ph
           ph=>ph%next_photon
           deallocate(temp)
        else if(.not. has_next .and. has_previous) then
           ! Current photon is last.
-          ! print *, "AAA .not. has_next"
-          ! print *, "previous photon is", ph%previous_photon%id
           temp=>ph
-          ! ph=>ph%previous_photon
           ph%previous_photon=>null()
           deallocate(temp)
        else if(has_previous .and. has_next) then
           ! Current photon is in the middle.
-          ! print *, "AAA, middle", has_previous, has_next
           temp=>ph
-          ! print *, "first", ph%previous_photon%next_photon%id, ph%next_photon%id
           ph%previous_photon%next_photon=>ph%next_photon
-          ! print *, "second", ph%next_photon%previous_photon%id, ph%previous_photon%id
           ph%next_photon%previous_photon=>ph%previous_photon
-
           deallocate(temp)
        else
-          ! print *, "deleting11", ph%id
           deallocate(ph)
           ph=>null()
-          ! print *, "deleted11"
        end if
     end if
 

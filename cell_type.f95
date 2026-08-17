@@ -122,11 +122,9 @@ contains
     distances(5)=this%wallz_negative%surface_distance(from, direction)
     distance=this%wallz_positive%surface_distance(from, direction)
 
-    ! Find the distance to the surface that is the closest one, i.e. find the smallest value. The distance must be >0.
+    ! Find the distance to the surface that is the closest one, i.e.
+    ! find the smallest value. The distance must be >0.
     do i=1, 5
-       ! if(abs(distances(i))<distance) then
-       !    distance=distances(i)
-       ! end if
        if(distances(i)<distance .and. distances(i)>0) then
           distance=distances(i)
        else if(distance<0 .and. distances(i)>0) then
@@ -177,15 +175,8 @@ contains
     real(kind(1.d0)), dimension(2) :: distances
     distances=(/this%wallz_negative%surface_distance(from, direction),  this%wallz_positive%surface_distance(from, direction)/)
     distance=this%surface_cylinder%surface_distance(from, direction)
-    ! print *, "dst", distance, distances(1), distances(2)
     ! Find the distance to the surface that is the closest one,
-    !i.e. find the smallest value. The distance must be >0.
-
-    ! do i=1, 2
-    !    if(abs(distances(i))<distance) then
-    !       distance=distances(i)
-    !    end if
-    ! end do
+    ! i.e. find the smallest value. The distance must be >0.
 
     do i=1, 2
        if(distances(i)<distance .and. distances(i)>0) then
@@ -219,7 +210,6 @@ contains
     cell_index=0
 
     do i=1, n
-       ! print *, cell_list(i)%cell_array%name
        cell_hit=cell_list(i)%cell_array%cell_test(mfp)
 
        if(cell_hit .eqv. .true.) then
@@ -227,11 +217,6 @@ contains
           exit
        end if
     end do
-
-    ! if(cell_hit .eqv. .false.) then
-    !    print *, "OH no", cell_index
-    !    error stop
-    ! end if
   end function cell_search
 
 end module cell_type

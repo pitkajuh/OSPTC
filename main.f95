@@ -25,26 +25,6 @@ program main
   ! call clear_material(steel2)
   ! deallocate(steel2)
 
-
-
-  ! call random_seed(size=n)
-  ! allocate(seed1(n))
-  ! call system_clock(count=count1)
-  ! print *, count1
-  ! do i=1, n
-  !    seed1(i)=count1+i*99999
-  ! end do
-
-  ! call random_seed(put=seed1)
-
-  ! seed1=count
-  ! call random_seed(put=ix(1:n))
-
-  ! call random_seed(size=n)
-  ! allocate(seed1(n))
-  ! seed1=time()
-  ! call random_seed(get=seed1)
-
   reaction=.false.
   cell_hit=.false.
   continue_loop=.false.
@@ -72,36 +52,9 @@ program main
      call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
   end select
 
-  ! print *, size(cell_all)
-
-  ! new_location=coordinate(0.1_8, 0.1_8, 0.1_8)
-  ! print *, source_cell%cell_test(new_location)
-
-  ! ph%energy=1
-  ! current_photon=>ph
-
-  ! do i=2, 10
-  !    allocate(current_photon%next_photon)
-  !    current_photon=>current_photon%next_photon
-  !    current_photon%energy=i
-  !    current_photon%next_photon => null()
-  ! end do
-
-  ! ! previous_photon=>null()
-  ! current_photon=>ph
-
-  ! do while (associated(current_photon))
-  !    ! print *, current_photon%energy
-  !    ! previous_photon=>current_photon
-  !    current_photon=>current_photon%next_photon
-  ! end do
-
-
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=1E4
-  ! call omp_set_num_threads(4)
-  ! allocate(ph)
+  co_60_source%activity=1E3
   end=.false.
 
   !!!$omp parallel do reduction(+:ph)
@@ -115,22 +68,16 @@ program main
 
         ph%next_photon=>null()
         current_photon=>ph
-        ! print *, "----- origin begin"
-        ! call show(ph%origin)
-        ! print *, "-----"
+
         do while(associated(current_photon))
            end=surface_tracking(cell_all, current_photon, cell_index)
 
            if(end .eqv. .false.) then
               cycle
            else if(end .eqv. .true.) then
-              ! print *, "exiting loop"
-              ! ph=>current_photon
               if(associated(current_photon)) then
-                 ! print *, "main, deleting", current_photon%id
                  deallocate(current_photon)
               end if
-              ! deallocate(current_photon)
               exit
            end if
            current_photon=>current_photon%next_photon
@@ -138,8 +85,6 @@ program main
      end do
   end do
   !!!$omp end parallel do
-
-  ! ph=>current_photon
 
   print *, "END"
   print *, "delete source"

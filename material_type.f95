@@ -280,7 +280,6 @@ contains
          2.00000E+01,2.153E-02,1.606E-02],shape=[3,36])
   end subroutine create_hydrogen
 
-
   subroutine create_oxygen(this)
     class(oxygen), intent(inout) :: this
     this%density=1.332E-03
