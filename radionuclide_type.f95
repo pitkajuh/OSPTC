@@ -36,11 +36,11 @@ contains
 
     if(std_uniform_distribution()<=0.85) then
        ! call create_photon(ph, 1173E3_8, origin)
-       energy=1173E4_8
+       energy=1173E3_8
        call create_photon(ph, energy, origin)
     else
        ! call create_photon(ph, 1332E3_8, origin)
-       energy=1332E4_8
+       energy=1332E3_8
        call create_photon(ph, energy, origin)
     end if
   end subroutine pdf_co_60

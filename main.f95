@@ -11,12 +11,10 @@ program main
   use constants, only: elementary_charge
   implicit none
 
-  integer, allocatable :: seed1(:)
-  ! integer, dimension(100) :: ix
-  integer :: n, time, count1, i
-  integer :: second, cell_index, seed
-  class(material), pointer :: steel1, nitrogen1, steel2
-  type(photon), pointer :: current_photon, ph, temp
+  integer :: time, i
+  integer :: second, cell_index
+  class(material), pointer :: steel1, nitrogen1
+  type(photon), pointer :: current_photon, ph
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop, reaction, end_clause
   class(cells), allocatable :: cell_all(:)
@@ -54,11 +52,11 @@ program main
 
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=1E2
+  co_60_source%activity=2E6
   end_clause=.false.
   !$omp parallel private(ph, cell_index, end_clause, current_photon)
   !$omp do
-  do second=1, 10
+  do second=1, 1
      do i=1, co_60_source%activity
         allocate(ph)
         cell_index=1
@@ -95,22 +93,7 @@ program main
   print *, "delete source"
   deallocate(co_60_source)
 
-  ! current_photon=>ph
 
-  ! do while(associated(current_photon))
-  !    temp=>current_photon
-
-  !    if(associated(temp)) then
-  !       print *, "delete", temp%id
-  !       deallocate(temp)
-  !    end if
-  !    current_photon=>current_photon%next_photon
-  ! end do
-
-  ! if(associated(ph)) then
-  !    print *, "main, deleting", ph%id
-  !     deallocate(ph)
-  ! end if
 
 
 
