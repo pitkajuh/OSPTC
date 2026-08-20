@@ -19,7 +19,6 @@ program main
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop, reaction, end_clause
   class(cells), allocatable :: cell_all(:)
-  call random_seed()
   ! allocate(steel :: steel2)
   ! call steel2%create()
   ! call clear_material(steel2)
