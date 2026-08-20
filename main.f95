@@ -13,13 +13,13 @@ program main
   integer, allocatable :: seed1(:)
   ! integer, dimension(100) :: ix
   integer :: n, time, count1, i
-  integer :: second, cell_index
+  integer :: second, cell_index, seed
   class(material), pointer :: steel1, nitrogen1, steel2
   type(photon), pointer :: current_photon, ph, temp
   class(radionuclide), allocatable :: co_60_source
-  logical :: cell_hit, continue_loop, reaction, end
+  logical :: cell_hit, continue_loop, reaction, end_clause
   class(cells), allocatable :: cell_all(:)
-
+  call random_seed()
   ! allocate(steel :: steel2)
   ! call steel2%create()
   ! call clear_material(steel2)
@@ -54,11 +54,11 @@ program main
 
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=1E3
-  end=.false.
-
-  !!!$omp parallel do reduction(+:ph)
-  do second=1, 100
+  co_60_source%activity=1E2
+  end_clause=.false.
+  !$omp parallel private(ph, cell_index, end_clause, current_photon)
+  !$omp do
+  do second=1, 10
      do i=1, co_60_source%activity
         allocate(ph)
         cell_index=1
@@ -70,11 +70,11 @@ program main
         current_photon=>ph
 
         do while(associated(current_photon))
-           end=surface_tracking(cell_all, current_photon, cell_index)
+           end_clause=surface_tracking(cell_all, current_photon, cell_index)
 
-           if(end .eqv. .false.) then
+           if(end_clause .eqv. .false.) then
               cycle
-           else if(end .eqv. .true.) then
+           else if(end_clause .eqv. .true.) then
               if(associated(current_photon)) then
                  deallocate(current_photon)
               end if
@@ -84,7 +84,8 @@ program main
         end do
      end do
   end do
-  !!!$omp end parallel do
+  !$emp end do
+  !$omp end parallel
 
   print *, "END"
   print *, "delete source"

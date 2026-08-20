@@ -4,7 +4,7 @@ project(OSPTC)
 enable_language(Fortran)
 
 set(CMAKE_Fortran_FLAGS "-fopenmp")
-set(CMAKE_Fortran_FLAGS_DEBUG "-02 -Wall -Wline-truncation  -Wcharacter-truncation  -Wsurprising  -Waliasing  -Wimplicit-interface  -Wunused-parameter  -fwhole-file -fcheck=all -pedantic  -fbacktrace")
+set(CMAKE_Fortran_FLAGS_DEBUG "-Wall -Wline-truncation  -Wcharacter-truncation  -Wsurprising  -Waliasing  -Wimplicit-interface  -Wunused-parameter  -fwhole-file -fcheck=all -pedantic  -fbacktrace")
 set(CMAKE_Fortran_FLAGS_RELEASE "-O3 -march=native -flto")
 
 file(GLOB_RECURSE sources *.f95)

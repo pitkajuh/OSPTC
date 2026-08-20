@@ -85,7 +85,6 @@ contains
 
        if(rand<0.5*(1+mu)) exit
     end do
-
   end function sample_coherent_scattering_angle
 
   function kahns_method(a) result(mu)
