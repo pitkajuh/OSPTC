@@ -89,7 +89,7 @@ program main
 
   print *, "SIMULATION END"
 
-  print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%accumulated_energy*elementary_charge, cell_all(2)%cell_array%accumulated_energy*elementary_charge
+  print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%get_dose(), cell_all(2)%cell_array%get_dose()
 
 
   print *, "delete source"
