@@ -316,7 +316,7 @@ contains
        mfp=calculate_mfp(ph, cell_all(cell_from)%cell_array%cell_material &
             %get_mu_value(ph%energy), cell_all(cell_from)%cell_array% &
             cell_material% density)
-       cell_index=cell_search(cell_all, size(cell_all), mfp)
+       cell_index=cell_search(cell_all, size(cell_all), mfp, ph%energy)
 
        if(cell_index>1) then
           do j=cell_index, size(cell_all)

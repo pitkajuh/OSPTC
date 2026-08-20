@@ -12,7 +12,7 @@ module cell_type
 
   type, abstract :: cell
      character :: name
-     integer :: hits
+     real(kind(1.d0)) :: accumulated_energy
      class(material), pointer:: cell_material
    contains
      procedure(create_cell_test), deferred :: cell_test
@@ -29,11 +29,12 @@ module cell_type
        real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
      end subroutine create_create
 
-     function create_cell_test(this, p) result(result1)
+     function create_cell_test(this, p, energy) result(result1)
        import coordinate
        import cell
        class(cell), intent(inout) :: this
        type(coordinate), intent(in) :: p
+       real(kind(1.d0)), intent(in) :: energy
        logical :: result1
      end function create_cell_test
 
@@ -91,9 +92,10 @@ contains
     call create_planez(this%wallz_positive, z1)
   end subroutine create_cell_box_3d
 
-  function cell_test_box(this, p) result(result1)
+  function cell_test_box(this, p, energy) result(result1)
     class(cell_box_3d), intent(inout) :: this
     type(coordinate), intent(in) :: p
+    real(kind(1.d0)), intent(in) :: energy
     logical :: result1, b1, b2, b3, b4, b5, b6
     b1=.not. this%wallx_negative%surface_test(p)
     b2=this%wallx_positive%surface_test(p)
@@ -104,7 +106,7 @@ contains
     result1=.false.
 
     if(b1 .and. b2 .and. b3 .and. b4 .and. b4 .and. b5 .and. b6) then
-       this%hits=this%hits+1
+       this%accumulated_energy=this%accumulated_energy+energy
        result1=.true.
     end if
   end function cell_test_box
@@ -152,9 +154,10 @@ contains
     call create_planez(this%wallz_positive, y0)
   end subroutine create_cell_cylinder_truncated_z
 
-  function cell_test_cylinder_z(this, p) result(result1)
+  function cell_test_cylinder_z(this, p, energy) result(result1)
     class(cell_cylinder_truncated_z), intent(inout) :: this
     type(coordinate), intent(in) :: p
+    real(kind(1.d0)), intent(in) :: energy
     logical :: result1, b1, b2, b3
     b1=this%surface_cylinder%surface_test(p)
     b2=this%wallz_positive%surface_test(p)
@@ -162,7 +165,7 @@ contains
     result1=.false.
 
     if(b1 .and. b2 .and. b3) then
-       this%hits=this%hits+1
+       this%accumulated_energy=this%accumulated_energy+energy
        result1=.true.
     end if
   end function cell_test_cylinder_z
@@ -201,16 +204,17 @@ contains
     result1%z=this%wallz_negative%v+(this%wallz_positive%v-this%wallz_negative%v)*std_uniform_distribution()
   end function cell_initial_position_cylinder_z
 
-  function cell_search(cell_list, n, mfp) result(cell_index)
+  function cell_search(cell_list, n, mfp, energy) result(cell_index)
     class(cells), intent(inout), allocatable :: cell_list(:)
     type(coordinate), intent(in) :: mfp
+    real(kind(1.d0)), intent(in) :: energy
     integer, intent(in) :: n
     integer :: i, cell_index
     logical :: cell_hit
     cell_index=0
 
     do i=1, n
-       cell_hit=cell_list(i)%cell_array%cell_test(mfp)
+       cell_hit=cell_list(i)%cell_array%cell_test(mfp, energy)
 
        if(cell_hit .eqv. .true.) then
           cell_index=i

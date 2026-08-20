@@ -8,6 +8,7 @@ program main
   use material_type
   use physics_routine
   use photon_type
+  use constants, only: elementary_charge
   implicit none
 
   integer, allocatable :: seed1(:)
@@ -86,7 +87,11 @@ program main
   !$emp end do
   !$omp end parallel
 
-  print *, "END"
+  print *, "SIMULATION END"
+
+  print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%accumulated_energy*elementary_charge, cell_all(2)%cell_array%accumulated_energy*elementary_charge
+
+
   print *, "delete source"
   deallocate(co_60_source)
 
@@ -135,6 +140,9 @@ program main
   ! call clear_material(nitrogen1)
   ! deallocate(nitrogen1)
   ! cell_all(2)%cell_array%cell_material=>null()
+
+
+
   print *, "del cells"
   deallocate(cell_all)
 
@@ -146,5 +154,4 @@ program main
   call clear_material(nitrogen1)
   deallocate(nitrogen1)
 
-  print *, "END"
 end program main
