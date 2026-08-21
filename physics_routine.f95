@@ -271,25 +271,19 @@ contains
 
     select case (reaction_id)
     case(502)
-       ! print *, "coherent scattering", ph%energy
-       ! energy_before=ph%energy
        call coherent_scattering_reaction(ph, endf)
        energy_lost=0.0_8 ! No energy is lost in coherent/elastic scattering.
     case(504)
-       ! print *, "incoherent scattering", ph%energy
        energy_before=ph%energy
        call incoherent_scattering_reaction(ph, endf)
        energy_lost=energy_before-ph%energy
     case(515)
-       ! print *, "pair formation in electric field", ph%energy
        energy_lost=ph%energy-energy_threshold_pair_elec
        call pair_production(ph, mfp)
     case(517)
-       ! print *, "pair formation in nuclear field", ph%energy
        energy_lost=ph%energy-energy_threshold_pair_nuc
        call pair_production(ph, mfp)
     case default
-       ! print *, "ionization", ph%energy
        energy_before=ph%energy
        end=photo_ionization(ph, endf, reaction_id)
        energy_lost=energy_before-ph%energy
