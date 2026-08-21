@@ -11,7 +11,7 @@ program main
   use constants, only: elementary_charge
   implicit none
 
-  integer :: time, i
+  integer :: i
   integer :: second, cell_index
   class(material), pointer :: steel1, nitrogen1
   type(photon), pointer :: current_photon, ph
@@ -52,11 +52,11 @@ program main
 
 
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=2E6
+  co_60_source%activity=1E3
   end_clause=.false.
   !$omp parallel private(ph, cell_index, end_clause, current_photon)
   !$omp do
-  do second=1, 1
+  do second=1, 10
      do i=1, co_60_source%activity
         allocate(ph)
         cell_index=1

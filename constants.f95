@@ -10,5 +10,7 @@ module constants
   real(kind(1.d0)) :: meter_in_angstroms=10_8**10_8 ! A/m
   real(kind(1.d0)) :: atomic_mass_unit=931.494013_8*10_8**(6_8) ! eV/c^2
   real(kind(1.d0)) :: electron_mass=5.11E5_8 ! eV/c^2
+  real(kind(1.d0)) :: energy_threshold_pair_nuc=2*5.11E5_8 ! eV/c^2
+  real(kind(1.d0)) :: energy_threshold_pair_elec=4*5.11E5_8 ! eV/c^2
   real(kind(1.d0)) :: elementary_charge=1.602176462E-19_8
 end module constants

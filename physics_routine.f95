@@ -6,7 +6,7 @@ module physics_routine
   use photon_type
   use search
   use photon_angular_distribution
-  use constants, only: electron_mass
+  use constants, only: electron_mass, energy_threshold_pair_nuc, energy_threshold_pair_elec
   implicit none
 
 contains
@@ -258,10 +258,12 @@ contains
     end do
   end function select_reaction
 
-  function reaction_function(endf, ph, mfp) result(end)
+  function reaction_function(endf, ph, mfp, energy_lost) result(end)
     type(tape), intent(inout) :: endf
     type(photon), pointer, intent(inout) :: ph
     type(coordinate), intent(in) :: mfp
+    real(kind(1.d0)), intent(inout) :: energy_lost
+    real(kind(1.d0)) :: energy_before
     integer :: reaction_id
     logical :: end
     end=.false.
@@ -270,34 +272,42 @@ contains
     select case (reaction_id)
     case(502)
        ! print *, "coherent scattering", ph%energy
+       ! energy_before=ph%energy
        call coherent_scattering_reaction(ph, endf)
+       energy_lost=0.0_8 ! No energy is lost in coherent/elastic scattering.
     case(504)
        ! print *, "incoherent scattering", ph%energy
+       energy_before=ph%energy
        call incoherent_scattering_reaction(ph, endf)
+       energy_lost=energy_before-ph%energy
     case(515)
        ! print *, "pair formation in electric field", ph%energy
+       energy_lost=ph%energy-energy_threshold_pair_elec
        call pair_production(ph, mfp)
     case(517)
        ! print *, "pair formation in nuclear field", ph%energy
+       energy_lost=ph%energy-energy_threshold_pair_nuc
        call pair_production(ph, mfp)
     case default
        ! print *, "ionization", ph%energy
+       energy_before=ph%energy
        end=photo_ionization(ph, endf, reaction_id)
+       energy_lost=energy_before-ph%energy
     end select
 
   end function reaction_function
 
-  function surface_tracking(cell_all, ph, cell_from) result(end)
+  function surface_tracking(cell_all, ph, cell_from) result(end_tracking)
     class(cells), intent(inout), allocatable :: cell_all(:)
     type(photon), pointer, intent(inout) :: ph
     integer, intent(inout) :: cell_from
     type(photon), pointer :: temp
     integer :: cell_index, k, j
-    logical :: end, has_next, has_previous
-    real(kind(1.d0)) :: distance_to_cell
+    logical :: end_tracking, has_next, has_previous
+    real(kind(1.d0)) :: distance_to_cell, energy_before, energy_lost
     type(coordinate) :: mfp
     temp=>null()
-    end=.false.
+    end_tracking=.false.
     has_next=.false.
     has_previous=.false.
     mfp=coordinate(0.0_8, 0.0_8, 0.0_8)
@@ -305,13 +315,15 @@ contains
     cell_index=1
     k=1
     j=1
+    energy_lost=0.0_8
 
     do k=1, 1000
        ! Ignore photons with energy less than 1 keV.
        if(ph%energy<1000) then
-          end=.true.
+          end_tracking=.true.
           exit
        end if
+       energy_before=ph%energy
 
        mfp=calculate_mfp(ph, cell_all(cell_from)%cell_array%cell_material &
             %get_mu_value(ph%energy), cell_all(cell_from)%cell_array% &
@@ -328,9 +340,10 @@ contains
                 ! move to mfp
                 print *, "same material"
                 ph%origin=mfp
-                end=.false.
-                end=reaction_function(cell_all(j)%cell_array%cell_material% &
-                     endf, ph, mfp)
+                end_tracking=.false.
+                end_tracking=reaction_function(cell_all(j)%cell_array%cell_material% &
+                     endf, ph, mfp, energy_lost)
+                cell_all(j)%cell_array%accumulated_energy=cell_all(j)%cell_array%accumulated_energy+energy_lost
                 exit
              else
                 ! Add small interpolation distance in order to make sure
@@ -341,17 +354,19 @@ contains
              end if
           end do
        else if(cell_index==0) then
-          end=.true.
+          end_tracking=.true.
           exit
        else
           ! Reaction happens at the source.
-          end=reaction_function(cell_all(cell_index)%cell_array% &
-               cell_material%endf, ph, mfp)
+          end_tracking=reaction_function(cell_all(cell_index)%cell_array% &
+               cell_material%endf, ph, mfp, energy_lost)
+          cell_all(cell_index)%cell_array%accumulated_energy=cell_all(cell_index)%cell_array%accumulated_energy+energy_lost
           exit
        end if
+
     end do
 
-    if(end .eqv. .true.) then
+    if(end_tracking .eqv. .true.) then
        has_next=associated(ph%next_photon)
        has_previous=associated(ph%previous_photon)
 
