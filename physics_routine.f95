@@ -6,6 +6,7 @@ module physics_routine
   use photon_type
   use search
   use photon_angular_distribution
+  use results_type
   use constants, only: electron_mass, energy_threshold_pair_nuc, energy_threshold_pair_elec
   implicit none
 
@@ -291,14 +292,15 @@ contains
 
   end function reaction_function
 
-  function surface_tracking(cell_all, ph, cell_from) result(end_tracking)
+  function surface_tracking(cell_all, ph, cell_from, statistics) result(end_tracking)
     class(cells), intent(inout), allocatable :: cell_all(:)
     type(photon), pointer, intent(inout) :: ph
     integer, intent(inout) :: cell_from
     type(photon), pointer :: temp
+    type(results), intent(inout) :: statistics
     integer :: cell_index, k, j
     logical :: end_tracking, has_next, has_previous
-    real(kind(1.d0)) :: distance_to_cell, energy_before, energy_lost
+    real(kind(1.d0)) :: distance_to_cell, energy_lost
     type(coordinate) :: mfp
     temp=>null()
     end_tracking=.false.
@@ -317,7 +319,6 @@ contains
           end_tracking=.true.
           exit
        end if
-       energy_before=ph%energy
 
        mfp=calculate_mfp(ph, cell_all(cell_from)%cell_array%cell_material &
             %get_mu_value(ph%energy), cell_all(cell_from)%cell_array% &
@@ -333,6 +334,7 @@ contains
                   %cell_array%cell_material%density) then
                 ! move to mfp
                 print *, "same material"
+                call add_result(statistics, ph)
                 ph%origin=mfp
                 end_tracking=.false.
                 end_tracking=reaction_function(cell_all(j)%cell_array%cell_material% &
@@ -352,6 +354,8 @@ contains
           exit
        else
           ! Reaction happens at the source.
+          call add_result(statistics, ph)
+
           end_tracking=reaction_function(cell_all(cell_index)%cell_array% &
                cell_material%endf, ph, mfp, energy_lost)
           cell_all(cell_index)%cell_array%accumulated_energy=cell_all(cell_index)%cell_array%accumulated_energy+energy_lost
