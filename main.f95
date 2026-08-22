@@ -19,6 +19,8 @@ program main
   logical :: cell_hit, continue_loop, reaction, end_clause
   class(cells), allocatable :: cell_all(:)
   type(results) :: statistics
+  ! integer :: stat
+  ! stat=0
   ! allocate(steel :: steel2)
   ! call steel2%create()
   ! call clear_material(steel2)
@@ -51,6 +53,11 @@ program main
   !    call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
   ! end select
 
+  ! Create a directory for results
+  call execute_command_line("mkdir -p results")
+  ! print *, "aoao", stat
+
+  ! if(stat==0) print *, "aoao", stat
 
   allocate(co_60 :: co_60_source)
   co_60_source%activity=1E3
@@ -94,16 +101,15 @@ program main
   call co_60_source%pdf(ph)
   ph%id=1
   ph%origin=coordinate(0, 0, 0)
-  print *, "write 1"
   call add_result(statistics, ph)
   deallocate(ph)
-  print *, "write 2"
   allocate(ph)
   call co_60_source%pdf(ph)
   ph%id=1
   ph%origin=coordinate(0, 0, 0)
   call add_result(statistics, ph)
-  call write_results(statistics)
+  second=1
+  call write_results(statistics, second)
   deallocate(ph)
 
 

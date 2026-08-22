@@ -32,8 +32,6 @@ contains
 
           next=>next%next
        end do
-
-
     else
        allocate(this%energy_dist)
        this%energy_dist%location=ph%direction
@@ -42,27 +40,30 @@ contains
 
   end subroutine add_result
 
-  subroutine write_results(this)
+  subroutine write_results(this, second)
     type(results), intent(in) :: this
     type(energy_distribution), pointer :: next, remove
+    integer, intent(in) :: second
+    character(len=:), allocatable :: second_str
     character(len=5) :: z
-    character(len=10) :: t
+    character(len=6) :: t
     character(len=8) :: d
     remove=>null()
+    second_str="a"
     call date_and_time(d, t, z)
-
-    open(1, file=t, status="new")
+    call execute_command_line("mkdir -p results/"//t)
+    write(second_str, '(I0)') second
+    open(1, file="results/"//t//"/"//second_str, status="new")
     next=>this%energy_dist
 
     do while(associated(next))
-       print *, next%location, next%energy
-
        write(1, *) next%location, next%energy
        remove=>next
        next=>next%next
        deallocate(remove)
     end do
     close(1)
+    deallocate(second_str)
   end subroutine write_results
 
 end module results_type
