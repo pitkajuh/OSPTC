@@ -18,21 +18,12 @@ contains
     type(results), intent(inout) :: this
     type(photon), intent(in) :: ph
     type(energy_distribution), pointer :: next
-    integer :: i
-    i=1
 
-    if(.not. associated(this%energy_dist)) then
-       print *, "rcu"
-       allocate(this%energy_dist)
-       this%energy_dist%location=ph%direction
-       this%energy_dist%energy=ph%energy
-    else
+    if(associated(this%energy_dist)) then
        next=>this%energy_dist
 
        do while(associated(next))
-          print *, i, .not. associated(next%next)
           if(.not. associated(next%next)) then
-             print *, "add"
              allocate(next%next)
              next%next%location=ph%direction
              next%next%energy=ph%energy
@@ -40,8 +31,13 @@ contains
           end if
 
           next=>next%next
-          i=i+1
        end do
+
+
+    else
+       allocate(this%energy_dist)
+       this%energy_dist%location=ph%direction
+       this%energy_dist%energy=ph%energy
     end if
 
   end subroutine add_result
@@ -52,7 +48,6 @@ contains
     character(len=5) :: z
     character(len=10) :: t
     character(len=8) :: d
-    ! next=>null()
     remove=>null()
     call date_and_time(d, t, z)
 
