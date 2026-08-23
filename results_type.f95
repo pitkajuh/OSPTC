@@ -19,7 +19,7 @@ contains
     type(results), intent(inout) :: this
     type(photon), intent(in) :: ph
     type(energy_distribution), pointer :: next
-    ! print *, "adding"
+
     if(associated(this%energy_dist)) then
        next=>this%energy_dist
 

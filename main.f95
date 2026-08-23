@@ -68,9 +68,9 @@ program main
   allocate(co_60 :: co_60_source)
   co_60_source%activity=1
   end_clause=.false.
-  !!!$omp parallel private(ph, cell_index, end_clause, current_photon)
-  !!!$omp do
-  do second=1, 2
+  !$omp parallel private(ph, cell_index, end_clause, current_photon, statistics, second)
+  !$omp do
+  do second=1, 5
      do i=1, co_60_source%activity
         allocate(ph)
         cell_index=1
@@ -97,8 +97,8 @@ program main
      end do
      call write_results(statistics, second, time_start)
   end do
-  !!!$emp end do
-  !!!$omp end parallel
+  !$emp end do
+  !$omp end parallel
 
   ! allocate(statistics%energy_dist)
 
