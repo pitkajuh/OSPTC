@@ -6,6 +6,7 @@ module results_type
      type(coordinate) :: location
      real(kind(1.d0)) :: energy
      type(energy_distribution), pointer :: next => null()
+
   end type energy_distribution
 
   type :: results
@@ -18,7 +19,7 @@ contains
     type(results), intent(inout) :: this
     type(photon), intent(in) :: ph
     type(energy_distribution), pointer :: next
-
+    ! print *, "adding"
     if(associated(this%energy_dist)) then
        next=>this%energy_dist
 
@@ -41,17 +42,18 @@ contains
   end subroutine add_result
 
   subroutine write_results(this, second, time_start)
-    type(results), intent(in) :: this
+    type(results), intent(inout) :: this
     type(energy_distribution), pointer :: next, remove
     integer, intent(in) :: second
     character(len=6), intent(in) :: time_start
+    integer :: i
     ! character(len=:), allocatable :: second_str
     character(len=32) :: temporary
     character(len=5) :: z
     character(len=6) :: time_start1
     character(len=8) :: d
     remove=>null()
-
+    i=1
 
     call date_and_time(d, time_start1, z)
     ! print *, "chrc"//second
@@ -67,10 +69,20 @@ contains
        write(1, *) next%location, next%energy
        remove=>next
        next=>next%next
+       ! remove%next=>null()
        deallocate(remove)
     end do
     close(1)
+    ! this%energy_dist%next=>null()
+    ! if(associated(this%energy_dist)) then
+    !    print *, "free", loc(this%energy_dist)
+    !    deallocate(this%energy_dist)
+    ! end if
+
+    ! deallocate(next%next)
     ! deallocate(second_str)
+     this%energy_dist=>null()
+
   end subroutine write_results
 
 end module results_type

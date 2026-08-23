@@ -96,7 +96,6 @@ program main
         end do
      end do
      call write_results(statistics, second, time_start)
-     print *, "----"
   end do
   !!!$emp end do
   !!!$omp end parallel
