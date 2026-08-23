@@ -9,7 +9,7 @@ module photon_type
      type(coordinate) :: direction
      type(coordinate) :: origin
      ! type(coordinate) :: to
-     ! type(coordinate) :: mfp
+     type(coordinate) :: mfp
      type(photon), pointer :: next_photon => null()
      type(photon), pointer :: previous_photon => null()
   end type photon

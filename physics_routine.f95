@@ -301,12 +301,10 @@ contains
     integer :: cell_index, k, j
     logical :: end_tracking, has_next, has_previous
     real(kind(1.d0)) :: distance_to_cell, energy_lost
-    type(coordinate) :: mfp
     temp=>null()
     end_tracking=.false.
     has_next=.false.
     has_previous=.false.
-    mfp=coordinate(0.0_8, 0.0_8, 0.0_8)
     distance_to_cell=0.0_8
     cell_index=1
     k=1
@@ -320,10 +318,10 @@ contains
           exit
        end if
 
-       mfp=calculate_mfp(ph, cell_all(cell_from)%cell_array%cell_material &
+       ph%mfp=calculate_mfp(ph, cell_all(cell_from)%cell_array%cell_material &
             %get_mu_value(ph%energy), cell_all(cell_from)%cell_array% &
             cell_material% density)
-       cell_index=cell_search(cell_all, size(cell_all), mfp, ph%energy)
+       cell_index=cell_search(cell_all, size(cell_all), ph%mfp, ph%energy)
 
        if(cell_index>1) then
           do j=cell_index, size(cell_all)
@@ -335,10 +333,10 @@ contains
                 ! move to mfp
                 print *, "same material"
                 call add_result(statistics, ph)
-                ph%origin=mfp
+                ph%origin=ph%mfp
                 end_tracking=.false.
                 end_tracking=reaction_function(cell_all(j)%cell_array%cell_material% &
-                     endf, ph, mfp, energy_lost)
+                     endf, ph, ph%mfp, energy_lost)
                 cell_all(j)%cell_array%accumulated_energy=cell_all(j)%cell_array%accumulated_energy+energy_lost
                 exit
              else
@@ -357,7 +355,7 @@ contains
           call add_result(statistics, ph)
 
           end_tracking=reaction_function(cell_all(cell_index)%cell_array% &
-               cell_material%endf, ph, mfp, energy_lost)
+               cell_material%endf, ph, ph%mfp, energy_lost)
           cell_all(cell_index)%cell_array%accumulated_energy=cell_all(cell_index)%cell_array%accumulated_energy+energy_lost
           exit
        end if

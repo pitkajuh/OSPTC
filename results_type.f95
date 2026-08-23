@@ -25,7 +25,7 @@ contains
        do while(associated(next))
           if(.not. associated(next%next)) then
              allocate(next%next)
-             next%next%location=ph%direction
+             next%next%location=ph%mfp
              next%next%energy=ph%energy
              exit
           end if
@@ -34,26 +34,33 @@ contains
        end do
     else
        allocate(this%energy_dist)
-       this%energy_dist%location=ph%direction
+       this%energy_dist%location=ph%mfp
        this%energy_dist%energy=ph%energy
     end if
 
   end subroutine add_result
 
-  subroutine write_results(this, second)
+  subroutine write_results(this, second, time_start)
     type(results), intent(in) :: this
     type(energy_distribution), pointer :: next, remove
     integer, intent(in) :: second
-    character(len=:), allocatable :: second_str
+    character(len=6), intent(in) :: time_start
+    ! character(len=:), allocatable :: second_str
+    character(len=32) :: temporary
     character(len=5) :: z
-    character(len=6) :: t
+    character(len=6) :: time_start1
     character(len=8) :: d
     remove=>null()
-    second_str="a"
-    call date_and_time(d, t, z)
-    call execute_command_line("mkdir -p results/"//t)
-    write(second_str, '(I0)') second
-    open(1, file="results/"//t//"/"//second_str, status="new")
+
+
+    call date_and_time(d, time_start1, z)
+    ! print *, "chrc"//second
+    ! second_str="a"
+    write(temporary, '(I0)') second
+    temporary=trim(temporary)
+    open(1, file="results/"//time_start//"/"//temporary, status="new")
+    ! call execute_command_line()
+    ! open(1, file="results/"//time_start//"/"//time_start1, status="new")
     next=>this%energy_dist
 
     do while(associated(next))
@@ -63,7 +70,7 @@ contains
        deallocate(remove)
     end do
     close(1)
-    deallocate(second_str)
+    ! deallocate(second_str)
   end subroutine write_results
 
 end module results_type
