@@ -2,48 +2,127 @@ module results_type
   use coordinate_type
   use photon_type
 
-  type :: energy_distribution
-     type(coordinate) :: location
-     real(kind(1.d0)) :: energy
-     type(energy_distribution), pointer :: next => null()
+  ! type :: energy_distribution
+  !    type(coordinate) :: location
+  !    real(kind(1.d0)) :: energy
+  !    type(energy_distribution), pointer :: next => null()
 
-  end type energy_distribution
+  ! end type energy_distribution
 
   type :: results
-     type(energy_distribution), pointer :: energy_dist => null()
+     ! type(energy_distribution), pointer :: energy_dist => null()
+     type(coordinate) :: location
+     real(kind(1.d0)) :: energy
+     type(results), pointer :: next => null()
   end type results
 
 contains
 
   subroutine add_result(this, ph)
-    type(results), intent(inout) :: this
+    type(results), pointer, intent(inout) :: this
     type(photon), intent(in) :: ph
-    type(energy_distribution), pointer :: next
+    type(results), pointer :: next
+    logical :: nothing
+    nothing=.false.
+    print *, "add_result"
+    ! if(.not. associated(ph)) then
+    !    print *, "help"
+    ! end if
+    ! next=>null()
+    ! if(.not. associated(this%energy_dist)) then
+    !    print *, "help2"
+    ! end if
+    if(associated(this)) then
+       print *, "123"
+    next=>this
+    print *, "312"
 
-    if(associated(this%energy_dist)) then
-       next=>this%energy_dist
+    do while(associated(next))
+       print *, next%energy
+       if(.not. associated(next%next)) then
+          print *, ".not. associated(next%next)"
+          print *, ph%energy
+          allocate(next%next)
+          next%next%location=ph%mfp
+          next%next%energy=ph%energy
+          nothing=.true.
+          exit
+       end if
 
-       do while(associated(next))
-          if(.not. associated(next%next)) then
-             allocate(next%next)
-             next%next%location=ph%mfp
-             next%next%energy=ph%energy
-             exit
-          end if
+       next=>next%next
+    end do
+ end if
 
-          next=>next%next
-       end do
-    else
-       allocate(this%energy_dist)
-       this%energy_dist%location=ph%mfp
-       this%energy_dist%energy=ph%energy
-    end if
 
+
+    ! if(this%energy .neqv. 0) then
+    !    this%energy=ph%energy
+    !    this%location=ph%mfp
+
+    !    if(.not. associated(this%next)) then
+    !       allocate(this%next)
+    !       next=>this%next
+
+    !       do while(associated(next))
+    !          if(.not. associated(next%next)) then
+    !             print *, ".not. associated(next%next)"
+    !             print *, ph%energy
+    !             allocate(next%next)
+    !             next%next%location=ph%mfp
+    !             next%next%energy=ph%energy
+    !             nothing=.true.
+    !             exit
+    !          end if
+
+    !          next=>next%next
+    !       end do
+    !    end if
+
+
+
+    ! else if(.not. associated(this%next)) then
+    !    allocate(this%next)
+    !    this%next%energy=ph%energy
+    !    this%next%location=ph%mfp
+    ! else
+
+
+    ! end if
+
+
+
+    ! ! ! if(associated(this)) then
+    ! ! if(this%energy>0) then
+    ! !    next=>this
+    ! !    print *, "alloc", loc(next)
+    ! !    do while(associated(next))
+    ! !       if(.not. associated(next%next)) then
+    ! !          print *, ".not. associated(next%next)"
+    ! !          print *, ph%energy
+    ! !          allocate(next%next)
+    ! !          next%next%location=ph%mfp
+    ! !          next%next%energy=ph%energy
+    ! !          nothing=.true.
+    ! !          exit
+    ! !       end if
+
+    ! !       next=>next%next
+    ! !    end do
+    ! !    print *, "alloc end", nothing
+    ! ! else
+    ! !    print *, "unallocated"
+    ! !    print *, ph%energy
+    ! !    allocate(this)
+    ! !    this%location=ph%mfp
+    ! !    this%energy=ph%energy
+    ! !    print *, "anallo end"
+    ! ! end if
+    print *, "add result end"
   end subroutine add_result
 
   subroutine write_results(this, second, time_start)
-    type(results), intent(inout) :: this
-    type(energy_distribution), pointer :: next, remove
+    type(results), pointer, intent(inout) :: this
+    type(results), pointer :: next, remove
     integer, intent(in) :: second
     character(len=6), intent(in) :: time_start
     integer :: i
@@ -63,7 +142,7 @@ contains
     open(1, file="results/"//time_start//"/"//temporary, status="new")
     ! call execute_command_line()
     ! open(1, file="results/"//time_start//"/"//time_start1, status="new")
-    next=>this%energy_dist
+    next=>this
 
     do while(associated(next))
        write(1, *) next%location, next%energy
@@ -71,6 +150,7 @@ contains
        next=>next%next
        ! remove%next=>null()
        deallocate(remove)
+       ! remove=>null()
     end do
     close(1)
     ! this%energy_dist%next=>null()
@@ -81,7 +161,12 @@ contains
 
     ! deallocate(next%next)
     ! deallocate(second_str)
-     this%energy_dist=>null()
+     this=>null()
+
+     this%energy=0.0_8
+     this%location=coordinate(0.0_8, 0.0_8, 0.0_8)
+     this%next=>null()
+
 
   end subroutine write_results
 

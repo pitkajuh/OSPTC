@@ -18,7 +18,7 @@ program main
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop, reaction, end_clause
   class(cells), allocatable :: cell_all(:)
-  type(results) :: statistics
+  type(results), pointer :: statistics
   character(len=5) :: z
   character(len=6) :: time_start
   character(len=8) :: d
@@ -64,13 +64,18 @@ program main
 
   call date_and_time(d, time_start, z)
   call execute_command_line("mkdir -p results/"//time_start)
-
+  ! statistics%energy_dist=>null()
   allocate(co_60 :: co_60_source)
   co_60_source%activity=1
   end_clause=.false.
+
+
   !$omp parallel private(ph, cell_index, end_clause, current_photon, statistics, second)
   !$omp do
-  do second=1, 5
+  do second=1, 1
+     statistics=>null()
+     allocate(statistics)
+
      do i=1, co_60_source%activity
         allocate(ph)
         cell_index=1
@@ -95,7 +100,8 @@ program main
            current_photon=>current_photon%next_photon
         end do
      end do
-     call write_results(statistics, second, time_start)
+     ! call write_results(statistics, second, time_start)
+     deallocate(statistics)
   end do
   !$emp end do
   !$omp end parallel

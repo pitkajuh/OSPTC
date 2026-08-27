@@ -297,7 +297,7 @@ contains
     type(photon), pointer, intent(inout) :: ph
     integer, intent(inout) :: cell_from
     type(photon), pointer :: temp
-    type(results), intent(inout) :: statistics
+    type(results), pointer, intent(inout) :: statistics
     integer :: cell_index, k, j
     logical :: end_tracking, has_next, has_previous
     real(kind(1.d0)) :: distance_to_cell, energy_lost
