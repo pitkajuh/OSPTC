@@ -20,11 +20,12 @@ contains
 
   subroutine add_result(this, ph)
     type(results), pointer, intent(inout) :: this
-    type(photon), intent(in) :: ph
+    type(photon), pointer, intent(inout) :: ph
     type(results), pointer :: next
+    type(photon), pointer :: next_photon!, delete_photon
     logical :: nothing
     nothing=.false.
-    print *, "add_result"
+    ! print *, "add_result"
     ! if(.not. associated(ph)) then
     !    print *, "help"
     ! end if
@@ -32,31 +33,48 @@ contains
     ! if(.not. associated(this%energy_dist)) then
     !    print *, "help2"
     ! end if
-    if(associated(this)) then
-       print *, "123"
-    next=>this
-    print *, "312"
+    if(.not. associated(this)) then
+       print *, "STOP"
+       error stop
+    end if
 
-    do while(associated(next))
-       print *, next%energy
-       if(.not. associated(next%next)) then
-          print *, ".not. associated(next%next)"
-          print *, ph%energy
-          allocate(next%next)
-          next%next%location=ph%mfp
-          next%next%energy=ph%energy
-          nothing=.true.
+    if(.not. associated(this%next)) then
+       ! print *, ".not. associated(this%next)", this%location
+       next=>this
+    ! end if
+    else
+       next=>this
+
+       do while(associated(next))
+          ! print *, "next%location", next%location
+          if(.not. associated(next%next)) then
+             allocate(next%next)
+             next=>next%next
+             exit
+          end if
+          next=>next%next
+       end do
+    end if
+
+
+    next_photon=>ph
+    print *, associated(ph), ph%mfp
+    do while(associated(next_photon))
+       next%energy=next_photon%energy
+       next%location=next_photon%mfp
+
+       if(.not. associated(next_photon%next_photon)) then
+          print *, "EXIT", ph%mfp
           exit
        end if
 
+       next_photon=>next_photon%next_photon
+       allocate(next%next)
        next=>next%next
     end do
- end if
 
-
-
-    ! if(this%energy .neqv. 0) then
-    !    this%energy=ph%energy
+       ! if(this%energy .neqv. 0) then
+       !    this%energy=ph%energy
     !    this%location=ph%mfp
 
     !    if(.not. associated(this%next)) then
@@ -117,42 +135,56 @@ contains
     ! !    this%energy=ph%energy
     ! !    print *, "anallo end"
     ! ! end if
-    print *, "add result end"
+    ! print *, "add result end"
   end subroutine add_result
 
-  subroutine write_results(this, second, time_start)
+  subroutine write_results(this, time_stamp, time_start)
     type(results), pointer, intent(inout) :: this
     type(results), pointer :: next, remove
-    integer, intent(in) :: second
+    integer, intent(in) :: time_stamp
     character(len=6), intent(in) :: time_start
     integer :: i
-    ! character(len=:), allocatable :: second_str
-    character(len=32) :: temporary
-    character(len=5) :: z
-    character(len=6) :: time_start1
-    character(len=8) :: d
+    ! character(len=:), allocatable :: time_stamp_str
+    ! character(len=32) :: temporary
+    ! character(len=5) :: z
+    ! character(len=6) :: time_start1
+    ! character(len=8) :: d
     remove=>null()
     i=1
 
-    call date_and_time(d, time_start1, z)
-    ! print *, "chrc"//second
-    ! second_str="a"
-    write(temporary, '(I0)') second
-    temporary=trim(temporary)
-    open(1, file="results/"//time_start//"/"//temporary, status="new")
-    ! call execute_command_line()
-    ! open(1, file="results/"//time_start//"/"//time_start1, status="new")
+    ! call date_and_time(d, time_start1, z)
+    ! ! print *, "chrc"//time_stamp
+    ! ! time_stamp_str="a"
+    ! write(temporary, '(I0)') time_stamp
+    ! temporary=trim(temporary)
+    ! open(1, file="results/"//time_start//"/"//temporary, status="new")
+    ! ! call execute_command_line()
+    ! ! open(1, file="results/"//time_start//"/"//time_start1, status="new")
+
+
+
     next=>this
 
     do while(associated(next))
-       write(1, *) next%location, next%energy
+
+       ! write(1, *) next%location, next%energy
+       print *, next%location, next%energy
+
+       if(.not. associated(next%next)) then
+          print *, "(associated(next%next)"
+          exit
+       end if
+
        remove=>next
        next=>next%next
        ! remove%next=>null()
        deallocate(remove)
        ! remove=>null()
+
     end do
-    close(1)
+    ! close(1)
+
+
     ! this%energy_dist%next=>null()
     ! if(associated(this%energy_dist)) then
     !    print *, "free", loc(this%energy_dist)
@@ -160,12 +192,12 @@ contains
     ! end if
 
     ! deallocate(next%next)
-    ! deallocate(second_str)
+    ! deallocate(time_stamp_str)
      this=>null()
 
-     this%energy=0.0_8
-     this%location=coordinate(0.0_8, 0.0_8, 0.0_8)
-     this%next=>null()
+     ! this%energy=0.0_8
+     ! this%location=coordinate(0.0_8, 0.0_8, 0.0_8)
+     ! this%next=>null()
 
 
   end subroutine write_results
