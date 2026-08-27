@@ -109,7 +109,7 @@ program main
         next_statistics=>next_statistics%next
         deallocate(remove)
      end do
-
+     ! deallocate(next_statistics)
      ! deallocate(statistics)
 
 

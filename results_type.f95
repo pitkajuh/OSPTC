@@ -144,22 +144,22 @@ contains
     integer, intent(in) :: time_stamp
     character(len=6), intent(in) :: time_start
     integer :: i
-    ! character(len=:), allocatable :: time_stamp_str
-    ! character(len=32) :: temporary
-    ! character(len=5) :: z
-    ! character(len=6) :: time_start1
-    ! character(len=8) :: d
+    character(len=:), allocatable :: time_stamp_str
+    character(len=32) :: temporary
+    character(len=5) :: z
+    character(len=6) :: time_start1
+    character(len=8) :: d
     remove=>null()
     i=1
 
-    ! call date_and_time(d, time_start1, z)
-    ! ! print *, "chrc"//time_stamp
-    ! ! time_stamp_str="a"
-    ! write(temporary, '(I0)') time_stamp
-    ! temporary=trim(temporary)
-    ! open(1, file="results/"//time_start//"/"//temporary, status="new")
-    ! ! call execute_command_line()
-    ! ! open(1, file="results/"//time_start//"/"//time_start1, status="new")
+    call date_and_time(d, time_start1, z)
+    ! print *, "chrc"//time_stamp
+    ! time_stamp_str="a"
+    write(temporary, '(I0)') time_stamp
+    temporary=trim(temporary)
+    open(1, file="results/"//time_start//"/"//temporary, status="new")
+    ! call execute_command_line()
+    ! open(1, file="results/"//time_start//"/"//time_start1, status="new")
 
 
 
@@ -167,7 +167,7 @@ contains
 
     do while(associated(next))
 
-       ! write(1, *) next%location, next%energy
+       write(1, *) next%location, next%energy
        print *, next%location, next%energy
 
        if(.not. associated(next%next)) then
@@ -182,7 +182,7 @@ contains
        ! remove=>null()
 
     end do
-    ! close(1)
+    close(1)
 
 
     ! this%energy_dist%next=>null()
@@ -193,7 +193,7 @@ contains
 
     ! deallocate(next%next)
     ! deallocate(time_stamp_str)
-     this=>null()
+     ! this=>null()
 
      ! this%energy=0.0_8
      ! this%location=coordinate(0.0_8, 0.0_8, 0.0_8)
