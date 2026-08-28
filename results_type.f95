@@ -1,6 +1,7 @@
 module results_type
   use coordinate_type
   use photon_type
+  use omp_lib
 
   ! type :: energy_distribution
   !    type(coordinate) :: location
@@ -144,31 +145,59 @@ contains
     ! print *, "add result end"
   end subroutine add_result
 
+  function create_file_name(time_start, time_stamp) result(file_name)
+    integer, intent(in) :: time_stamp
+    character(len=6), intent(in) :: time_start
+    character(len=32) :: temporary
+    character(len=32) :: file_name
+    character(len=5) :: z
+    character(len=6) :: time_start1
+    character(len=8) :: d
+    call date_and_time(d, time_start1, z)
+    write(temporary, '(I0)') time_stamp
+    tread_id=time_stamp+omp_get_thread_num()
+    temporary=trim(temporary)
+    file_name="results/"//time_start//"/"//temporary
+    file_name=trim(file_name)
+    print *, "file name", file_name
+  end function create_file_name
+
+  ! function create_file(time_start, time_stamp) result(thread_id)
+  !   integer :: i, tread_id
+  !   character(len=32) :: temporary, file_name
+  !   tread_id=int(time_stamp)+omp_get_thread_num()
+  !   file_name=create_file_name(time_start, time_stamp)
+  !   open(tread_id, file=file_name, status="new")
+  ! end function create_file
+
   subroutine write_results(this, time_stamp, time_start)
     type(results), pointer, intent(inout) :: this
     type(results), pointer :: next, remove
     integer, intent(in) :: time_stamp
     character(len=6), intent(in) :: time_start
-    integer :: i
-    character(len=:), allocatable :: time_stamp_str
-    character(len=32) :: temporary
+    integer :: i, tread_id
+    character(len=32) :: temporary, file_name
     character(len=5) :: z
     character(len=6) :: time_start1
     character(len=8) :: d
     remove=>null()
     i=1
     ! print *, "write"
+    ! file_name=create_file_name(time_start, time_stamp)
 
-    ! call date_and_time(d, time_start1, z)
-    ! write(temporary, '(I0)') time_stamp
-    ! temporary=trim(temporary)
-    ! open(time_stamp, file="results/"//time_start//"/"//temporary, status="new")
+    call date_and_time(d, time_start1, z)
+    write(temporary, '(I0)') time_stamp
+    temporary=trim(temporary)
+    tread_id=int(time_stamp)+int(omp_get_thread_num())
+
+    open(tread_id, file="results/"//time_start//"/"//temporary, status="new")
+    ! open(tread_id, file=file_name, status="new")
 
     next=>this
 
     do while(associated(next))
 
-       ! write(time_stamp, *) next%location, next%energy
+       write(tread_id, *) next%location, next%energy
        ! print *, next%location, next%energy
 
        if(.not. associated(next%next)) then
@@ -184,24 +213,9 @@ contains
        ! remove=>null()
 
     end do
-    close(1)
-    ! print *, ""
+
+    close(tread_id)
     deallocate(next)
-    ! this%energy_dist%next=>null()
-    ! if(associated(this%energy_dist)) then
-    !    print *, "free", loc(this%energy_dist)
-    !    deallocate(this%energy_dist)
-    ! end if
-
-    ! deallocate(next%next)
-    ! deallocate(time_stamp_str)
-     ! this=>null()
-
-     ! this%energy=0.0_8
-     ! this%location=coordinate(0.0_8, 0.0_8, 0.0_8)
-     ! this%next=>null()
-
-
   end subroutine write_results
 
 end module results_type

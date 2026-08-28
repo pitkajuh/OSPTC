@@ -137,6 +137,7 @@ contains
     result1=.false.
 
     if(b1 .and. b2 .and. b3 .and. b4 .and. b4 .and. b5 .and. b6) then
+       !omp atomic update
        this%accumulated_energy=this%accumulated_energy+energy
        result1=.true.
     end if
@@ -196,6 +197,7 @@ contains
     result1=.false.
 
     if(b1 .and. b2 .and. b3) then
+       !omp atomic update
        this%accumulated_energy=this%accumulated_energy+energy
        result1=.true.
     end if

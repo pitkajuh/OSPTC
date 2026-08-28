@@ -4,6 +4,7 @@ module tape_type
   use file_type
   use interpolate
   use photon_angular_distribution
+  use omp_lib
   implicit none
 
   type :: tape
@@ -27,7 +28,7 @@ contains
     type(tape), intent(inout) :: this
     character(*), intent(in) :: tape_name
     integer :: ios, z
-    z=1
+    z=omp_get_thread_num()
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin(this, z, ios)
