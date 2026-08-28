@@ -337,6 +337,7 @@ contains
                 end_tracking=.false.
                 end_tracking=reaction_function(cell_all(j)%cell_array%cell_material% &
                      endf, ph, ph%mfp, energy_lost)
+                !omp atomic update
                 cell_all(j)%cell_array%accumulated_energy=cell_all(j)%cell_array%accumulated_energy+energy_lost
                 exit
              else
@@ -356,6 +357,7 @@ contains
 
           end_tracking=reaction_function(cell_all(cell_index)%cell_array% &
                cell_material%endf, ph, ph%mfp, energy_lost)
+          !omp atomic update
           cell_all(cell_index)%cell_array%accumulated_energy=cell_all(cell_index)%cell_array%accumulated_energy+energy_lost
           exit
        end if

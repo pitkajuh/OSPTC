@@ -66,13 +66,13 @@ program main
   call execute_command_line("mkdir -p results/"//time_start)
   ! statistics%energy_dist=>null()
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=2
+  co_60_source%activity=4
   end_clause=.false.
 
 
-  !$omp parallel private(ph, cell_index, end_clause, current_photon, statistics, second, i) shared(cell_all)
+  !$omp parallel private(ph, cell_index, end_clause, current_photon, statistics, second, i)
   !$omp do
-  do second=1, 2
+  do second=1, 4
      statistics=>null()
      allocate(statistics)
      statistics%energy=-1.0_8

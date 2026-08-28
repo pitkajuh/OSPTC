@@ -159,11 +159,13 @@ contains
     temporary=trim(temporary)
     file_name="results/"//time_start//"/"//temporary
     file_name=trim(file_name)
-    print *, "file name", file_name
   end function create_file_name
 
   ! function create_file(time_start, time_stamp) result(thread_id)
-  !   integer :: i, tread_id
+  !   integer, intent(in) :: time_stamp
+  !   character(len=6), intent(in) :: time_start
+  !   integer :: i
+  !   integer :: tread_id
   !   character(len=32) :: temporary, file_name
   !   tread_id=int(time_stamp)+omp_get_thread_num()
   !   file_name=create_file_name(time_start, time_stamp)
@@ -182,16 +184,22 @@ contains
     character(len=8) :: d
     remove=>null()
     i=1
-    ! print *, "write"
-    ! file_name=create_file_name(time_start, time_stamp)
+
+    file_name=create_file_name(time_start, time_stamp)
 
     call date_and_time(d, time_start1, z)
     write(temporary, '(I0)') time_stamp
     temporary=trim(temporary)
     tread_id=int(time_stamp)+int(omp_get_thread_num())
 
-    open(tread_id, file="results/"//time_start//"/"//temporary, status="new")
-    ! open(tread_id, file=file_name, status="new")
+    ! open(tread_id, file="results/"//time_start//"/"//temporary, status="new")
+    open(tread_id, file=file_name, status="new")
+
+
+    ! thread_id=create_file(time_start, time_stamp)
+
+
+
 
     next=>this
 
