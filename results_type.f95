@@ -38,15 +38,14 @@ contains
        error stop
     end if
 
-    if(.not. associated(this%next)) then
-       ! print *, ".not. associated(this%next)", this%location
+    if(.not. associated(this%next)) then! .and. this%energy<0) then
+       print *, ".not. associated(this%next)", this%energy
        next=>this
     ! end if
     else
-       next=>this
+       next=>this%next
 
        do while(associated(next))
-          ! print *, "next%location", next%location
           if(.not. associated(next%next)) then
              allocate(next%next)
              next=>next%next
@@ -56,15 +55,15 @@ contains
        end do
     end if
 
-
     next_photon=>ph
-    print *, associated(ph), ph%mfp
+
     do while(associated(next_photon))
        next%energy=next_photon%energy
        next%location=next_photon%mfp
-
+       print *, next_photon%energy/1000, next_photon%mfp
        if(.not. associated(next_photon%next_photon)) then
-          print *, "EXIT", ph%mfp
+          print *, "EXIT"
+          ! allocate(next%next)
           exit
        end if
 
@@ -151,7 +150,7 @@ contains
     character(len=8) :: d
     remove=>null()
     i=1
-
+    print *, "write"
     call date_and_time(d, time_start1, z)
     ! print *, "chrc"//time_stamp
     ! time_stamp_str="a"
@@ -166,12 +165,13 @@ contains
     next=>this
 
     do while(associated(next))
+    ! do while(associated(next%next))
 
        write(1, *) next%location, next%energy
-       print *, next%location, next%energy
+       ! print *, next%location, next%energy
 
        if(.not. associated(next%next)) then
-          print *, "(associated(next%next)"
+          ! print *, "(associated(next%next)"
           exit
        end if
 
@@ -183,7 +183,7 @@ contains
 
     end do
     close(1)
-
+    print *, ""
 
     ! this%energy_dist%next=>null()
     ! if(associated(this%energy_dist)) then

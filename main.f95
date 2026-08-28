@@ -75,7 +75,9 @@ program main
   do second=1, 2
      statistics=>null()
      allocate(statistics)
+     statistics%energy=-1.0_8
 
+     print *, "new statistics"
      do i=1, co_60_source%activity
         allocate(ph)
         cell_index=1
@@ -100,9 +102,8 @@ program main
            current_photon=>current_photon%next_photon
         end do
      end do
+
      call write_results(statistics, second, time_start)
-
-
      next_statistics=>statistics
      do while(associated(next_statistics))
         remove=>next_statistics
