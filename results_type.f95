@@ -45,7 +45,7 @@ contains
     ! end if
        ! else
     else if(.not. associated(this%next)) then
-       print *, ".not. associated(this%next)"
+       ! print *, ".not. associated(this%next)"
        allocate(this%next)
        next=>this%next
     else
@@ -67,7 +67,7 @@ contains
     do while(associated(next_photon))
        next%energy=next_photon%energy
        next%location=next_photon%mfp
-       print *, next_photon%energy/1000, next_photon%mfp, loc(next)
+       ! print *, next_photon%energy/1000, next_photon%mfp, loc(next)
        if(.not. associated(next_photon%next_photon)) then
           ! print *, "EXIT"
           ! allocate(next%next)
@@ -157,24 +157,18 @@ contains
     character(len=8) :: d
     remove=>null()
     i=1
-    print *, "write"
-    call date_and_time(d, time_start1, z)
-    ! print *, "chrc"//time_stamp
-    ! time_stamp_str="a"
-    write(temporary, '(I0)') time_stamp
-    temporary=trim(temporary)
-    open(1, file="results/"//time_start//"/"//temporary, status="new")
-    ! call execute_command_line()
-    ! open(1, file="results/"//time_start//"/"//time_start1, status="new")
+    ! print *, "write"
 
-
+    ! call date_and_time(d, time_start1, z)
+    ! write(temporary, '(I0)') time_stamp
+    ! temporary=trim(temporary)
+    ! open(time_stamp, file="results/"//time_start//"/"//temporary, status="new")
 
     next=>this
 
     do while(associated(next))
-    ! do while(associated(next%next))
 
-       write(1, *) next%location, next%energy
+       ! write(time_stamp, *) next%location, next%energy
        ! print *, next%location, next%energy
 
        if(.not. associated(next%next)) then
@@ -185,13 +179,13 @@ contains
        remove=>next
        next=>next%next
        ! remove%next=>null()
-       print *, "remove", loc(remove)
+       ! print *, "remove", loc(remove)
        deallocate(remove)
        ! remove=>null()
 
     end do
     close(1)
-    print *, ""
+    ! print *, ""
     deallocate(next)
     ! this%energy_dist%next=>null()
     ! if(associated(this%energy_dist)) then
