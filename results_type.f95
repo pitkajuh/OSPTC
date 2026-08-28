@@ -37,12 +37,19 @@ contains
        print *, "STOP"
        error stop
     end if
-
-    if(.not. associated(this%next)) then! .and. this%energy<0) then
-       print *, ".not. associated(this%next)", this%energy
+    ! print *, "ADDING", ph%energy, ph%mfp
+    ! if(.not. associated(this%next) .and. this%energy<0) then
+    if(this%energy<0) then
+       ! print *, "this%energy<0", this%energy
        next=>this
     ! end if
+       ! else
+    else if(.not. associated(this%next)) then
+       print *, ".not. associated(this%next)"
+       allocate(this%next)
+       next=>this%next
     else
+       ! print *, "ELSE", associated(this%next)
        next=>this%next
 
        do while(associated(next))
@@ -60,9 +67,9 @@ contains
     do while(associated(next_photon))
        next%energy=next_photon%energy
        next%location=next_photon%mfp
-       print *, next_photon%energy/1000, next_photon%mfp
+       print *, next_photon%energy/1000, next_photon%mfp, loc(next)
        if(.not. associated(next_photon%next_photon)) then
-          print *, "EXIT"
+          ! print *, "EXIT"
           ! allocate(next%next)
           exit
        end if
@@ -178,13 +185,14 @@ contains
        remove=>next
        next=>next%next
        ! remove%next=>null()
+       print *, "remove", loc(remove)
        deallocate(remove)
        ! remove=>null()
 
     end do
     close(1)
     print *, ""
-
+    deallocate(next)
     ! this%energy_dist%next=>null()
     ! if(associated(this%energy_dist)) then
     !    print *, "free", loc(this%energy_dist)

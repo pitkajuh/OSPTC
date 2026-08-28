@@ -104,12 +104,13 @@ program main
      end do
 
      call write_results(statistics, second, time_start)
-     next_statistics=>statistics
-     do while(associated(next_statistics))
-        remove=>next_statistics
-        next_statistics=>next_statistics%next
-        deallocate(remove)
-     end do
+
+     ! next_statistics=>statistics
+     ! do while(associated(next_statistics))
+     !    remove=>next_statistics
+     !    next_statistics=>next_statistics%next
+     !    deallocate(remove)
+     ! end do
      ! deallocate(next_statistics)
      ! deallocate(statistics)
 
