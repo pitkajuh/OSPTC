@@ -90,7 +90,7 @@ contains
     class(steel), intent(inout) :: this
     this%density=7.874
     print *, "Create steel"
-    call read_tape(this%endf, 'cross-sections/photoat-026_Fe_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-026_Fe_000.endf', 26)
     this%n=37
     allocate(this%mu(3, 37))
     call get_ionization_energies(this)
@@ -124,7 +124,7 @@ contains
     class(iodine), intent(inout) :: this
     this%density=4.930
     print *, "Create iodine"
-    call read_tape(this%endf, 'cross-sections/photoat-053_I_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-053_I_000.endf', 53)
     this%n=48
     allocate(this%mu(3, 48))
     ! call get_ionization_energies(this)
@@ -160,7 +160,7 @@ contains
     class(sodium),intent(inout) :: this
     this%density=9.710E-01
     print *, "Create sodium"
-    call read_tape(this%endf, 'cross-sections/photoat-011_Na_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-011_Na_000.endf', 11)
     this%n=39
     allocate(this%mu(3, 39))
     call get_ionization_energies(this)
@@ -191,7 +191,7 @@ contains
     class(titanium), intent(inout) :: this
     this%density=4.540
     print*, "Create titanium"
-    call read_tape(this%endf, 'cross-sections/photoat-022_Ti_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-022_Ti_000.endf', 22)
     this%n=38
     allocate(this%mu(3, 38))
     call get_ionization_energies(this)
@@ -222,7 +222,7 @@ contains
     class(nitrogen), intent(inout) :: this
     this%density=1.165E-03
     print *, "Create nitrogen"
-    call read_tape(this%endf, 'cross-sections/photoat-007_N_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-007_N_000.endf', 7)
     this%n=36
     call get_ionization_energies(this)
     allocate(this%mu(3, 36))
@@ -253,7 +253,7 @@ contains
     class(hydrogen), intent(inout) :: this
     this%density=8.375E-05
     print *, "Create hydrogen"
-    call read_tape(this%endf, 'cross-sections/photoat-001_H_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-001_H_000.endf', 1)
     this%n=36
     allocate(this%mu(3, 36))
     ! call get_ionization_energies(this)
@@ -284,7 +284,7 @@ contains
     class(oxygen), intent(inout) :: this
     this%density=1.332E-03
     print *, "Create oxygen"
-    call read_tape(this%endf, 'cross-sections/photoat-008_O_000.endf')
+    call read_tape(this%endf, 'cross-sections/photoat-008_O_000.endf', 8)
     this%n=36
     allocate(this%mu(3, 36))
     call get_ionization_energies(this)

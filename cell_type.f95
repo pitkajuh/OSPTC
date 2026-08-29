@@ -115,6 +115,7 @@ contains
   subroutine create_cell_box_3d(this, x0, x1, y0, y1, z0, z1)
     class(cell_box_3d), intent(inout) :: this
     real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
+    this%accumulated_energy=0.0_8
     call create_planex(this%wallx_negative, x0)
     call create_planex(this%wallx_positive, x1)
     call create_planey(this%wally_negative, y0)
@@ -180,6 +181,7 @@ contains
     class(cell_cylinder_truncated_z), intent(inout) :: this
     real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
     type(coordinate) :: centered_at
+    this%accumulated_energy=0.0_8
     centered_at=coordinate(y1, z0, z1)
     call create_cylinder(this%surface_cylinder, x0, centered_at)
     call create_planez(this%wallz_negative, x1)

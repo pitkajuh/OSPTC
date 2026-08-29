@@ -292,10 +292,9 @@ contains
 
   end function reaction_function
 
-  function surface_tracking(cell_all, ph, cell_from, statistics) result(end_tracking)
+  function surface_tracking(cell_all, ph, statistics) result(end_tracking)
     class(cells), intent(inout), allocatable :: cell_all(:)
     type(photon), pointer, intent(inout) :: ph
-    integer, intent(inout) :: cell_from
     type(photon), pointer :: temp
     type(results), pointer, intent(inout) :: statistics
     integer :: cell_index, k, j
@@ -318,11 +317,11 @@ contains
           exit
        end if
 
-       ph%mfp=calculate_mfp(ph, cell_all(cell_from)%cell_array%cell_material &
-            %get_mu_value(ph%energy), cell_all(cell_from)%cell_array% &
-            cell_material% density)
+       ph%mfp=calculate_mfp(ph, cell_all(1)%cell_array%cell_material &
+            %get_mu_value(ph%energy), cell_all(1)%cell_array% &
+            cell_material%density)
        cell_index=cell_search(cell_all, size(cell_all), ph%mfp, ph%energy)
-
+       ! print *, cell_index
        if(cell_index>1) then
           do j=cell_index, size(cell_all)
              distance_to_cell=cell_all(j)%cell_array% &
@@ -337,18 +336,19 @@ contains
                 end_tracking=.false.
                 end_tracking=reaction_function(cell_all(j)%cell_array%cell_material% &
                      endf, ph, ph%mfp, energy_lost)
-                !omp atomic update
+                !omp atomic write
                 cell_all(j)%cell_array%accumulated_energy=cell_all(j)%cell_array%accumulated_energy+energy_lost
+                print *, cell_all(cell_index)%cell_array%accumulated_energy/1000, cell_index
                 exit
              else
                 ! Add small interpolation distance in order to make sure
                 ! that the photon ends up on the right side.
                 distance_to_cell=distance_to_cell*1.01
                 ph%origin=ph%origin+ph%direction*distance_to_cell
-                cell_from=j
              end if
           end do
        else if(cell_index==0) then
+          ! Photon left the geometry.
           end_tracking=.true.
           exit
        else
@@ -357,8 +357,10 @@ contains
 
           end_tracking=reaction_function(cell_all(cell_index)%cell_array% &
                cell_material%endf, ph, ph%mfp, energy_lost)
-          !omp atomic update
+          !omp atomic write
           cell_all(cell_index)%cell_array%accumulated_energy=cell_all(cell_index)%cell_array%accumulated_energy+energy_lost
+          ! print *, cell_all(cell_index)%cell_array%accumulated_energy/1000, cell_index
+
           exit
        end if
 

@@ -190,22 +190,22 @@ contains
     call date_and_time(d, time_start1, z)
     write(temporary, '(I0)') time_stamp
     temporary=trim(temporary)
-    tread_id=int(time_stamp)+int(omp_get_thread_num())
+    ! tread_id=int(time_stamp)+int(omp_get_thread_num())
 
     ! open(tread_id, file="results/"//time_start//"/"//temporary, status="new")
-    open(tread_id, file=file_name, status="new")
+
 
 
     ! thread_id=create_file(time_start, time_stamp)
 
 
 
-
+    ! open(tread_id, file=file_name, status="new")
     next=>this
 
     do while(associated(next))
 
-       write(tread_id, *) next%location, next%energy
+       ! write(tread_id, *) next%location, next%energy
        ! print *, next%location, next%energy
 
        if(.not. associated(next%next)) then
@@ -222,7 +222,7 @@ contains
 
     end do
 
-    close(tread_id)
+    ! close(tread_id)
     deallocate(next)
   end subroutine write_results
 

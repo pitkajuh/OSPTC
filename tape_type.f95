@@ -24,16 +24,15 @@ contains
     call clear_mf27(this%mf27)
   end subroutine clear_tape
 
-  subroutine read_tape(this, tape_name)
+  subroutine read_tape(this, tape_name, z)
     type(tape), intent(inout) :: this
     character(*), intent(in) :: tape_name
-    integer :: ios, z
-    z=omp_get_thread_num()
+    integer, intent(in) :: z
+    integer :: ios
 
     open(z, file=tape_name, status="old", action="read", iostat=ios)
     call read_begin(this, z, ios)
     call this%mf23%create(z, ios, this%n)
-    ! print *, "aoeeoaeo", this%mf23%n_ionization+5+1
     call this%mf27%create(z, ios, this%n)
     close(z)
 
@@ -51,7 +50,9 @@ contains
 
   subroutine read_begin(this, z, ios)
     type(tape), intent(inout) :: this
-    integer :: z, ios, i
+    integer, intent(in) :: z
+    integer, intent(inout) :: ios
+    integer :: i
     character(75) :: line
     real(kind(1.d0)) :: ZA, AWR
     integer :: L1, L2, N1, N2, MAT, MF, MT

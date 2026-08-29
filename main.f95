@@ -12,8 +12,8 @@ program main
   implicit none
 
   integer :: i
-  integer :: second, cell_index
-  class(material), pointer :: steel1, nitrogen1
+  integer :: second
+  class(material), pointer :: steel1, nitrogen1, steel2
   type(photon), pointer :: current_photon, ph
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop, reaction, end_clause
@@ -44,7 +44,7 @@ program main
   class is (cell_cylinder_truncated_z)
      ! cell_array%name="source"
      cell_array%cell_material=>steel1
-     call cell_array%create(0.1_8, -0.1_8, 0.1_8, 0.0_8, 0.0_8, 0.0_8)
+     call cell_array%create(0.05_8, -0.05_8, 0.05_8, 0.0_8, 0.0_8, 0.0_8)
   end select
 
   allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
@@ -56,39 +56,37 @@ program main
      call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
   end select
 
-  ! Create a directory for results
-  call execute_command_line("mkdir -p results")
-  ! print *, "aoao", stat
+  ! ! Create a directory for results
+  ! call execute_command_line("mkdir -p results")
+  ! ! print *, "aoao", stat
 
-  ! if(stat==0) print *, "aoao", stat
+  ! ! if(stat==0) print *, "aoao", stat
 
   call date_and_time(d, time_start, z)
   call execute_command_line("mkdir -p results/"//time_start)
-  ! statistics%energy_dist=>null()
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=4
+  co_60_source%activity=2
   end_clause=.false.
 
 
-  !$omp parallel private(ph, cell_index, end_clause, current_photon, statistics, second, i)
+  !$omp parallel private(ph, end_clause, current_photon, statistics, second, i)
   !$omp do
-  do second=1, 4
+  do second=1, 2
      statistics=>null()
      allocate(statistics)
      statistics%energy=-1.0_8
 
      do i=1, co_60_source%activity
         allocate(ph)
-        cell_index=1
         call co_60_source%pdf(ph)
         ph%id=1
-        ph%origin=cell_all(cell_index)%cell_array%random_initial_position()
+        ph%origin=cell_all(1)%cell_array%random_initial_position()
 
         ph%next_photon=>null()
         current_photon=>ph
 
         do while(associated(current_photon))
-           end_clause=surface_tracking(cell_all, current_photon, cell_index, statistics)
+           end_clause=surface_tracking(cell_all, current_photon, statistics)
 
            if(end_clause .eqv. .false.) then
               cycle
@@ -101,18 +99,8 @@ program main
            current_photon=>current_photon%next_photon
         end do
      end do
-
+     print *, cell_all(1)%cell_array%accumulated_energy/1000, cell_all(2)%cell_array%accumulated_energy/1000
      call write_results(statistics, second, time_start)
-
-     ! next_statistics=>statistics
-     ! do while(associated(next_statistics))
-     !    remove=>next_statistics
-     !    next_statistics=>next_statistics%next
-     !    deallocate(remove)
-     ! end do
-     ! deallocate(next_statistics)
-     ! deallocate(statistics)
-
 
   end do
   !$emp end do
@@ -147,8 +135,7 @@ program main
   ! print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%get_dose(), cell_all(2)%cell_array%get_dose()
 
 
-  ! print *, "delete source"
-  deallocate(co_60_source)
+
 
 
 
@@ -182,6 +169,11 @@ program main
   ! cell_all(2)%cell_array%cell_material=>null()
 
 
+
+
+
+  print *, "delete source"
+  deallocate(co_60_source)
 
   print *, "del cells"
   deallocate(cell_all)
