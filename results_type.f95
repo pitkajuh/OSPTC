@@ -147,7 +147,7 @@ contains
 
   function create_file_name(time_start, time_stamp) result(file_name)
     integer, intent(in) :: time_stamp
-    ! integer, intent(inout) :: thread_id
+    ! integer, intent(inout) :: thread_no
     character(len=6), intent(in) :: time_start
     character(len=32) :: temporary!, temporary2
     character(len=32) :: file_name
@@ -157,7 +157,7 @@ contains
     call date_and_time(d, time_start1, z)
     ! print *, d, time_start1, z
 
-    ! read(time_start1, *) thread_id
+    ! read(time_start1, *) thread_no
 
     write(temporary, '(I0)') time_stamp
     ! tread_id=time_stamp+omp_get_thread_num()
@@ -167,7 +167,7 @@ contains
     ! print *, "file name", file_name
   end function create_file_name
 
-  ! function create_file(time_start, time_stamp) result(thread_id)
+  ! function create_file(time_start, time_stamp) result(thread_no)
   !   integer, intent(in) :: time_stamp
   !   character(len=6), intent(in) :: time_start
   !   integer :: i
@@ -178,23 +178,23 @@ contains
   !   open(tread_id, file=file_name, status="new")
   ! end function create_file
 
-  function create_thread_id(time_stamp) result(thread_id)
+  function create_thread_no(time_stamp) result(thread_no)
     integer, intent(in) :: time_stamp
-    integer :: thread_id
+    integer :: thread_no
     ! character(len=5) :: z
     ! character(len=6) :: time_start1
     ! character(len=8) :: d
     ! call date_and_time(d, time_start1, z)
-    ! write(temporary2, '(I0)') thread_id
+    ! write(temporary2, '(I0)') thread_no
     tread_id=int(time_stamp)+int(omp_get_thread_num())
-  end function create_thread_id
+  end function create_thread_no
 
   subroutine write_results(this, time_stamp, time_start)
     type(results), pointer, intent(inout) :: this
     type(results), pointer :: next, remove
     integer, intent(in) :: time_stamp
     character(len=6), intent(in) :: time_start
-    integer :: i, thread_id
+    integer :: i, thread_no
     character(len=32) :: temporary, file_name
     character(len=5) :: z
     character(len=6) :: time_start1
@@ -203,9 +203,9 @@ contains
     i=1
 
     file_name=create_file_name(time_start, time_stamp)
-    thread_id=create_thread_id(time_stamp)
-    ! print *, "ID", thread_id, omp_get_thread_num()
-    open(thread_id, file=file_name, status="new")
+    thread_no=create_thread_no(time_stamp)
+    ! print *, "ID", thread_no, omp_get_thread_num()
+    open(thread_no, file=file_name, status="new")
 
 
 
@@ -219,31 +219,25 @@ contains
 
     ! write(temporary, '(I0)') time_stamp
     ! temporary=trim(temporary)
-    ! thread_id=create_thread_id(time_stamp)
-    ! open(thread_id, file="results/"//time_start//"/"//temporary, status="new")
+    ! thread_no=create_thread_no(time_stamp)
+    ! open(thread_no, file="results/"//time_start//"/"//temporary, status="new")
 
     next=>this
 
     do while(associated(next))
-
-       write(thread_id, *) next%location, next%energy
+       write(thread_no, '(F0.7,",",F0.7,",",F0.7,",",F0.3)') next%location%x, next%location%y, next%location%z, next%energy
        ! print *, next%location, next%energy
 
        if(.not. associated(next%next)) then
-          ! print *, "(associated(next%next)"
           exit
        end if
 
        remove=>next
        next=>next%next
-       ! remove%next=>null()
-       ! print *, "remove", loc(remove)
        deallocate(remove)
-       ! remove=>null()
-
     end do
 
-    close(thread_id)
+    close(thread_no)
     deallocate(next)
   end subroutine write_results
 
