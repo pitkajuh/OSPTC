@@ -11,9 +11,8 @@ program main
   use results_type
   implicit none
 
-  integer :: i
-  integer :: second
-  class(material), pointer :: steel1, nitrogen1, steel2
+  integer :: i, second, time_end
+  class(material), pointer :: steel1, nitrogen1
   type(photon), pointer :: current_photon, ph
   class(radionuclide), allocatable :: co_60_source
   logical :: cell_hit, continue_loop, reaction, end_clause
@@ -22,12 +21,15 @@ program main
   character(len=5) :: z
   character(len=6) :: time_start
   character(len=8) :: d
-  ! integer :: stat
-  ! stat=0
+  !class(material), pointer :: steel2
   ! allocate(steel :: steel2)
   ! call steel2%create()
   ! call clear_material(steel2)
   ! deallocate(steel2)
+
+
+  call random_seed()
+
 
   reaction=.false.
   cell_hit=.false.
@@ -44,6 +46,7 @@ program main
   class is (cell_cylinder_truncated_z)
      ! cell_array%name="source"
      cell_array%cell_material=>steel1
+     ! cell_array%cell_material=>nitrogen1
      call cell_array%create(0.05_8, -0.05_8, 0.05_8, 0.0_8, 0.0_8, 0.0_8)
   end select
 
@@ -65,14 +68,14 @@ program main
   call date_and_time(d, time_start, z)
   call execute_command_line("mkdir -p results/"//time_start)
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=2
+  co_60_source%activity=10
+  time_end=10
   end_clause=.false.
 
 
-  !$omp parallel private(ph, end_clause, current_photon, statistics, second, i)
+  !$omp parallel private(ph, end_clause, current_photon, statistics, second)
   !$omp do
-  do second=1, 2
-     statistics=>null()
+  do second=1, time_end
      allocate(statistics)
      statistics%energy=-1.0_8
 
@@ -99,40 +102,17 @@ program main
            current_photon=>current_photon%next_photon
         end do
      end do
-     print *, cell_all(1)%cell_array%accumulated_energy/1000, cell_all(2)%cell_array%accumulated_energy/1000
+
      call write_results(statistics, second, time_start)
 
   end do
-  !$emp end do
+  !$omp end do
   !$omp end parallel
 
 
+  print *, "SIMULATION END"
 
-
-
-  ! allocate(statistics%energy_dist)
-
-
-  ! allocate(ph)
-  ! call co_60_source%pdf(ph)
-  ! ph%id=1
-  ! ph%origin=coordinate(0, 0, 0)
-  ! call add_result(statistics, ph)
-  ! deallocate(ph)
-  ! allocate(ph)
-  ! call co_60_source%pdf(ph)
-  ! ph%id=1
-  ! ph%origin=coordinate(0, 0, 0)
-  ! call add_result(statistics, ph)
-  ! second=1
-  ! call write_results(statistics, second)
-  ! deallocate(ph)
-
-
-
-  ! print *, "SIMULATION END"
-
-  ! print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%get_dose(), cell_all(2)%cell_array%get_dose()
+  print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%get_dose(), cell_all(2)%cell_array%get_dose()
 
 
 

@@ -109,7 +109,6 @@ contains
          (this%wallz_positive%v-this%wallz_negative%v)
     mass=this%cell_material%density*volume
     dose=this%accumulated_energy*elementary_charge/mass
-    mass=this%cell_material%density*volume
   end function get_box_3d_dose
 
   subroutine create_cell_box_3d(this, x0, x1, y0, y1, z0, z1)
