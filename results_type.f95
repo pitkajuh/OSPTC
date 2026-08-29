@@ -3,15 +3,7 @@ module results_type
   use photon_type
   use omp_lib
 
-  ! type :: energy_distribution
-  !    type(coordinate) :: location
-  !    real(kind(1.d0)) :: energy
-  !    type(energy_distribution), pointer :: next => null()
-
-  ! end type energy_distribution
-
   type :: results
-     ! type(energy_distribution), pointer :: energy_dist => null()
      type(coordinate) :: location
      real(kind(1.d0)) :: energy
      type(results), pointer :: next => null()
@@ -23,34 +15,14 @@ contains
     type(results), pointer, intent(inout) :: this
     type(photon), pointer, intent(inout) :: ph
     type(results), pointer :: next
-    type(photon), pointer :: next_photon!, delete_photon
-    logical :: nothing
-    nothing=.false.
-    ! print *, "add_result"
-    ! if(.not. associated(ph)) then
-    !    print *, "help"
-    ! end if
-    ! next=>null()
-    ! if(.not. associated(this%energy_dist)) then
-    !    print *, "help2"
-    ! end if
-    if(.not. associated(this)) then
-       print *, "STOP"
-       error stop
-    end if
-    ! print *, "ADDING", ph%energy, ph%mfp
-    ! if(.not. associated(this%next) .and. this%energy<0) then
+    type(photon), pointer :: next_photon!
+
     if(this%energy<0) then
-       ! print *, "this%energy<0", this%energy
        next=>this
-    ! end if
-       ! else
     else if(.not. associated(this%next)) then
-       ! print *, ".not. associated(this%next)"
        allocate(this%next)
        next=>this%next
     else
-       ! print *, "ELSE", associated(this%next)
        next=>this%next
 
        do while(associated(next))
@@ -68,10 +40,8 @@ contains
     do while(associated(next_photon))
        next%energy=next_photon%energy
        next%location=next_photon%mfp
-       ! print *, next_photon%energy/1000, next_photon%mfp, loc(next)
+
        if(.not. associated(next_photon%next_photon)) then
-          ! print *, "EXIT"
-          ! allocate(next%next)
           exit
        end if
 
@@ -79,113 +49,26 @@ contains
        allocate(next%next)
        next=>next%next
     end do
-
-       ! if(this%energy .neqv. 0) then
-       !    this%energy=ph%energy
-    !    this%location=ph%mfp
-
-    !    if(.not. associated(this%next)) then
-    !       allocate(this%next)
-    !       next=>this%next
-
-    !       do while(associated(next))
-    !          if(.not. associated(next%next)) then
-    !             print *, ".not. associated(next%next)"
-    !             print *, ph%energy
-    !             allocate(next%next)
-    !             next%next%location=ph%mfp
-    !             next%next%energy=ph%energy
-    !             nothing=.true.
-    !             exit
-    !          end if
-
-    !          next=>next%next
-    !       end do
-    !    end if
-
-
-
-    ! else if(.not. associated(this%next)) then
-    !    allocate(this%next)
-    !    this%next%energy=ph%energy
-    !    this%next%location=ph%mfp
-    ! else
-
-
-    ! end if
-
-
-
-    ! ! ! if(associated(this)) then
-    ! ! if(this%energy>0) then
-    ! !    next=>this
-    ! !    print *, "alloc", loc(next)
-    ! !    do while(associated(next))
-    ! !       if(.not. associated(next%next)) then
-    ! !          print *, ".not. associated(next%next)"
-    ! !          print *, ph%energy
-    ! !          allocate(next%next)
-    ! !          next%next%location=ph%mfp
-    ! !          next%next%energy=ph%energy
-    ! !          nothing=.true.
-    ! !          exit
-    ! !       end if
-
-    ! !       next=>next%next
-    ! !    end do
-    ! !    print *, "alloc end", nothing
-    ! ! else
-    ! !    print *, "unallocated"
-    ! !    print *, ph%energy
-    ! !    allocate(this)
-    ! !    this%location=ph%mfp
-    ! !    this%energy=ph%energy
-    ! !    print *, "anallo end"
-    ! ! end if
-    ! print *, "add result end"
   end subroutine add_result
 
   function create_file_name(time_start, time_stamp) result(file_name)
     integer, intent(in) :: time_stamp
-    ! integer, intent(inout) :: thread_no
     character(len=6), intent(in) :: time_start
-    character(len=32) :: temporary!, temporary2
+    character(len=32) :: temporary
     character(len=32) :: file_name
     character(len=5) :: z
     character(len=6) :: time_start1
     character(len=8) :: d
+
     call date_and_time(d, time_start1, z)
-    ! print *, d, time_start1, z
-
-    ! read(time_start1, *) thread_no
-
     write(temporary, '(I0)') time_stamp
-    ! tread_id=time_stamp+omp_get_thread_num()
     temporary=trim(temporary)
     file_name=trim("results/"//time_start//"/"//temporary)
-    ! file_name=trim(file_name)
-    ! print *, "file name", file_name
   end function create_file_name
-
-  ! function create_file(time_start, time_stamp) result(thread_no)
-  !   integer, intent(in) :: time_stamp
-  !   character(len=6), intent(in) :: time_start
-  !   integer :: i
-  !   integer :: tread_id
-  !   character(len=32) :: temporary, file_name
-  !   tread_id=int(time_stamp)+omp_get_thread_num()
-  !   file_name=create_file_name(time_start, time_stamp)
-  !   open(tread_id, file=file_name, status="new")
-  ! end function create_file
 
   function create_thread_no(time_stamp) result(thread_no)
     integer, intent(in) :: time_stamp
     integer :: thread_no
-    ! character(len=5) :: z
-    ! character(len=6) :: time_start1
-    ! character(len=8) :: d
-    ! call date_and_time(d, time_start1, z)
-    ! write(temporary2, '(I0)') thread_no
     tread_id=int(time_stamp)+int(omp_get_thread_num())
   end function create_thread_no
 
@@ -204,29 +87,11 @@ contains
 
     file_name=create_file_name(time_start, time_stamp)
     thread_no=create_thread_no(time_stamp)
-    ! print *, "ID", thread_no, omp_get_thread_num()
     open(thread_no, file=file_name, status="new")
-
-
-
-
-    ! file_name=create_file_name(time_start, time_stamp)
-
-    ! call date_and_time(d, time_start1, z)
-
-
-
-
-    ! write(temporary, '(I0)') time_stamp
-    ! temporary=trim(temporary)
-    ! thread_no=create_thread_no(time_stamp)
-    ! open(thread_no, file="results/"//time_start//"/"//temporary, status="new")
-
     next=>this
 
     do while(associated(next))
        write(thread_no, '(F0.7,",",F0.7,",",F0.7,",",F0.3)') next%location%x, next%location%y, next%location%z, next%energy
-       ! print *, next%location, next%energy
 
        if(.not. associated(next%next)) then
           exit

@@ -13,7 +13,7 @@ module cell_type
 
   type, abstract :: cell
      character :: name
-     real(kind(1.d0)) :: accumulated_energy
+     real(kind(1.d0)) :: accumulated_energy, volume, mass
      class(material), pointer:: cell_material
    contains
      procedure(create_cell_test), deferred :: cell_test
@@ -93,28 +93,24 @@ contains
 
   function get_cylinder_truncated_z_dose(this) result(dose)
     class(cell_cylinder_truncated_z), intent(inout) :: this
-    real(kind(1.d0)) :: dose, mass, volume
-    ! pi*r*2*(z1-z0)
-    volume=pi*this%surface_cylinder%v*this%surface_cylinder%v&
-         *(this%wallz_positive%v-this%wallz_negative%v)
-    mass=this%cell_material%density*volume
-    dose=this%accumulated_energy*elementary_charge/mass
+    real(kind(1.d0)) :: dose
+    dose=this%accumulated_energy*elementary_charge/this%mass
   end function get_cylinder_truncated_z_dose
 
   function get_box_3d_dose(this) result(dose)
     class(cell_box_3d), intent(inout) :: this
-    real(kind(1.d0)) :: dose, mass, volume
-    volume=(this%wallx_positive%v-this%wallx_negative%v)*&
-         (this%wally_positive%v-this%wally_negative%v)*&
-         (this%wallz_positive%v-this%wallz_negative%v)
-    mass=this%cell_material%density*volume
-    dose=this%accumulated_energy*elementary_charge/mass
+    real(kind(1.d0)) :: dose
+    dose=this%accumulated_energy*elementary_charge/this%mass
   end function get_box_3d_dose
 
   subroutine create_cell_box_3d(this, x0, x1, y0, y1, z0, z1)
     class(cell_box_3d), intent(inout) :: this
     real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
     this%accumulated_energy=0.0_8
+    this%volume=(this%wallx_positive%v-this%wallx_negative%v)*&
+         (this%wally_positive%v-this%wally_negative%v)*&
+         (this%wallz_positive%v-this%wallz_negative%v)
+    this%mass=this%cell_material%density*this%volume
     call create_planex(this%wallx_negative, x0)
     call create_planex(this%wallx_positive, x1)
     call create_planey(this%wally_negative, y0)
@@ -137,8 +133,6 @@ contains
     result1=.false.
 
     if(b1 .and. b2 .and. b3 .and. b4 .and. b4 .and. b5 .and. b6) then
-       !!omp atomic update
-       ! this%accumulated_energy=this%accumulated_energy+energy
        result1=.true.
     end if
   end function cell_test_box
@@ -181,6 +175,9 @@ contains
     real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
     type(coordinate) :: centered_at
     this%accumulated_energy=0.0_8
+    this%volume=pi*this%surface_cylinder%v*this%surface_cylinder%v&
+         *(this%wallz_positive%v-this%wallz_negative%v)
+    this%mass=this%cell_material%density*this%volume
     centered_at=coordinate(y1, z0, z1)
     call create_cylinder(this%surface_cylinder, x0, centered_at)
     call create_planez(this%wallz_negative, x1)
@@ -198,8 +195,6 @@ contains
     result1=.false.
 
     if(b1 .and. b2 .and. b3) then
-       !!omp atomic update
-       ! this%accumulated_energy=this%accumulated_energy+energy
        result1=.true.
     end if
   end function cell_test_cylinder_z
@@ -231,7 +226,7 @@ contains
     type(coordinate) :: result1
     real(kind(1.d0)) :: radial, azimuthal_angle
     radial=this%surface_cylinder%v*std_uniform_distribution()**0.5
-    azimuthal_angle=2*3.14159265*std_uniform_distribution()
+    azimuthal_angle=2*pi*std_uniform_distribution()
 
     result1%x=radial*cos(azimuthal_angle)
     result1%y=radial*sin(azimuthal_angle)
