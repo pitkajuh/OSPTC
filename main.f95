@@ -28,7 +28,7 @@ program main
   ! deallocate(steel2)
 
 
-  call random_seed()
+  ! call random_seed()
 
 
   reaction=.false.
