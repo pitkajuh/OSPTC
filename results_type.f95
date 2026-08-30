@@ -7,7 +7,7 @@ module results_type
   type :: results
      type(coordinate) :: location
      real(kind(1.d0)) :: dose
-     type(results), pointer :: next => null()
+     type(results), pointer :: next=>null()
   end type results
 
 contains
@@ -17,7 +17,7 @@ contains
     type(photon), pointer, intent(inout) :: ph
     real(kind(1.d0)), intent(in) :: mass_of_cell
     type(results), pointer :: next
-    type(photon), pointer :: next_photon!
+    type(photon), pointer :: next_photon
 
     if(this%dose<0) then
        next=>this

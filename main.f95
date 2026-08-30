@@ -42,46 +42,40 @@ program main
 
   allocate(cell_all(2))
 
-  allocate(cell_cylinder_truncated_z::cell_all(1)%cell_array)
-  select type(cell_array => cell_all(1)%cell_array)
-  class is (cell_cylinder_truncated_z)
+  allocate(cell_box_3d::cell_all(1)%cell_array)
+  select type(cell_array=>cell_all(1)%cell_array)
+  class is(cell_box_3d)
      ! cell_array%name="source"
      cell_array%cell_material=>steel1
      ! cell_array%cell_material=>nitrogen1
-     call cell_array%create(0.05_8, -0.05_8, 0.05_8, 0.0_8, 0.0_8, 0.0_8)
+     call cell_array%create(-0.05_8, 0.05_8, -0.05_8, 0.05_8, -0.05_8, 0.05_8)
   end select
 
   allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
-  select type(cell_array => cell_all(2)%cell_array)
-  class is (cell_cylinder_truncated_z)
+  select type(cell_array=>cell_all(2)%cell_array)
+  class is(cell_cylinder_truncated_z)
      ! cell_array%name="outside"
      cell_array%cell_material=>nitrogen1
      ! cell_array%cell_material=>steel1
      call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
   end select
 
-  ! ! Create a directory for results
-  ! call execute_command_line("mkdir -p results")
-  ! ! print *, "aoao", stat
-
-  ! ! if(stat==0) print *, "aoao", stat
-
+  ! Create a directory for results
   call date_and_time(d, time_start, z)
   new_time=d//time_start
-  ! call execute_command_line("mkdir -p results/"//d//time_start)
   call execute_command_line("mkdir -p results/"//new_time)
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=1E1
+  co_60_source%activity=1E4
   time_end=10
   end_clause=.false.
 
 
-  !$omp parallel private(ph, end_clause, current_photon, statistics, second)
+  !$omp parallel private(ph, end_clause, current_photon, statistics)
   !$omp do
   do second=1, time_end
      allocate(statistics)
      statistics%dose=-1.0_8
-     print *, second
+
      do i=1, co_60_source%activity
         allocate(ph)
         call co_60_source%pdf(ph)
@@ -141,19 +135,6 @@ program main
   ! !    ! call clear_mf27(cell_all(i)%cell_array%cell_material%endf%mf27)
   ! !    ! ! print *, cell_all(i)%cell_array%cell_test(new_location)
   ! end do
-
-  ! print *, "del steel1"
-  ! call clear_material(steel1)
-  ! deallocate(steel1)
-
-  ! print *, "del nitrogen1"
-  ! call clear_material(nitrogen1)
-  ! deallocate(nitrogen1)
-  ! cell_all(2)%cell_array%cell_material=>null()
-
-
-
-
 
   print *, "delete source"
   deallocate(co_60_source)
