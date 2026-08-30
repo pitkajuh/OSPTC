@@ -21,6 +21,7 @@ program main
   character(len=5) :: z
   character(len=6) :: time_start
   character(len=8) :: d
+  character(len=14) :: new_time
   !class(material), pointer :: steel2
   ! allocate(steel :: steel2)
   ! call steel2%create()
@@ -66,7 +67,9 @@ program main
   ! ! if(stat==0) print *, "aoao", stat
 
   call date_and_time(d, time_start, z)
-  call execute_command_line("mkdir -p results/"//time_start)
+  new_time=d//time_start
+  ! call execute_command_line("mkdir -p results/"//d//time_start)
+  call execute_command_line("mkdir -p results/"//new_time)
   allocate(co_60 :: co_60_source)
   co_60_source%activity=1E1
   time_end=10
@@ -78,7 +81,7 @@ program main
   do second=1, time_end
      allocate(statistics)
      statistics%dose=-1.0_8
-
+     print *, second
      do i=1, co_60_source%activity
         allocate(ph)
         call co_60_source%pdf(ph)
@@ -103,7 +106,7 @@ program main
         end do
      end do
 
-     call write_results(statistics, second, time_start)
+     call write_results(statistics, second, new_time)
 
   end do
   !$omp end do

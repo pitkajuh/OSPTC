@@ -55,7 +55,7 @@ contains
 
   function create_file_name(time_start, time_stamp) result(file_name)
     integer, intent(in) :: time_stamp
-    character(len=6), intent(in) :: time_start
+    character(len=14), intent(in) :: time_start
     character(len=32) :: temporary
     character(len=32) :: file_name
     character(len=5) :: z
@@ -66,26 +66,23 @@ contains
     write(temporary, '(I0)') time_stamp
     temporary=trim(temporary)
     file_name=trim("results/"//time_start//"/"//temporary)
+
   end function create_file_name
 
   function create_thread_no(time_stamp) result(thread_no)
     integer, intent(in) :: time_stamp
     integer :: thread_no
-    tread_id=int(time_stamp)+int(omp_get_thread_num())
+    thread_no=int(time_stamp)+int(omp_get_thread_num())
   end function create_thread_no
 
   subroutine write_results(this, time_stamp, time_start)
     type(results), pointer, intent(inout) :: this
     type(results), pointer :: next, remove
     integer, intent(in) :: time_stamp
-    character(len=6), intent(in) :: time_start
-    integer :: i, thread_no
-    character(len=32) :: temporary, file_name
-    character(len=5) :: z
-    character(len=6) :: time_start1
-    character(len=8) :: d
+    character(len=14), intent(in) :: time_start
+    integer :: thread_no
+    character(len=32) :: file_name
     remove=>null()
-    i=1
 
     file_name=create_file_name(time_start, time_stamp)
     thread_no=create_thread_no(time_stamp)
