@@ -1,23 +1,25 @@
 module results_type
   use coordinate_type
   use photon_type
+  use constants, only: elementary_charge, pi
   use omp_lib
 
   type :: results
      type(coordinate) :: location
-     real(kind(1.d0)) :: energy
+     real(kind(1.d0)) :: dose
      type(results), pointer :: next => null()
   end type results
 
 contains
 
-  subroutine add_result(this, ph)
+  subroutine add_result(this, ph, mass_of_cell)
     type(results), pointer, intent(inout) :: this
     type(photon), pointer, intent(inout) :: ph
+    real(kind(1.d0)), intent(in) :: mass_of_cell
     type(results), pointer :: next
     type(photon), pointer :: next_photon!
 
-    if(this%energy<0) then
+    if(this%dose<0) then
        next=>this
     else if(.not. associated(this%next)) then
        allocate(this%next)
@@ -38,7 +40,7 @@ contains
     next_photon=>ph
 
     do while(associated(next_photon))
-       next%energy=next_photon%energy
+       next%dose=next_photon%energy*elementary_charge/mass_of_cell
        next%location=next_photon%mfp
 
        if(.not. associated(next_photon%next_photon)) then
@@ -91,7 +93,7 @@ contains
     next=>this
 
     do while(associated(next))
-       write(thread_no, '(F0.7,",",F0.7,",",F0.7,",",F0.3)') next%location%x, next%location%y, next%location%z, next%energy
+       write(thread_no, '(F0.7,",",F0.7,",",F0.7,",",G0)') next%location%x, next%location%y, next%location%z, next%dose
 
        if(.not. associated(next%next)) then
           exit

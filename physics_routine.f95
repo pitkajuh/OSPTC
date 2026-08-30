@@ -332,7 +332,7 @@ contains
              if(cell_all(j)%cell_array%cell_material%density==cell_all(j-1) &
                   %cell_array%cell_material%density) then
                 ! Same material. Photon can be moved straight to mfp.
-                call add_result(statistics, ph)
+                call add_result(statistics, ph, cell_all(j)%cell_array%mass)
                 ph%origin=ph%mfp
                 end_tracking=reaction_function(cell_all(j)%cell_array%cell_material% &
                      endf, ph, ph%mfp, energy_lost)
@@ -368,7 +368,7 @@ contains
           exit
        else if(cell_index==cell_from) then
           ! Reaction happens at the source.
-          call add_result(statistics, ph)
+          call add_result(statistics, ph, cell_all(j)%cell_array%mass)
           ! print *, "At source"
           end_tracking=reaction_function(cell_all(cell_index)%cell_array% &
                cell_material%endf, ph, ph%mfp, energy_lost)

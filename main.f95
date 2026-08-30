@@ -68,7 +68,7 @@ program main
   call date_and_time(d, time_start, z)
   call execute_command_line("mkdir -p results/"//time_start)
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=1E5
+  co_60_source%activity=1E1
   time_end=10
   end_clause=.false.
 
@@ -77,7 +77,7 @@ program main
   !$omp do
   do second=1, time_end
      allocate(statistics)
-     statistics%energy=-1.0_8
+     statistics%dose=-1.0_8
 
      do i=1, co_60_source%activity
         allocate(ph)

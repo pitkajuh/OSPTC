@@ -107,16 +107,16 @@ contains
     class(cell_box_3d), intent(inout) :: this
     real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
     this%accumulated_energy=0.0_8
-    this%volume=(this%wallx_positive%v-this%wallx_negative%v)*&
-         (this%wally_positive%v-this%wally_negative%v)*&
-         (this%wallz_positive%v-this%wallz_negative%v)
-    this%mass=this%cell_material%density*this%volume
     call create_planex(this%wallx_negative, x0)
     call create_planex(this%wallx_positive, x1)
     call create_planey(this%wally_negative, y0)
     call create_planey(this%wally_positive, y1)
     call create_planez(this%wallz_negative, z0)
     call create_planez(this%wallz_positive, z1)
+    this%volume=(this%wallx_positive%v-this%wallx_negative%v)*&
+         (this%wally_positive%v-this%wally_negative%v)*&
+         (this%wallz_positive%v-this%wallz_negative%v)
+    this%mass=this%cell_material%density*this%volume
   end subroutine create_cell_box_3d
 
   function cell_test_box(this, p, energy) result(result1)
@@ -175,13 +175,13 @@ contains
     real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
     type(coordinate) :: centered_at
     this%accumulated_energy=0.0_8
-    this%volume=pi*this%surface_cylinder%v*this%surface_cylinder%v&
-         *(this%wallz_positive%v-this%wallz_negative%v)
-    this%mass=this%cell_material%density*this%volume
     centered_at=coordinate(y1, z0, z1)
     call create_cylinder(this%surface_cylinder, x0, centered_at)
     call create_planez(this%wallz_negative, x1)
     call create_planez(this%wallz_positive, y0)
+    this%volume=pi*this%surface_cylinder%v*this%surface_cylinder%v&
+         *(this%wallz_positive%v-this%wallz_negative%v)
+    this%mass=this%cell_material%density*this%volume
   end subroutine create_cell_cylinder_truncated_z
 
   function cell_test_cylinder_z(this, p, energy) result(result1)
