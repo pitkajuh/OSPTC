@@ -3,27 +3,55 @@ module post_processing
 
 contains
 
-  function create_grid(x0, x1, y0, y1, z0, z1) result(grid)
-    real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
-    real(kind(1.d0)) :: dx, dy, dz
-    integer :: nx, ny, nz, dt
-    real(kind(1.d0)), allocatable, dimension(:, :, :) :: grid
-    dt=100
-    nx=(x1-x0)*dt
-    ny=(y1-y0)*dt
-    nz=(z1-z0)*dt
-    allocate(grid(nx, ny, nz))
+  function create_grid_coordinate(v, dv, n, v0) result(s)
+    real(kind(1.d0)), intent(in) :: v, dv, v0
+    integer, intent(in) :: n
+    integer :: s, a
+    ! int(v*n/dv)
+    ! if(v<0) then
+       a=abs(int(v0/dv))
+       ! end if
+       print *, int(v/dv), abs(int(v0/dv))
+    s=int(v/dv)+abs(int(v0/dv))
+  end function create_grid_coordinate
 
-  end function create_grid
+  ! function create_grid(x0, x1, y0, y1, z0, z1) result(grid)
+  !   real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
+  !   real(kind(1.d0)) :: dx, dy, dz
+  !   integer :: nx, ny, nz, dt
+  !   real(kind(1.d0)), allocatable, dimension(:, :, :) :: grid
+  !   dt=100
+  !   nx=(x1-x0)*dt
+  !   ny=(y1-y0)*dt
+  !   nz=(z1-z0)*dt
+  !   allocate(grid(nx, ny, nz))
 
-  subroutine read_file(file_name, id)
+  ! end function create_grid
+
+  subroutine read_file(file_name, id, grid, dx, dy, dz, n, x0, y0, z0)
     character(*), intent(in) :: file_name
-    integer, intent(in) :: id
-    open(id, file=file_name, status="old", action="read")
+    integer, intent(in) :: id, n
+    real(kind(1.d0)), intent(in) :: dx, dy, dz, x0, y0, z0
+    real(kind(1.d0)), allocatable, dimension(:, :, :) :: grid
+    integer :: i, io, ii
+    real(kind(1.d0)) :: x, y, z, energy, mass
+    print *, "read file"
+    open(newunit=ii, file=file_name, status="old", action="read")
+    i=1
+    x=0
+    y=0
+    z=0
+    energy=0
+    mass=0
 
-    ! do
+    do
+       read(ii, *, iostat=io) x, y, z, energy, mass
+       print *, create_grid_coordinate(x, dx, n, x0), create_grid_coordinate(y, dy, n, y0), create_grid_coordinate(z, dz, n, z0)
+       if(io/=0) exit
 
-    ! end do
+       i=i+1
+       exit
+    end do
 
     close(id)
   end subroutine read_file
@@ -34,9 +62,19 @@ contains
     real(kind(1.d0)), intent(in) :: x0, x1, y0, y1, z0, z1
     real(kind(1.d0)), allocatable, dimension(:, :, :) :: grid
     character(len=32) :: temporary, file_name
-    integer :: i, x, y, z
-    grid=create_grid(x0, x1, y0, y1, z0, z1)
+    integer :: i, x, y, z, n
+    real(kind(1.d0)) :: dx, dy, dz
+    ! grid=create_grid(x0, x1, y0, y1, z0, z1)
 
+    n=100
+    dx=x1-x0
+    dy=y1-y0
+    dz=z1-z0
+
+    allocate(grid(n, n, n))
+
+
+    ! i=1
     do i=1, time_end
     !    do x=1, 200
     !       do y=1, 200
@@ -47,8 +85,9 @@ contains
        write(temporary, '(I0)') i
        temporary=trim(temporary)
        file_name=trim(directory//temporary)
-       call read_file(file_name, i)
+       call read_file(file_name, i, grid, dx, dy, dz, n, x0, y0, z0)
        print *, file_name
+       exit
     end do
     deallocate(grid)
   end subroutine post_process_results

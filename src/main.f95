@@ -108,7 +108,7 @@ program main
 
 
   print *, "SIMULATION END"
-  print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%get_dose(), cell_all(2)%cell_array%get_dose()
+  ! print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%get_dose(), cell_all(2)%cell_array%get_dose()
 
 
 
@@ -156,6 +156,7 @@ program main
   y1=1.0_8
   z0=-1.0_8
   z1=1.0_8
+  print *, "process results"
   call post_process_results(directory, time_end, x0, x1, y0, y1, z0, z1)
 
 end program main
