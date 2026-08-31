@@ -7,6 +7,7 @@ program main
   use radionuclide_type
   use material_type
   use physics_routine
+  use surface_tracking_algorithm
   use photon_type
   use results_type
   implicit none
