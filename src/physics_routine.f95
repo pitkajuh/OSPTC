@@ -309,6 +309,7 @@ contains
     cell_index=1
     energy_lost=0.0_8
 
+    ! 1000 is just a threshold for preventing infinite loops.
     do i=1, 1000
        ! Ignore photons with energy less than 1 keV.
        if(ph%energy<1E3) then
@@ -325,17 +326,13 @@ contains
             cell_material%density)
        cell_index=cell_search(cell_all, size(cell_all), ph%mfp, ph%energy)
 
-       ! Same material. Photon can be moved straight to mfp.
-       if(cell_all(cell_index)%cell_array%cell_material%density== &
-            cell_all(cell_from)%cell_array%cell_material%density .and. cell_index>1) then
-
-          call add_result(statistics, ph, cell_all(cell_index)%cell_array%mass, cell_index)
-          ph%origin=ph%mfp
-          end_tracking=reaction_function(cell_all(cell_index)%cell_array%cell_material% &
-               endf, ph, ph%mfp, energy_lost)
-          !omp reduction(+:cell_all(cell_index)%cell_array%accumulated_energy)
-          cell_all(cell_index)%cell_array%accumulated_energy=cell_all(cell_index)% &
-               cell_array%accumulated_energy+energy_lost
+       if(cell_index==0) then
+          ! Photon left the geometry without reacting.
+          end_tracking=.true.
+          exit
+       else if(cell_index-cell_from>1) then
+          print *, "Photon going over multiple cells. What to do now?"
+          error stop
        else if(cell_index>0) then
           distance_to_cell=cell_all(cell_index)%cell_array% &
                cell_distance(ph%origin, ph%direction)
@@ -355,13 +352,6 @@ contains
              ph%origin=ph%origin+ph%direction*distance_to_cell
              cell_from=cell_index
           end if
-       else if(cell_index==0) then
-          ! Photon left the geometry without reacting.
-          end_tracking=.true.
-          exit
-       else if(cell_index-cell_from>1) then
-          print *, "Photon going over multiple cells. What to do now?"
-          error stop
        end if
     end do
 
