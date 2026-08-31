@@ -7,15 +7,17 @@ module results_type
   type :: results
      type(coordinate) :: location
      real(kind(1.d0)) :: dose
+     integer :: cell_index
      type(results), pointer :: next=>null()
   end type results
 
 contains
 
-  subroutine add_result(this, ph, mass_of_cell)
+  subroutine add_result(this, ph, mass_of_cell, cell_index)
     type(results), pointer, intent(inout) :: this
     type(photon), pointer, intent(inout) :: ph
     real(kind(1.d0)), intent(in) :: mass_of_cell
+    integer, intent(in) :: cell_index
     type(results), pointer :: next
     type(photon), pointer :: next_photon
 
@@ -42,6 +44,7 @@ contains
     do while(associated(next_photon))
        next%dose=next_photon%energy*elementary_charge/mass_of_cell
        next%location=next_photon%mfp
+       next%cell_index=cell_index
 
        if(.not. associated(next_photon%next_photon)) then
           exit
@@ -91,6 +94,12 @@ contains
 
     do while(associated(next))
        write(thread_no, '(F0.7,",",F0.7,",",F0.7,",",G0)') next%location%x, next%location%y, next%location%z, next%dose
+       ! write(thread_no, '(F0.7,",",F0.7,",",F0.7,",",G0,",",F0.7)') next%location%x, next%location%y, next%location%z, next%dose, &
+       !      cell_index
+
+
+       ! print *, next%location%x, next%location%y, next%location%z, next%dose, cell_index
+
 
        if(.not. associated(next%next)) then
           exit

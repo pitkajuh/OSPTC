@@ -4,6 +4,10 @@ This program models photon transport by using Monte Carlo method and ENDF nuclea
 
 ## Theoretical basis
 
+### Particle tracking algorithm
+
+The program uses surface tracking algorithms
+
 ### Scattering reactions
 
 ENDF nuclear physics libraries are parsed for coherent scattering form factors (27502) and incoherent scattering functions (27504). Cumulative distribution functions are formed for both reactions from the parsed data. During the runtime of the simulation, values from the cumulative distribution are sampled and scattering angles are calculated by using rejection sampling method. Kahn's method (only for photons with energy less than 1.5 MeV) is used for sampling incoherent scattering angles, which are then accepted or rejected by rejection sampling.
@@ -26,12 +30,13 @@ The program does not take into account the following
 
 ## References
 
-Below is a list of documents which were used as a theoretical basis for this program.
+Below is a list of references which were used as a theoretical basis for this program.
 
-1. Kahn, Herman, Applications of Monte Carlo. Santa Monica, CA: RAND Corporation, 1956.
-2. Persliden J. A Monte Carlo program for photon transport using analogue sampling of scattering angle in coherent and incoherent scattering processes. Comput Programs Biomed. 1983 Aug-Oct;17(1-2):115-28. doi: 10.1016/0010-468x(83)90032-6. PMID: 6689289.
-3. Carter, L L and Cashwell, E D. "Particle-transport simulation with the Monte Carlo method." , Jan. 1975. https://doi.org/10.2172/4167844
-4. Brown, David A.. "ENDF-6 Formats Manual - Data Formats and Procedures for the Evaluated Nuclear Data Files ENDF/B-VI, ENDF/B-VII and ENDF/B-VIII." , Sep. 2023. https://doi.org/10.2172/2007538
+1. Surface tracking algorithm https://serpent.vtt.fi/mediawiki/index.php/Delta-_and_surface-tracking
+2. Kahn, Herman, Applications of Monte Carlo. Santa Monica, CA: RAND Corporation, 1956.
+3. Persliden J. A Monte Carlo program for photon transport using analogue sampling of scattering angle in coherent and incoherent scattering processes. Comput Programs Biomed. 1983 Aug-Oct;17(1-2):115-28. doi: 10.1016/0010-468x(83)90032-6. PMID: 6689289.
+4. Carter, L L and Cashwell, E D. "Particle-transport simulation with the Monte Carlo method." , Jan. 1975. https://doi.org/10.2172/4167844
+5. Brown, David A.. "ENDF-6 Formats Manual - Data Formats and Procedures for the Evaluated Nuclear Data Files ENDF/B-VI, ENDF/B-VII and ENDF/B-VIII." , Sep. 2023. https://doi.org/10.2172/2007538
 
 
 # Build instructions

@@ -15,9 +15,9 @@ program main
   class(material), pointer :: steel1, nitrogen1
   type(photon), pointer :: current_photon, ph
   class(radionuclide), allocatable :: co_60_source
-  logical :: cell_hit, continue_loop, reaction, end_clause
+  logical :: end_clause
   class(cells), allocatable :: cell_all(:)
-  type(results), pointer :: statistics, next_statistics, remove
+  type(results), pointer :: statistics
   character(len=5) :: z
   character(len=6) :: time_start
   character(len=8) :: d
@@ -32,9 +32,6 @@ program main
   ! call random_seed()
 
 
-  reaction=.false.
-  cell_hit=.false.
-  continue_loop=.false.
   allocate(steel :: steel1)
   call steel1%create()
   allocate(nitrogen :: nitrogen1)
@@ -65,10 +62,9 @@ program main
   new_time=d//time_start
   call execute_command_line("mkdir -p results/"//new_time)
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=1E4
+  co_60_source%activity=1E3
   time_end=10
   end_clause=.false.
-
 
   !$omp parallel private(ph, end_clause, current_photon, statistics)
   !$omp do
@@ -108,7 +104,6 @@ program main
 
 
   print *, "SIMULATION END"
-
   print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%get_dose(), cell_all(2)%cell_array%get_dose()
 
 

@@ -297,7 +297,7 @@ contains
     type(photon), pointer, intent(inout) :: ph
     type(photon), pointer :: temp
     type(results), pointer, intent(inout) :: statistics
-    integer :: cell_index, k, j, cell_from
+    integer :: i, cell_index, cell_from
     logical :: end_tracking, has_next, has_previous
     real(kind(1.d0)) :: distance_to_cell, energy_lost
     cell_from=1
@@ -307,77 +307,57 @@ contains
     has_previous=.false.
     distance_to_cell=0.0_8
     cell_index=1
-    k=1
-    j=1
     energy_lost=0.0_8
 
-    do k=1, 1000
+    do i=1, 1000
        ! Ignore photons with energy less than 1 keV.
-       if(ph%energy<1000) then
+       if(ph%energy<1E3) then
           end_tracking=.true.
           exit
        end if
-       ! Cell index 1 is the source.
+
+       if(end_tracking) then
+          exit
+       end if
+
        ph%mfp=calculate_mfp(ph, cell_all(cell_from)%cell_array%cell_material &
             %get_mu_value(ph%energy), cell_all(cell_from)%cell_array% &
             cell_material%density)
        cell_index=cell_search(cell_all, size(cell_all), ph%mfp, ph%energy)
-       ! print *, cell_index
 
-       if(cell_index>1) then
-          do j=cell_index, size(cell_all)
-             distance_to_cell=cell_all(j)%cell_array% &
-                  cell_distance(ph%origin, ph%direction)
+       ! Same material. Photon can be moved straight to mfp.
+       if(cell_all(cell_index)%cell_array%cell_material%density== &
+            cell_all(cell_from)%cell_array%cell_material%density .and. cell_index>1) then
 
-             if(cell_all(j)%cell_array%cell_material%density==cell_all(j-1) &
-                  %cell_array%cell_material%density) then
-                ! Same material. Photon can be moved straight to mfp.
-                call add_result(statistics, ph, cell_all(j)%cell_array%mass)
-                ph%origin=ph%mfp
-                end_tracking=reaction_function(cell_all(j)%cell_array%cell_material% &
-                     endf, ph, ph%mfp, energy_lost)
-                !!!omp atomic write
-                !omp reduction(+:cell_all(cell_index)%cell_array%accumulated_energy)
-                cell_all(j)%cell_array%accumulated_energy=cell_all(j)% &
-                     cell_array%accumulated_energy+energy_lost
-                ! print *, cell_all(cell_index)%cell_array%accumulated_energy/1000, cell_index
-                exit
-             else
-                ! print *, "else", cell_index
-                ! Add small interpolation distance in order to make sure
-                ! that the photon ends up on the right side.
-                ! print *, "Move to next cell."
-                distance_to_cell=distance_to_cell*1.01
-                ph%origin=ph%origin+ph%direction*distance_to_cell
-                cell_from=j
-
-                end_tracking=reaction_function(cell_all(j)%cell_array%cell_material% &
-                     endf, ph, ph%mfp, energy_lost)
-                !!!omp atomic write
-                !omp reduction(+:cell_all(cell_index)%cell_array%accumulated_energy)
-                cell_all(j)%cell_array%accumulated_energy=cell_all(j)% &
-                     cell_array%accumulated_energy+energy_lost
-                ! print *, cell_all(cell_index)%cell_array%accumulated_energy/1000, cell_index
-                exit
-             end if
-          end do
-       else if(cell_index==0) then
-          ! Photon left the geometry without reacting.
-          ! print *, "left geometry"
-          end_tracking=.true.
-          exit
-       else if(cell_index==cell_from) then
-          ! Reaction happens at the source.
-          call add_result(statistics, ph, cell_all(j)%cell_array%mass)
-          ! print *, "At source"
-          end_tracking=reaction_function(cell_all(cell_index)%cell_array% &
-               cell_material%endf, ph, ph%mfp, energy_lost)
-          !!!omp atomic write
+          call add_result(statistics, ph, cell_all(cell_index)%cell_array%mass, cell_index)
+          ph%origin=ph%mfp
+          end_tracking=reaction_function(cell_all(cell_index)%cell_array%cell_material% &
+               endf, ph, ph%mfp, energy_lost)
           !omp reduction(+:cell_all(cell_index)%cell_array%accumulated_energy)
           cell_all(cell_index)%cell_array%accumulated_energy=cell_all(cell_index)% &
                cell_array%accumulated_energy+energy_lost
-          ! print *, cell_all(cell_index)%cell_array%accumulated_energy/1000, cell_index
+       else if(cell_index>0) then
+          distance_to_cell=cell_all(cell_index)%cell_array% &
+               cell_distance(ph%origin, ph%direction)
 
+          if(length(ph%mfp)<distance_to_cell) then
+             call add_result(statistics, ph, cell_all(cell_index)%cell_array%mass, cell_index)
+             ph%origin=ph%mfp
+             end_tracking=reaction_function(cell_all(cell_index)%cell_array%cell_material% &
+                  endf, ph, ph%mfp, energy_lost)
+             !omp reduction(+:cell_all(cell_index)%cell_array%accumulated_energy)
+             cell_all(cell_index)%cell_array%accumulated_energy=cell_all(cell_index)% &
+                  cell_array%accumulated_energy+energy_lost
+          else
+             ! Add small interpolation distance in order to make sure
+             ! that the photon ends up on the right side.
+             distance_to_cell=distance_to_cell*1.01
+             ph%origin=ph%origin+ph%direction*distance_to_cell
+             cell_from=cell_index
+          end if
+       else if(cell_index==0) then
+          ! Photon left the geometry without reacting.
+          end_tracking=.true.
           exit
        else if(cell_index-cell_from>1) then
           print *, "Photon going over multiple cells. What to do now?"
