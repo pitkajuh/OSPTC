@@ -10,6 +10,7 @@ program main
   use surface_tracking_algorithm
   use photon_type
   use results_type
+  use post_processing
   implicit none
 
   integer :: i, second, time_end
@@ -19,10 +20,12 @@ program main
   logical :: end_clause
   class(cells), allocatable :: cell_all(:)
   type(results), pointer :: statistics
+  real(kind(1.d0)) :: x0, x1, y0, y1, z0, z1
   character(len=5) :: z
   character(len=6) :: time_start
   character(len=8) :: d
   character(len=14) :: new_time
+  character(len=23) :: directory
   !class(material), pointer :: steel2
   ! allocate(steel :: steel2)
   ! call steel2%create()
@@ -63,7 +66,7 @@ program main
   new_time=d//time_start
   call execute_command_line("mkdir -p results/"//new_time)
   allocate(co_60 :: co_60_source)
-  co_60_source%activity=1E3
+  co_60_source%activity=1E1
   time_end=10
   end_clause=.false.
 
@@ -71,7 +74,7 @@ program main
   !$omp do
   do second=1, time_end
      allocate(statistics)
-     statistics%dose=-1.0_8
+     statistics%energy=-1.0_8
 
      do i=1, co_60_source%activity
         allocate(ph)
@@ -145,5 +148,14 @@ program main
   print *, "del nitrogen1"
   call clear_material(nitrogen1)
   deallocate(nitrogen1)
+
+  directory="results/"//new_time//"/"
+  x0=-1.0_8
+  x1=1.0_8
+  y0=-1.0_8
+  y1=1.0_8
+  z0=-1.0_8
+  z1=1.0_8
+  call post_process_results(directory, time_end, x0, x1, y0, y1, z0, z1)
 
 end program main

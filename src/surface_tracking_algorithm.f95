@@ -53,7 +53,7 @@ contains
                cell_distance(ph%origin, ph%direction)
 
           if(length(ph%mfp)<distance_to_cell) then
-             call add_result(statistics, ph, cell_all(cell_index)%cell_array%mass, cell_index)
+             call add_result(statistics, ph, cell_all(cell_index)%cell_array%mass)
              ph%origin=ph%mfp
              end_tracking=reaction_function(cell_all(cell_index)%cell_array%cell_material% &
                   endf, ph, ph%mfp, energy_lost)
