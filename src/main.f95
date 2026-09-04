@@ -13,7 +13,8 @@ program main
   use post_processing
   implicit none
 
-  integer :: i, second, time_end
+  character(len=32) :: arg
+  integer :: i, second, time_end, j
   class(material), pointer :: steel1, nitrogen1
   type(photon), pointer :: current_photon, ph
   class(radionuclide), allocatable :: co_60_source
@@ -25,7 +26,7 @@ program main
   character(len=6) :: time_start
   character(len=8) :: d
   character(len=14) :: new_time
-  character(len=23) :: directory
+  character(len=32) :: results_directory
   !class(material), pointer :: steel2
   ! allocate(steel :: steel2)
   ! call steel2%create()
@@ -35,128 +36,142 @@ program main
 
   ! call random_seed()
 
+  do j=1, command_argument_count()
+     call get_command_argument(j, arg)
+     select case(arg)
+     case("run")
+        allocate(steel :: steel1)
+        call steel1%create()
+        allocate(nitrogen :: nitrogen1)
+        call nitrogen1%create()
 
-  allocate(steel :: steel1)
-  call steel1%create()
-  allocate(nitrogen :: nitrogen1)
-  call nitrogen1%create()
+        allocate(cell_all(2))
 
-  allocate(cell_all(2))
+        allocate(cell_box_3d::cell_all(1)%cell_array)
+        select type(cell_array=>cell_all(1)%cell_array)
+        class is(cell_box_3d)
+           ! cell_array%name="source"
+           cell_array%cell_material=>steel1
+           ! cell_array%cell_material=>nitrogen1
+           call cell_array%create(-0.05_8, 0.05_8, -0.05_8, 0.05_8, -0.05_8, 0.05_8)
+        end select
 
-  allocate(cell_box_3d::cell_all(1)%cell_array)
-  select type(cell_array=>cell_all(1)%cell_array)
-  class is(cell_box_3d)
-     ! cell_array%name="source"
-     cell_array%cell_material=>steel1
-     ! cell_array%cell_material=>nitrogen1
-     call cell_array%create(-0.05_8, 0.05_8, -0.05_8, 0.05_8, -0.05_8, 0.05_8)
-  end select
+        allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
+        select type(cell_array=>cell_all(2)%cell_array)
+        class is(cell_cylinder_truncated_z)
+           ! cell_array%name="outside"
+           cell_array%cell_material=>nitrogen1
+           ! cell_array%cell_material=>steel1
+           call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
+        end select
 
-  allocate(cell_cylinder_truncated_z::cell_all(2)%cell_array)
-  select type(cell_array=>cell_all(2)%cell_array)
-  class is(cell_cylinder_truncated_z)
-     ! cell_array%name="outside"
-     cell_array%cell_material=>nitrogen1
-     ! cell_array%cell_material=>steel1
-     call cell_array%create(1.0_8, -1.0_8, 1.0_8, 0.0_8, 0.0_8, 0.0_8)
-  end select
+        ! Create a directory for results
+        call date_and_time(d, time_start, z)
+        new_time=d//time_start
+        call execute_command_line("mkdir -p results/"//new_time)
+        allocate(co_60 :: co_60_source)
+        co_60_source%activity=1E1
+        time_end=10
+        end_clause=.false.
 
-  ! Create a directory for results
-  call date_and_time(d, time_start, z)
-  new_time=d//time_start
-  call execute_command_line("mkdir -p results/"//new_time)
-  allocate(co_60 :: co_60_source)
-  co_60_source%activity=1E1
-  time_end=10
-  end_clause=.false.
+        !$omp parallel private(ph, end_clause, current_photon, statistics)
+        !$omp do
+        do second=1, time_end
+           allocate(statistics)
+           statistics%energy=-1.0_8
 
-  !$omp parallel private(ph, end_clause, current_photon, statistics)
-  !$omp do
-  do second=1, time_end
-     allocate(statistics)
-     statistics%energy=-1.0_8
+           do i=1, co_60_source%activity
+              allocate(ph)
+              call co_60_source%pdf(ph)
+              ph%id=1
+              ph%origin=cell_all(1)%cell_array%random_initial_position()
 
-     do i=1, co_60_source%activity
-        allocate(ph)
-        call co_60_source%pdf(ph)
-        ph%id=1
-        ph%origin=cell_all(1)%cell_array%random_initial_position()
+              ph%next_photon=>null()
+              current_photon=>ph
 
-        ph%next_photon=>null()
-        current_photon=>ph
+              do while(associated(current_photon))
+                 end_clause=surface_tracking(cell_all, current_photon, statistics)
 
-        do while(associated(current_photon))
-           end_clause=surface_tracking(cell_all, current_photon, statistics)
+                 if(end_clause .eqv. .false.) then
+                    cycle
+                 else if(end_clause .eqv. .true.) then
+                    if(associated(current_photon)) then
+                       deallocate(current_photon)
+                    end if
+                    exit
+                 end if
+                 current_photon=>current_photon%next_photon
+              end do
+           end do
 
-           if(end_clause .eqv. .false.) then
-              cycle
-           else if(end_clause .eqv. .true.) then
-              if(associated(current_photon)) then
-                 deallocate(current_photon)
-              end if
-              exit
-           end if
-           current_photon=>current_photon%next_photon
+           call write_results(statistics, second, new_time)
+
         end do
-     end do
+        !$omp end do
+        !$omp end parallel
 
-     call write_results(statistics, second, new_time)
 
+        print *, "SIMULATION END"
+        ! print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%get_dose(), cell_all(2)%cell_array%get_dose()
+
+
+
+
+
+
+
+
+        ! do i=1, size(cell_all)
+        !    ! deallocate(cell_all(i))
+        !    select type(cell_array => cell_all(i)%cell_array)
+        !       deallocate(cell_array)
+        !       deallocate(cell_array(i))
+        !       deallocate(cell_all(i))
+        ! !    !    print *,cell_all(i)%name
+        ! !    !    ! cell_all%cell_array(i)!%surface_cylinder%v
+        !    end select
+        ! !    ! print *, cell_all(i)%cell_array%name
+        ! !    ! deallocate(cell_all(i)%cell_array%cell_material%mu)
+        ! !    ! deallocate(cell_all(i)%cell_array%cell_material%endf%coherent_A)
+        ! !    ! deallocate(cell_all(i)%cell_array%cell_material%endf%mf23%photo_ionization)
+        ! !    ! call clear_mf23(cell_all(i)%cell_array%cell_material%endf%mf23)
+        ! !    ! call clear_mf27(cell_all(i)%cell_array%cell_material%endf%mf27)
+        ! !    ! ! print *, cell_all(i)%cell_array%cell_test(new_location)
+        ! end do
+
+        print *, "delete source"
+        deallocate(co_60_source)
+
+        print *, "del cells"
+        deallocate(cell_all)
+
+        print *, "del steel1"
+        call clear_material(steel1)
+        deallocate(steel1)
+
+        print *, "del nitrogen1"
+        call clear_material(nitrogen1)
+        deallocate(nitrogen1)
+        exit
+     case("postproc")
+        print *, "Starting post processing"
+        call get_command_argument(j+1, arg)
+        results_directory=arg
+        print *, results_directory
+
+        x0=-1.0_8
+        x1=1.0_8
+        y0=-1.0_8
+        y1=1.0_8
+        z0=-1.0_8
+        z1=1.0_8
+        print *, "process results"
+        call post_process_results(results_directory, time_end, x0, x1, y0, y1, z0, z1)
+        exit
+     case default
+        print *, "Unknow command: ", arg
+     end select
   end do
-  !$omp end do
-  !$omp end parallel
 
-
-  print *, "SIMULATION END"
-  ! print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%get_dose(), cell_all(2)%cell_array%get_dose()
-
-
-
-
-
-
-
-
-  ! do i=1, size(cell_all)
-  !    ! deallocate(cell_all(i))
-  !    select type(cell_array => cell_all(i)%cell_array)
-  !       deallocate(cell_array)
-  !       deallocate(cell_array(i))
-  !       deallocate(cell_all(i))
-  ! !    !    print *,cell_all(i)%name
-  ! !    !    ! cell_all%cell_array(i)!%surface_cylinder%v
-  !    end select
-  ! !    ! print *, cell_all(i)%cell_array%name
-  ! !    ! deallocate(cell_all(i)%cell_array%cell_material%mu)
-  ! !    ! deallocate(cell_all(i)%cell_array%cell_material%endf%coherent_A)
-  ! !    ! deallocate(cell_all(i)%cell_array%cell_material%endf%mf23%photo_ionization)
-  ! !    ! call clear_mf23(cell_all(i)%cell_array%cell_material%endf%mf23)
-  ! !    ! call clear_mf27(cell_all(i)%cell_array%cell_material%endf%mf27)
-  ! !    ! ! print *, cell_all(i)%cell_array%cell_test(new_location)
-  ! end do
-
-  print *, "delete source"
-  deallocate(co_60_source)
-
-  print *, "del cells"
-  deallocate(cell_all)
-
-  print *, "del steel1"
-  call clear_material(steel1)
-  deallocate(steel1)
-
-  print *, "del nitrogen1"
-  call clear_material(nitrogen1)
-  deallocate(nitrogen1)
-
-  directory="results/"//new_time//"/"
-  x0=-1.0_8
-  x1=1.0_8
-  y0=-1.0_8
-  y1=1.0_8
-  z0=-1.0_8
-  z1=1.0_8
-  print *, "process results"
-  call post_process_results(directory, time_end, x0, x1, y0, y1, z0, z1)
 
 end program main

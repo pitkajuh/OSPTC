@@ -62,9 +62,9 @@ make
 Download photonuclear ENDF libraries and extract them
 
 ``` bash
-wget https://www.nndc.bnl.gov/endf-releases/releases/B-VIII.1/gammas/gammas-version.VIII.1.tar.gz
+wget https://www.nndc.bnl.gov/endf-releases/releases/B-VIII.1/photoat/photoat-version.VIII.1.tar.gz
 mkdir cross-sections
-tar -zxvf gammas-version.VIII.1.tar.gz -C cross-sections --strip-components=1
+tar -zxvf photoat-version.VIII.1.tar.gz -C cross-sections --strip-components=1
 
 ```
 
