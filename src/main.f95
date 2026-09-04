@@ -14,7 +14,7 @@ program main
   implicit none
 
   character(len=32) :: arg
-  integer :: i, second, time_end, j
+  integer :: i, second, time_end, j, k, stat, io
   class(material), pointer :: steel1, nitrogen1
   type(photon), pointer :: current_photon, ph
   class(radionuclide), allocatable :: co_60_source
@@ -27,6 +27,7 @@ program main
   character(len=8) :: d
   character(len=14) :: new_time
   character(len=32) :: results_directory
+  integer :: file_name
   !class(material), pointer :: steel2
   ! allocate(steel :: steel2)
   ! call steel2%create()
@@ -157,6 +158,31 @@ program main
         print *, "Starting post processing"
         call get_command_argument(j+1, arg)
         results_directory=arg
+
+        call execute_command_line("ls -1 "//results_directory//"> result_files.txt", exitstat=stat)
+
+        if(stat/=0) then
+           print *, "Error reading"
+        end if
+
+        open(newunit=k, file="result_files.txt", status="old", action="read", iostat=io)
+
+        time_end=1
+
+        print *, file_name
+        do
+           read(k, '(I10)', iostat=io) file_name
+
+           if(file_name>time_end) then
+              time_end=file_name
+           end if
+
+           exit
+           if(is_iostat_end(io)) exit
+        end do
+        close(k)
+        call execute_command_line("rm result_files.txt")
+
         print *, results_directory
 
         x0=-1.0_8

@@ -35,7 +35,7 @@ contains
 
     do
        read(ii, *, iostat=io) x, y, z, energy, mass
-       if (is_iostat_end(io)) exit
+       if(is_iostat_end(io)) exit
        grid_x=coordinate_transform(x, dx, x0)
        grid_y=coordinate_transform(y, dy, y0)
        grid_z=coordinate_transform(z, dz, z0)
@@ -67,7 +67,7 @@ contains
     i=1
 
     ! i=1
-    ! do i=1, time_end
+    do i=1, time_end
     !    do x=1, 200
     !       do y=1, 200
     !          do z=1, 200
@@ -80,7 +80,7 @@ contains
        call read_file(file_name, i, grid, dx, dy, dz, x0, y0, z0)
 
     !    exit
-    ! end do
+    end do
     deallocate(grid)
   end subroutine post_process_results
 
