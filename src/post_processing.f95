@@ -1,26 +1,28 @@
 module post_processing
+  use constants, only: elementary_charge
   implicit none
 
 contains
 
-  function create_grid_coordinate(v, dv, n, v0) result(s)
+  function coordinate_transform(v, dv, v0) result(s)
     real(kind(1.d0)), intent(in) :: v, dv, v0
-    integer, intent(in) :: n
-    integer :: s, a
-    ! int(v*n/dv)
-    ! if(v<0) then
-       ! a=abs(int(v0/dv))
-       ! end if
-       ! print *, int(v/dv), abs(int(v0/dv))
+    integer :: s
     s=int(v/dv)+abs(int(v0/dv))
-  end function create_grid_coordinate
+  end function coordinate_transform
 
-  subroutine read_file(file_name, id, grid, dx, dy, dz, n, x0, y0, z0)
+  function coordinate_inverse_transform(v, dv, v0) result(s)
+    integer, intent(in) :: v
+    real(kind(1.d0)), intent(in) :: dv, v0
+    real(kind(1.d0)) :: s
+    s=v*dv-abs(v0)
+  end function coordinate_inverse_transform
+
+  subroutine read_file(file_name, id, grid, dx, dy, dz, x0, y0, z0)
     character(*), intent(in) :: file_name
-    integer, intent(in) :: id, n
+    integer, intent(in) :: id
     real(kind(1.d0)), intent(in) :: dx, dy, dz, x0, y0, z0
     real(kind(1.d0)), allocatable, dimension(:, :, :) :: grid
-    integer :: io, ii
+    integer :: io, ii, grid_x, grid_y, grid_z
     real(kind(1.d0)) :: x, y, z, energy, mass
     print *, "read file ", file_name
     open(newunit=ii, file=file_name, status="old", action="read")
@@ -34,9 +36,11 @@ contains
     do
        read(ii, *, iostat=io) x, y, z, energy, mass
        if (is_iostat_end(io)) exit
-       print *, x, y, z, energy, mass!, create_grid_coordinate(x, dx, n, x0)
-       print *, x, dx, int(x*n/dx)
-       print *, create_grid_coordinate(x, dx, n, x0), create_grid_coordinate(y, dy, n, y0), create_grid_coordinate(z, dz, n, z0)
+       grid_x=coordinate_transform(x, dx, x0)
+       grid_y=coordinate_transform(y, dy, y0)
+       grid_z=coordinate_transform(z, dz, z0)
+       print *, x, grid_x, coordinate_inverse_transform(grid_x, dx, x0)
+       grid(grid_x, grid_y, grid_z)=grid(grid_x, grid_y, grid_z)+energy*elementary_charge/mass
 
        exit
     end do
@@ -73,7 +77,7 @@ contains
        write(temporary, '(I0)') i
        temporary=trim(temporary)
        file_name=trim(directory//temporary)
-       call read_file(file_name, i, grid, dx, dy, dz, n, x0, y0, z0)
+       call read_file(file_name, i, grid, dx, dy, dz, x0, y0, z0)
 
     !    exit
     ! end do
