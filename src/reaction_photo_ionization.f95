@@ -17,7 +17,8 @@ contains
     if(ionization_energy<ph%energy) then
        ph%energy=ph%energy-ionization_energy
        end=.false.
-    ! else if(ph%energy-ionization_energy==0)
+    else if(ionization_energy>=ph%energy) then
+       ph%energy=0.0_8
     end if
   end function photo_ionization
 
