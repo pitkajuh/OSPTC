@@ -71,7 +71,7 @@ program main
         new_time=d//time_start
         call execute_command_line("mkdir -p results/"//new_time)
         allocate(co_60 :: co_60_source)
-        co_60_source%activity=1E1
+        co_60_source%activity=1E4
         time_end=10
         end_clause=.false.
 
@@ -113,7 +113,7 @@ program main
 
 
         print *, "SIMULATION END"
-        ! print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%get_dose(), cell_all(2)%cell_array%get_dose()
+        print *, "ACCUMULATED DOSE", cell_all(1)%cell_array%get_dose(), cell_all(2)%cell_array%get_dose()
 
 
 
